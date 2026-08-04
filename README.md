@@ -14,6 +14,7 @@ same shape that runs in production, just swapped for local equivalents.
 
 ## Run it
 
+
 ```bash
 cp .env.example .env
 docker-compose up -d
