@@ -206,7 +206,7 @@ export async function writeAudit(opts: {
       actorId: opts.actorId,
       hospitalId: opts.hospitalId,
       action: opts.action,
-      meta: opts.meta ?? undefined,
+      meta: (opts.meta as object | undefined) ?? undefined,
     },
   });
 }

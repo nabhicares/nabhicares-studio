@@ -15,7 +15,7 @@ export async function GET(
       where: { hospitalId: access.hospital.id },
     })) ??
     (await prisma.designSystem.create({
-      data: { hospitalId: access.hospital.id, tokens: DEFAULT_DESIGN_TOKENS },
+      data: { hospitalId: access.hospital.id, tokens: DEFAULT_DESIGN_TOKENS as object },
     }));
 
   return json(design);
@@ -35,8 +35,8 @@ export async function PUT(
 
   const design = await prisma.designSystem.upsert({
     where: { hospitalId: access.hospital.id },
-    create: { hospitalId: access.hospital.id, tokens: body.tokens },
-    update: { tokens: body.tokens },
+    create: { hospitalId: access.hospital.id, tokens: body.tokens as object },
+    update: { tokens: body.tokens as object },
   });
   return json(design);
 }
