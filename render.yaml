@@ -1,0 +1,68 @@
+# NabhiCares — Render Blueprint (MinIO + CDN + publish-worker)
+# https://render.com/docs/blueprint-spec
+#
+# Prerequisites: connect GitHub repo nabhicares/nabhicares-studio
+# Persistent disk requires a paid instance type (Starter+).
+
+services:
+  # --- Object store (S3 API) — replace Cloudflare R2 for pilot ---
+  - type: web
+    name: nabhi-minio
+    runtime: docker
+    plan: starter
+    region: singapore
+    dockerfilePath: ./infra/minio-render/Dockerfile
+    dockerContext: ./infra/minio-render
+    healthCheckPath: /minio/health/live
+    disk:
+      name: nabhi-minio-data
+      mountPath: /data
+      sizeGB: 10
+    envVars:
+      - key: MINIO_ROOT_USER
+        sync: false
+      - key: MINIO_ROOT_PASSWORD
+        sync: false
+
+  # --- CDN: LIVE pointer → versions/{id}/ (same as local cdn-sim) ---
+  - type: web
+    name: nabhi-cdn
+    runtime: docker
+    plan: starter
+    region: singapore
+    dockerfilePath: ./infra/cdn-sim/Dockerfile
+    dockerContext: ./infra/cdn-sim
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: "80"
+      - key: MINIO_URL
+        sync: false
+      - key: SNAPSHOT_BUCKET
+        value: nabhicares-sites
+
+  # --- Publish worker (BullMQ consumer) ---
+  - type: worker
+    name: nabhi-publish-worker
+    runtime: docker
+    plan: starter
+    region: singapore
+    dockerfilePath: ./apps/publish-worker/Dockerfile
+    dockerContext: .
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: BUILDER_DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: SNAPSHOT_STORE_ENDPOINT
+        sync: false
+      - key: SNAPSHOT_STORE_KEY
+        sync: false
+      - key: SNAPSHOT_STORE_SECRET
+        sync: false
+      - key: CDN_PUBLIC_URL
+        sync: false
+      - key: NEXT_PUBLIC_CDN_PUBLIC_URL
+        sync: false
