@@ -9,16 +9,25 @@ Add the same value in Vercel → `nabhi-studio` → Settings → Environment Var
 
 ## Step 1 — Deploy MinIO only (do this first)
 
-1. Push this repo to `nabhicares/nabhicares-studio` (includes `render.yaml` + `infra/minio-render`).
-2. [Render Dashboard](https://dashboard.render.com) → **New** → **Blueprint**
-3. Connect `nabhicares/nabhicares-studio`
-4. For the first pass you can **remove/disable** `nabhi-cdn` and `nabhi-publish-worker` in the Blueprint UI and only create **nabhi-minio**
-5. Set secrets when prompted:
+**Skip Blueprint** if it asks for payment. Create a free Web Service manually:
+
+1. [Render Dashboard](https://dashboard.render.com) → **New** → **Web Service**
+2. Connect repo **`nabhicares/nabhicares-studio`**
+3. Settings:
+   - **Name:** `nabhi-minio`
+   - **Root Directory:** leave empty
+   - **Runtime:** Docker
+   - **Dockerfile Path:** `infra/minio-render/Dockerfile`
+   - **Docker Context:** `infra/minio-render` (if asked)
+   - **Instance type:** **Free**
+   - **Do not** add a persistent disk yet (that’s the paid part)
+4. Environment:
    - `MINIO_ROOT_USER` = e.g. `nabhicares`
    - `MINIO_ROOT_PASSWORD` = long random password (save it)
-6. Plan: **Starter** (needed for the 10 GB disk)
-7. Apply → wait until MinIO is **Live**
-8. Copy the service URL, e.g. `https://nabhi-minio.onrender.com`
+5. Create Web Service → wait until **Live**
+6. Copy the URL, e.g. `https://nabhi-minio.onrender.com`
+
+**Caveat (free):** without a disk, MinIO data can vanish when the service sleeps or redeploys. Fine for wiring publish once; add a paid disk later for a real pilot.
 
 ### Create the bucket
 
