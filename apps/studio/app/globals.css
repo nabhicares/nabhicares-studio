@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-canvas text-on-surface font-inter antialiased;
+  }
+}
+
+@layer components {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    user-select: none;
+    font-family: 'Material Symbols Outlined';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .material-symbols-outlined.filled {
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  }
+
+  .hairline {
+    border: 1px solid #b8bdb1;
+  }
+
+  .btn-primary {
+    @apply bg-primary-container text-on-primary-container font-medium text-label-md px-lg py-sm rounded-lg hover:opacity-90 transition-opacity font-semibold;
+  }
+
+  .btn-ghost {
+    @apply border border-brand-sage text-on-surface-variant rounded-lg px-sm py-xs text-label-sm font-medium hover:bg-surface-container transition-colors;
+  }
+
+  .field-input {
+    @apply w-full bg-white hairline rounded-lg p-sm font-inter text-body-md outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container;
+  }
+}
+
+/* thin scrollbar like Stitch */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #c3c9b2;
+  border-radius: 10px;
+}
+
+@keyframes layout-shimmer {
+  0% {
+    background-position: -120% 0;
+  }
+  100% {
+    background-position: 120% 0;
+  }
+}
+
+.layout-thumb-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 65%
+  );
+  background-size: 200% 100%;
+  animation: layout-shimmer 1.8s ease-in-out infinite;
+  opacity: 0.7;
+}
+
+.layout-thumb-shimmer:hover::after,
+.layout-thumb-active::after {
+  opacity: 1;
+}

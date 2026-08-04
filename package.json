@@ -1,0 +1,23 @@
+{
+  "name": "nabhicares",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test",
+    "test:tenant": "npm run test:tenant --workspace=studio",
+    "backup:builder": "powershell -File scripts/backup-builder.ps1",
+    "backup:drill": "powershell -File scripts/verify-backup-drill.ps1",
+    "db:migrate:hms": "cd apps/hms-backend && npx prisma migrate dev",
+    "db:migrate:builder": "cd packages/db-builder && npx prisma migrate dev"
+  },
+  "devDependencies": {
+    "turbo": "^2.1.0"
+  },
+  "packageManager": "npm@10.0.0"
+}

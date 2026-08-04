@@ -1,0 +1,26 @@
+{
+  "name": "publish-worker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test:pipeline": "tsx src/test-pipeline.ts",
+    "seed": "tsx src/seed-builder.ts"
+  },
+  "dependencies": {
+    "@nabhicares/db-builder": "*",
+    "@nabhicares/queue": "*",
+    "@nabhicares/section-registry": "*",
+    "@nabhicares/snapshot-store": "*",
+    "bullmq": "^5.12.0",
+    "ioredis": "^5.4.1",
+    "@aws-sdk/client-s3": "^3.637.0",
+    "@prisma/client": "^5.19.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}

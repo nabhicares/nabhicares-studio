@@ -1,0 +1,53 @@
+name: Builder DB backup
+
+# Nightly dump when BUILDER_DATABASE_URL secret is set.
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check secret
+        id: check
+        env:
+          BUILDER_DATABASE_URL: ${{ secrets.BUILDER_DATABASE_URL }}
+        run: |
+          if [ -z "$BUILDER_DATABASE_URL" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "BUILDER_DATABASE_URL not set — skipping."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Install pg_dump
+        if: steps.check.outputs.skip != 'true'
+        run: sudo apt-get update && sudo apt-get install -y postgresql-client
+      - name: Dump builder DB
+        if: steps.check.outputs.skip != 'true'
+        env:
+          BUILDER_DATABASE_URL: ${{ secrets.BUILDER_DATABASE_URL }}
+        run: |
+          mkdir -p backups
+          STAMP=$(date -u +%Y%m%dT%H%M%SZ)
+          pg_dump "$BUILDER_DATABASE_URL" --no-owner --format=plain | gzip > "backups/builder-$STAMP.sql.gz"
+          ls -lh backups/
+      - uses: actions/upload-artifact@v4
+        if: steps.check.outputs.skip != 'true'
+        with:
+          name: builder-backup
+          path: backups/*.sql.gz
+          retention-days: 14
+      - name: Optional upload to R2/S3
+        if: steps.check.outputs.skip != 'true' && secrets.BACKUP_S3_BUCKET != ''
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.SNAPSHOT_STORE_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SNAPSHOT_STORE_SECRET }}
+          AWS_DEFAULT_REGION: auto
+          AWS_ENDPOINT_URL: ${{ secrets.SNAPSHOT_STORE_ENDPOINT }}
+          BACKUP_S3_BUCKET: ${{ secrets.BACKUP_S3_BUCKET }}
+        run: |
+          FILE=$(ls backups/*.sql.gz | head -1)
+          aws s3 cp "$FILE" "s3://${BACKUP_S3_BUCKET}/builder-db/$(basename $FILE)"

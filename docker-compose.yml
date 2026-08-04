@@ -1,0 +1,110 @@
+version: "3.9"
+
+services:
+  # --- Builder database: content, drafts, templates. Read-heavy, rebuildable. ---
+  postgres-builder:
+    image: postgres:16-alpine
+    container_name: nabhicares-postgres-builder
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: builder
+      POSTGRES_PASSWORD: builder_dev_pw
+      POSTGRES_DB: nabhicares_builder
+    ports:
+      - "5433:5432"
+    volumes:
+      - builder_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U builder -d nabhicares_builder"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # --- HMS database: patients, appointments, billing. Transactional, RLS-enforced. ---
+  postgres-hms:
+    image: postgres:16-alpine
+    container_name: nabhicares-postgres-hms
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: hms
+      POSTGRES_PASSWORD: hms_dev_pw
+      POSTGRES_DB: nabhicares_hms
+    ports:
+      - "5434:5432"
+    volumes:
+      - hms_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hms -d nabhicares_hms"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # --- Job queue: publish jobs, HMS notifications, future AI/background jobs ---
+  redis:
+    image: redis:7-alpine
+    container_name: nabhicares-redis
+    restart: unless-stopped
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:-nabhicares_redis_dev}"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-nabhicares_redis_dev}", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # --- Snapshot store: stand-in for S3/R2. Holds every versioned static build. ---
+  minio:
+    image: minio/minio:latest
+    container_name: nabhicares-minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: nabhicares
+      MINIO_ROOT_PASSWORD: nabhicares_dev_pw
+    ports:
+      - "9000:9000"   # S3 API
+      - "9001:9001"   # Web console
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # --- Creates the snapshot bucket on startup so the pipeline has somewhere to publish to ---
+  minio-init:
+    image: minio/mc:latest
+    container_name: nabhicares-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 nabhicares nabhicares_dev_pw &&
+      mc mb -p local/nabhicares-sites || true &&
+      mc anonymous set download local/nabhicares-sites &&
+      echo 'bucket ready'
+      "
+
+  # --- CDN simulator: LIVE pointer → versions/{id}/ (atomic promote) ---
+  cdn-sim:
+    build: ./infra/cdn-sim
+    container_name: nabhicares-cdn-sim
+    restart: unless-stopped
+    depends_on:
+      - minio
+    ports:
+      - "8080:80"
+    environment:
+      MINIO_URL: http://minio:9000
+      SNAPSHOT_BUCKET: nabhicares-sites
+
+volumes:
+  builder_db_data:
+  hms_db_data:
+  redis_data:
+  minio_data:

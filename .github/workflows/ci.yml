@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  unit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Generate builder Prisma client
+        working-directory: packages/db-builder
+        run: npx prisma generate
+        env:
+          BUILDER_DATABASE_URL: postgresql://builder:builder@localhost:5433/nabhicares_builder
+      - name: Section registry unit tests
+        run: npm test --workspace=@nabhicares/section-registry
+      - name: Typecheck section-registry
+        run: npx tsc --noEmit -p packages/section-registry/tsconfig.json
+
+  tenant:
+    runs-on: ubuntu-latest
+    needs: unit
+    services:
+      postgres-builder:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: builder
+          POSTGRES_PASSWORD: builder_dev_pw
+          POSTGRES_DB: nabhicares_builder
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U builder -d nabhicares_builder"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      BUILDER_DATABASE_URL: postgresql://builder:builder_dev_pw@localhost:5433/nabhicares_builder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Migrate + generate
+        working-directory: packages/db-builder
+        run: |
+          npx prisma generate
+          npx prisma migrate deploy
+      - name: Seed builder
+        run: npm run seed --workspace=publish-worker
+      - name: Cross-tenant isolation
+        run: npm run test:tenant --workspace=studio

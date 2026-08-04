@@ -1,0 +1,37 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# Next / build
+.next/
+out/
+dist/
+*.tsbuildinfo
+
+# Prisma
+packages/db-builder/src/generated/
+apps/hms-backend/node_modules/.prisma/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+
+# Local site-renderer output
+packages/site-renderer/data/site.json
+packages/site-renderer/out/
+packages/site-renderer/.next/
+
+# Backups (local dumps)
+backups/
+
+# Turbo
+.turbo/

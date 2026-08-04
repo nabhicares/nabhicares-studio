@@ -1,0 +1,50 @@
+name: Deploy Studio (Vercel)
+
+# Requires GitHub secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
+# Link project once: cd apps/studio && npx vercel link
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'apps/studio/**'
+      - 'packages/db-builder/**'
+      - 'packages/section-registry/**'
+      - 'packages/section-layouts/**'
+      - 'packages/snapshot-store/**'
+      - 'packages/queue/**'
+      - 'package-lock.json'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+      - run: npm ci
+      - name: Generate Prisma client
+        working-directory: packages/db-builder
+        run: npx prisma generate
+        env:
+          BUILDER_DATABASE_URL: postgresql://builder:builder@localhost:5433/nabhicares_builder
+      - name: Pull Vercel env
+        working-directory: apps/studio
+        run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Build
+        working-directory: apps/studio
+        run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      - name: Deploy
+        working-directory: apps/studio
+        run: npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}

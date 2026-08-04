@@ -1,0 +1,66 @@
+// HMS database - patients, appointments, billing, staff.
+// Every tenant-scoped table carries tenant_id and has Row-Level Security
+// enforced in Postgres itself (see prisma/sql/rls.sql) - not just app-layer
+// filtering. A forgotten WHERE clause must not be able to leak data.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("HMS_DATABASE_URL")
+}
+
+model Tenant {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now())
+
+  staff        Staff[]
+  patients     Patient[]
+  appointments Appointment[]
+}
+
+enum Role {
+  SUPER_ADMIN     // platform team, cross-tenant, never subject to RLS
+  HOSPITAL_OWNER
+  HOSPITAL_MANAGEMENT
+  DOCTOR
+  RECEPTIONIST
+  PHARMACY
+}
+
+model Staff {
+  id        String   @id @default(uuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  role      Role
+  name      String
+  email     String   @unique
+  createdAt DateTime @default(now())
+}
+
+model Patient {
+  id        String   @id @default(uuid())
+  tenantId  String
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
+  name      String
+  phone     String
+  createdAt DateTime @default(now())
+
+  appointments Appointment[]
+}
+
+model Appointment {
+  id          String   @id @default(uuid())
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  patientId   String
+  patient     Patient  @relation(fields: [patientId], references: [id])
+  doctorStaffId String
+  scheduledAt DateTime
+  status      String   @default("scheduled")
+  createdAt   DateTime @default(now())
+}
