@@ -2,10 +2,12 @@
 // Read-heavy, rebuildable from a bad publish. No PHI/PII lives here.
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   // Separate output so this client doesn't overwrite the HMS one in
   // node_modules/@prisma/client (both schemas live in the same monorepo).
-  output   = "../src/generated/client"
+  output        = "../src/generated/client"
+  // native = local Windows/Mac; rhel = Vercel Node serverless
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
