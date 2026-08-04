@@ -1,6 +1,7 @@
 name: Builder DB backup
 
 # Nightly dump when BUILDER_DATABASE_URL secret is set.
+# Note: secrets cannot be referenced in job/step `if:` — gate inside a check step.
 on:
   schedule:
     - cron: '0 2 * * *'
@@ -15,12 +16,19 @@ jobs:
         id: check
         env:
           BUILDER_DATABASE_URL: ${{ secrets.BUILDER_DATABASE_URL }}
+          BACKUP_S3_BUCKET: ${{ secrets.BACKUP_S3_BUCKET }}
         run: |
           if [ -z "$BUILDER_DATABASE_URL" ]; then
             echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "upload_s3=false" >> "$GITHUB_OUTPUT"
             echo "BUILDER_DATABASE_URL not set — skipping."
           else
             echo "skip=false" >> "$GITHUB_OUTPUT"
+            if [ -n "$BACKUP_S3_BUCKET" ]; then
+              echo "upload_s3=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "upload_s3=false" >> "$GITHUB_OUTPUT"
+            fi
           fi
       - name: Install pg_dump
         if: steps.check.outputs.skip != 'true'
@@ -41,7 +49,7 @@ jobs:
           path: backups/*.sql.gz
           retention-days: 14
       - name: Optional upload to R2/S3
-        if: steps.check.outputs.skip != 'true' && secrets.BACKUP_S3_BUCKET != ''
+        if: steps.check.outputs.skip != 'true' && steps.check.outputs.upload_s3 == 'true'
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.SNAPSHOT_STORE_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.SNAPSHOT_STORE_SECRET }}

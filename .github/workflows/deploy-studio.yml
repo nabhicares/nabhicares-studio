@@ -2,6 +2,7 @@ name: Deploy Studio (Vercel)
 
 # Requires GitHub secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID
 # Link project once: cd apps/studio && npx vercel link
+# Skips cleanly until those secrets exist (so main stays green).
 on:
   push:
     branches: [main, master]
@@ -13,6 +14,7 @@ on:
       - 'packages/snapshot-store/**'
       - 'packages/queue/**'
       - 'package-lock.json'
+      - '.github/workflows/deploy-studio.yml'
   workflow_dispatch:
 
 jobs:
@@ -20,29 +22,46 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Check Vercel secrets
+        id: check
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "VERCEL_TOKEN not set — skipping deploy (configure secrets to enable)."
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
       - uses: actions/setup-node@v4
+        if: steps.check.outputs.skip != 'true'
         with:
           node-version: '20'
           cache: npm
-      - run: npm ci
+      - if: steps.check.outputs.skip != 'true'
+        run: npm ci
       - name: Generate Prisma client
+        if: steps.check.outputs.skip != 'true'
         working-directory: packages/db-builder
         run: npx prisma generate
         env:
           BUILDER_DATABASE_URL: postgresql://builder:builder@localhost:5433/nabhicares_builder
       - name: Pull Vercel env
+        if: steps.check.outputs.skip != 'true'
         working-directory: apps/studio
         run: npx vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Build
+        if: steps.check.outputs.skip != 'true'
         working-directory: apps/studio
         run: npx vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
       - name: Deploy
+        if: steps.check.outputs.skip != 'true'
         working-directory: apps/studio
         run: npx vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:

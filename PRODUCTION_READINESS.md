@@ -60,8 +60,8 @@ Update the Status column when an item ships (and note the PR/date).
 | 3.4 | Encryption at rest (Postgres + object store) | P0 | Partial | Acceptance = managed Neon/R2 (documented); local Docker not encrypted |
 | 3.5 | Structured logs + error tracking (tenant/job ids) | P0/P1 | Partial |
 | 3.6 | Staging environment mirroring prod topology | P1 | Missing |
-| 3.7 | CI: lint / typecheck / test on every PR | P0 | Written, unverified | `.github/workflows/ci.yml` exists; never ran (no git remote) |
-| 3.8 | Automated deploy for studio + worker | P0 | Written, unverified | Workflow YAMLs + Dockerfiles; never executed against prod |
+| 3.7 | CI: lint / typecheck / test on every PR | P0 | Present | `.github/workflows/ci.yml` green on `main` (2026-08-04) |
+| 3.8 | Automated deploy for studio + worker | P0 | Written, unverified | Workflows skip until Vercel/registry secrets are set |
 | 3.9 | E2E: create → publish → live → rollback | P0 | Present | `test:pipeline` re-run green after LIVE + privacy + CDN path fix (2026-08-04) |
 
 ---
