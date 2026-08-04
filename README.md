@@ -65,6 +65,6 @@ powershell -File scripts/verify-backup-drill.ps1     # backup → scratch restor
  
 Production deploy (CDN/TLS/Vercel/worker/R2): see **`docs/ops/DEPLOY.md`**.  
 Legal sign-off template: **`docs/legal/DATA_CLASSIFICATION.md`**.
-
+ 
 Studio API routes are the only path to the builder DB. Publish enqueues
 BullMQ jobs; rollback calls `promoteToLive` (pointer flip, no rebuild).
