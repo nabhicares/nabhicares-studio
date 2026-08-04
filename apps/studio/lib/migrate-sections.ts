@@ -29,7 +29,7 @@ export async function ensureSectionMigrated(sectionId: string): Promise<string[]
     await prisma.section.update({
       where: { id: section.id },
       data: {
-        content: result.content,
+        content: result.content as object,
         contentSchemaVersion: result.version,
       },
     });
@@ -58,7 +58,7 @@ export async function ensureHospitalSectionsMigrated(
     await prisma.section.update({
       where: { id: section.id },
       data: {
-        content: result.content,
+        content: result.content as object,
         contentSchemaVersion: result.version,
       },
     });

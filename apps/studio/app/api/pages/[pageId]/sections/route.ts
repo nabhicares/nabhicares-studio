@@ -82,7 +82,7 @@ export async function POST(
       templateId: template.id,
       order,
       enabled: true,
-      content: defaultContent(type),
+      content: defaultContent(type) as object,
     },
     include: { template: true },
   });
