@@ -62,7 +62,6 @@ powershell -File scripts/backup-builder.ps1          # dump builder DB
 powershell -File scripts/verify-backup-drill.ps1     # backup → scratch restore → verify
 ```
 
-
 Production deploy (CDN/TLS/Vercel/worker/R2): see **`docs/ops/DEPLOY.md`**.  
 Legal sign-off template: **`docs/legal/DATA_CLASSIFICATION.md`**.
 
