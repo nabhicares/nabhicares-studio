@@ -1,4 +1,5 @@
-# Production publish-worker (Fly.io / Railway / any Docker host).
+# Production publish-worker (Render free Web Service / Fly / Railway).
+# Uses full npm ci (needs prisma + tsx + next for site export).
 FROM node:20-bookworm-slim
 WORKDIR /app
 
@@ -13,13 +14,15 @@ COPY packages/section-layouts/package.json packages/section-layouts/
 COPY packages/snapshot-store/package.json packages/snapshot-store/
 COPY packages/site-renderer/package.json packages/site-renderer/
 
-RUN npm ci --omit=dev || npm ci
+# Keep devDeps: prisma CLI, tsx, typescript used at runtime/build
+RUN npm ci
 
 COPY . .
 
-WORKDIR /app/packages/db-builder
-RUN npx prisma generate
+RUN npx prisma generate --schema=packages/db-builder/prisma/schema.prisma
 
 WORKDIR /app/apps/publish-worker
 ENV NODE_ENV=production
+ENV PORT=10000
+EXPOSE 10000
 CMD ["npx", "tsx", "src/index.ts"]

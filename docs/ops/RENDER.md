@@ -1,83 +1,52 @@
-# Render deploy — MinIO + CDN + publish-worker (no Cloudflare R2 required)
+# Render / CDN deploy — MinIO + publish-worker
 
-Pilot alternative to R2. Studio stays on Vercel; object store + CDN + worker run on Render.
+Pilot: Studio + CDN on Vercel; MinIO on Render; publish-worker local until a Render Web Service is added.
 
-## Step 0 — Redis on Vercel
+## Live URLs
 
-In `.env`, `REDIS_URL` must be Upstash **`rediss://…`** (TLS), not localhost.
-Add the same value in Vercel → `nabhi-studio` → Settings → Environment Variables → Production.
+| Piece | URL |
+|--------|-----|
+| Studio | https://nabhi-studio.vercel.app |
+| CDN (hospital sites) | https://nabhi-cdn.vercel.app/`{slug}`/ |
+| MinIO | https://nabhicares-studio-1.onrender.com |
 
-## Step 1 — Deploy MinIO only (do this first)
+## CDN (Vercel `nabhi-cdn`)
 
-**Skip Blueprint** if it asks for payment. Create a free Web Service manually:
+Source: `apps/cdn`. Env: `MINIO_URL`, `SNAPSHOT_BUCKET=nabhicares-sites`.
 
-1. [Render Dashboard](https://dashboard.render.com) → **New** → **Web Service**
-2. Connect repo **`nabhicares/nabhicares-studio`**
-3. Settings:
-   - **Name:** `nabhi-minio`
-   - **Root Directory:** leave empty
-   - **Runtime:** Docker
-   - **Dockerfile Path:** `infra/minio-render/Dockerfile`
-   - **Docker Context:** `infra/minio-render` (if asked)
-   - **Instance type:** **Free**
-   - **Do not** add a persistent disk yet (that’s the paid part)
-4. Environment:
-   - `MINIO_ROOT_USER` = e.g. `nabhicares`
-   - `MINIO_ROOT_PASSWORD` = long random password (save it)
-5. Create Web Service → wait until **Live**
-6. Copy the URL, e.g. `https://nabhi-minio.onrender.com`
-
-**Caveat (free):** without a disk, MinIO data can vanish when the service sleeps or redeploys. Fine for wiring publish once; add a paid disk later for a real pilot.
-
-### Create the bucket
-
-From a machine with [mc](https://min.io/docs/minio/linux/reference/minio-mc.html) (or Docker):
+Studio env:
 
 ```bash
-docker run --rm -it minio/mc sh -c "
-  mc alias set render https://nabhi-minio.onrender.com 'USER' 'PASSWORD' &&
+CDN_PUBLIC_URL="https://nabhi-cdn.vercel.app"
+NEXT_PUBLIC_CDN_PUBLIC_URL="https://nabhi-cdn.vercel.app"
+```
+
+## MinIO (free)
+
+Without a disk, buckets vanish on sleep/redeploy. Recreate:
+
+```bash
+docker run --rm --entrypoint sh minio/mc -c "
+  mc alias set render https://nabhicares-studio-1.onrender.com 'USER' 'PASSWORD' &&
   mc mb -p render/nabhicares-sites || true &&
   mc anonymous set download render/nabhicares-sites || true
 "
 ```
 
-## Step 2 — Point Studio at MinIO
+Wake before publish: `…/minio/health/live`.
 
-Vercel + local `.env` (production values):
+## Publish worker
 
-```bash
-SNAPSHOT_STORE_ENDPOINT="https://nabhi-minio.onrender.com"
-SNAPSHOT_STORE_KEY="<MINIO_ROOT_USER>"
-SNAPSHOT_STORE_SECRET="<MINIO_ROOT_PASSWORD>"
-```
-
-Redeploy Studio after saving env.
-
-## Step 3 — CDN service
-
-Enable `nabhi-cdn` from Blueprint (or New → Web Service → Docker `infra/cdn-sim`).
-
-Env:
+**Now:** keep this running while testing publishes:
 
 ```bash
-MINIO_URL=https://nabhi-minio.onrender.com
-SNAPSHOT_BUCKET=nabhicares-sites
-PORT=10000
+# from repo root, with .env loaded (no PORT=4000)
+npx tsx apps/publish-worker/src/index.ts
 ```
 
-Then set:
-
-```bash
-CDN_PUBLIC_URL="https://nabhi-cdn.onrender.com"
-NEXT_PUBLIC_CDN_PUBLIC_URL="https://nabhi-cdn.onrender.com"
-```
-
-## Step 4 — Publish worker
-
-Enable `nabhi-publish-worker` with the same Neon / Redis / MinIO / CDN env as Studio.
+**Render (optional):** New → Web Service → Docker `apps/publish-worker/Dockerfile`, context `.`, free plan, health `/`, env same as Studio + `PORT=10000`.
 
 ## Notes
 
-- MinIO on Render free tier without a disk **will lose data** on restart — use Starter + disk.
-- Services may sleep on free plans; paid Starter stays warmer for demos.
-- When you later add Cloudflare R2, only swap `SNAPSHOT_STORE_*` and CDN; no app rewrite.
+- Publishes stay PENDING if no worker is listening on Upstash Redis.
+- Free MinIO is ephemeral; prefer a paid disk or R2 for a real pilot.

@@ -1,6 +1,9 @@
 # NabhiCares — Render (free-tier friendly)
 # Prefer creating services manually in the dashboard (no Blueprint billing gate).
 # Disks / Starter are optional later when you need durable storage.
+#
+# CDN for pilot: Vercel project `nabhi-cdn` (apps/cdn).
+# Publish worker: Web Service (Docker) below — binds PORT for health + BullMQ.
 
 services:
   - type: web
@@ -16,3 +19,29 @@ services:
         sync: false
       - key: MINIO_ROOT_PASSWORD
         sync: false
+
+  - type: web
+    name: nabhi-publish-worker
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./apps/publish-worker/Dockerfile
+    dockerContext: .
+    healthCheckPath: /
+    envVars:
+      - key: BUILDER_DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false
+      - key: SNAPSHOT_STORE_ENDPOINT
+        sync: false
+      - key: SNAPSHOT_STORE_KEY
+        sync: false
+      - key: SNAPSHOT_STORE_SECRET
+        sync: false
+      - key: SNAPSHOT_STORE_PUBLIC_URL
+        sync: false
+      - key: CDN_PUBLIC_URL
+        sync: false
+      - key: PORT
+        value: "10000"

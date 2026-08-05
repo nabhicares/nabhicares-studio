@@ -1,5 +1,6 @@
 import { Worker, Job } from 'bullmq';
 import { spawn } from 'child_process';
+import { createServer } from 'http';
 import { readdir, readFile, writeFile, mkdir, stat, rm } from 'fs/promises';
 import { join, relative, extname } from 'path';
 import { connection, PublishJobData } from '@nabhicares/queue';
@@ -249,3 +250,14 @@ worker.on('failed', (job, err) => {
 });
 
 console.log('Publish worker listening for jobs...');
+
+// On Render, bind PORT for the free-web health check. Skip locally (PORT may be HMS).
+const healthPort = process.env.RENDER ? Number(process.env.PORT || 10000) : 0;
+if (healthPort > 0) {
+  createServer((_req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/plain' });
+    res.end('ok');
+  }).listen(healthPort, () => {
+    console.log(`health listening on :${healthPort}`);
+  });
+}
