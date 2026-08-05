@@ -863,7 +863,12 @@ export function StudioEditor({
               <PublishDrawer
                 hospitalId={hospitalId}
                 hospitalSlug={hospitalSlug}
+                customDomain={customDomain}
                 onClose={() => setTab('sections')}
+                onOpenSettings={() => {
+                  setTab('sections');
+                  setShowSettings(true);
+                }}
               />
             </div>
           ) : tab === 'design' ? (

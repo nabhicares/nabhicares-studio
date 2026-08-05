@@ -1,9 +1,9 @@
 'use client';
 
 import { apiFetch } from '@/lib/api-client';
-
 import { useEffect, useState } from 'react';
-import { liveSiteUrl } from '@/lib/cdn';
+import { liveSiteUrl, pathStyleLiveUrl, cdnRootDomain } from '@/lib/cdn';
+import { DnsSetupPanel } from './DnsSetupPanel';
 
 type Publish = {
   id: string;
@@ -11,6 +11,10 @@ type Publish = {
   isLive: boolean;
   snapshotPath: string | null;
   createdAt: string;
+  reviewNote?: string | null;
+  triggeredBy?: string;
+  approvedBy?: string | null;
+  completedAt?: string | null;
 };
 
 const STEPS = ['PENDING', 'BUILDING', 'UPLOADING', 'LIVE'] as const;
@@ -18,17 +22,23 @@ const STEPS = ['PENDING', 'BUILDING', 'UPLOADING', 'LIVE'] as const;
 export function PublishDrawer({
   hospitalId,
   hospitalSlug,
+  customDomain = '',
   onClose,
+  onOpenSettings,
 }: {
   hospitalId: string;
   hospitalSlug: string;
+  customDomain?: string;
   onClose: () => void;
+  /** Opens hospital settings (DNS lives there too). */
+  onOpenSettings?: () => void;
 }) {
   const [publishes, setPublishes] = useState<Publish[]>([]);
   const [busy, setBusy] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [activeStatus, setActiveStatus] = useState<string>('PENDING');
-  const [note, setNote] = useState('');
+  const [statusLine, setStatusLine] = useState('');
+  const [reviewNoteDraft, setReviewNoteDraft] = useState('');
 
   async function refresh() {
     const res = await apiFetch(`/api/hospitals/${hospitalId}/publish`);
@@ -45,7 +55,7 @@ export function PublishDrawer({
       const res = await apiFetch(`/api/publishes/${activeId}`);
       const pub = await res.json();
       setActiveStatus(pub.status);
-      setNote(`Publish ${pub.status}`);
+      setStatusLine(`Publish ${pub.status}`);
       if (pub.status === 'LIVE' || pub.status === 'FAILED') {
         setActiveId(null);
         setBusy(false);
@@ -56,28 +66,26 @@ export function PublishDrawer({
   }, [activeId]);
 
   async function publish() {
-    const reviewNote = window.prompt(
-      'Confirm content accuracy before publish (required).\nExample: Doctor credentials and bios verified.',
-    );
-    if (reviewNote === null) return;
-    if (!reviewNote.trim()) {
-      setNote('Publish cancelled — review note required');
+    const reviewNote = reviewNoteDraft.trim();
+    if (!reviewNote) {
+      setStatusLine('Add a review note before publishing (required).');
       return;
     }
     setBusy(true);
-    setNote('Enqueueing…');
+    setStatusLine('Enqueueing…');
     setActiveStatus('PENDING');
     const res = await apiFetch(`/api/hospitals/${hospitalId}/publish`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ reviewNote: reviewNote.trim() }),
+      body: JSON.stringify({ reviewNote }),
     });
     const pub = await res.json();
     if (!res.ok) {
       setBusy(false);
-      setNote(pub.error ?? 'Publish failed');
+      setStatusLine(pub.error ?? 'Publish failed');
       return;
     }
+    setReviewNoteDraft('');
     setActiveId(pub.id);
     setActiveStatus(pub.status);
     void refresh();
@@ -88,7 +96,7 @@ export function PublishDrawer({
       return;
     }
     setBusy(true);
-    setNote('Rolling back (no rebuild)…');
+    setStatusLine('Rolling back (no rebuild)…');
     const started = performance.now();
     const res = await apiFetch(`/api/hospitals/${hospitalId}/rollback`, {
       method: 'POST',
@@ -97,7 +105,7 @@ export function PublishDrawer({
     });
     const data = await res.json();
     const ms = Math.round(performance.now() - started);
-    setNote(
+    setStatusLine(
       data.rebuilt === false
         ? `Rollback done in ${ms}ms — pointer flip only`
         : `Rollback finished in ${ms}ms`,
@@ -112,6 +120,7 @@ export function PublishDrawer({
       (activeStatus === 'UPLOADING' ? 'BUILDING' : activeStatus) as (typeof STEPS)[number],
     ),
   );
+  const root = cdnRootDomain();
 
   return (
     <div className="relative w-full max-w-md h-[min(720px,90%)] bg-surface-container-lowest border border-outline-variant shadow-2xl flex flex-col rounded-xl overflow-hidden z-10">
@@ -131,10 +140,22 @@ export function PublishDrawer({
 
       <div className="flex-1 overflow-y-auto p-lg space-y-xl">
         <div className="space-y-md">
+          <div className="flex flex-col gap-xs">
+            <label className="font-inter text-label-sm text-outline">
+              Review note (kept with this deployment)
+            </label>
+            <textarea
+              className="field-input min-h-[72px]"
+              value={reviewNoteDraft}
+              onChange={(e) => setReviewNoteDraft(e.target.value)}
+              placeholder="e.g. Doctor credentials and bios verified."
+              disabled={busy}
+            />
+          </div>
           <button
             type="button"
             disabled={busy}
-            onClick={publish}
+            onClick={() => void publish()}
             className="w-full py-md bg-primary-container text-on-primary-container font-outfit text-h3 font-bold rounded-xl shadow-sm hover:shadow-md active:scale-[0.98] transition-all flex items-center justify-center gap-md disabled:opacity-60"
           >
             <span className="material-symbols-outlined filled">bolt</span>
@@ -143,7 +164,9 @@ export function PublishDrawer({
           <p className="font-inter text-body-sm text-on-surface-variant text-center px-md">
             Deployment usually takes less than 60 seconds.
           </p>
-          {note ? <p className="font-mono text-xs text-center text-primary">{note}</p> : null}
+          {statusLine ? (
+            <p className="font-mono text-xs text-center text-primary">{statusLine}</p>
+          ) : null}
           <a
             className="block text-center text-body-sm text-primary underline"
             href={liveSiteUrl(hospitalSlug)}
@@ -152,13 +175,24 @@ export function PublishDrawer({
           >
             Open live site
           </a>
+          <p className="font-inter text-label-sm text-outline text-center break-all">
+            {liveSiteUrl(hospitalSlug)}
+            {root ? (
+              <>
+                <br />
+                Path fallback: {pathStyleLiveUrl(hospitalSlug)}
+              </>
+            ) : null}
+          </p>
         </div>
 
         {busy || activeId ? (
           <div className="space-y-lg bg-surface-container-low p-md rounded-xl border border-outline-variant">
             {STEPS.filter((s) => s !== 'UPLOADING').map((step, i) => {
               const done = stepIndex > i || activeStatus === 'LIVE';
-              const current = STEPS[stepIndex] === step || (step === 'BUILDING' && activeStatus === 'UPLOADING');
+              const current =
+                STEPS[stepIndex] === step ||
+                (step === 'BUILDING' && activeStatus === 'UPLOADING');
               return (
                 <div key={step} className="flex items-center gap-md">
                   <div
@@ -207,43 +241,57 @@ export function PublishDrawer({
             {publishes.map((p, idx) => (
               <div
                 key={p.id}
-                className={`p-md bg-surface-container-lowest rounded-xl flex items-center justify-between ${
+                className={`p-md bg-surface-container-lowest rounded-xl flex flex-col gap-sm ${
                   p.isLive
                     ? 'border-2 border-primary-container'
                     : 'border border-outline-variant'
                 }`}
               >
-                <div>
-                  <div className="flex items-center gap-sm mb-xs">
-                    <span className="font-inter text-label-md font-bold text-on-surface">
-                      v{publishes.length - idx}
-                    </span>
-                    {p.isLive ? (
-                      <span className="bg-primary-container text-on-primary-container text-[10px] px-sm py-xs rounded-full font-bold uppercase">
-                        Live Now
+                <div className="flex items-center justify-between gap-sm">
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-sm mb-xs flex-wrap">
+                      <span className="font-inter text-label-md font-bold text-on-surface">
+                        v{publishes.length - idx}
                       </span>
-                    ) : (
-                      <span className="text-[10px] text-outline uppercase font-bold">
-                        {p.status}
-                      </span>
-                    )}
+                      {p.isLive ? (
+                        <span className="bg-primary-container text-on-primary-container text-[10px] px-sm py-xs rounded-full font-bold uppercase">
+                          Live Now
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-outline uppercase font-bold">
+                          {p.status}
+                        </span>
+                      )}
+                    </div>
+                    <p className="font-inter text-body-sm text-on-surface-variant opacity-70">
+                      {new Date(p.createdAt).toLocaleString()}
+                    </p>
                   </div>
-                  <p className="font-inter text-body-sm text-on-surface-variant opacity-70">
-                    {new Date(p.createdAt).toLocaleString()}
-                  </p>
+                  {p.isLive ? (
+                    <span className="material-symbols-outlined text-primary filled shrink-0">
+                      verified
+                    </span>
+                  ) : (
+                    <button
+                      type="button"
+                      disabled={busy || (!p.snapshotPath && p.status === 'FAILED')}
+                      className="btn-ghost flex items-center gap-xs shrink-0"
+                      onClick={() => void rollback(p.id)}
+                    >
+                      <span className="material-symbols-outlined text-sm">history</span>
+                      Rollback
+                    </button>
+                  )}
                 </div>
-                {p.isLive ? (
-                  <span className="material-symbols-outlined text-primary filled">verified</span>
+                {p.reviewNote ? (
+                  <p className="font-inter text-body-sm text-on-surface border-t border-outline-variant pt-sm">
+                    <span className="text-outline">Note: </span>
+                    {p.reviewNote}
+                  </p>
                 ) : (
-                  <button
-                    type="button"
-                    disabled={busy || (!p.snapshotPath && p.status === 'FAILED')}
-                    className="btn-ghost flex items-center gap-xs"
-                    onClick={() => rollback(p.id)}
-                  >
-                    <span className="material-symbols-outlined text-sm">history</span>
-                    Rollback
-                  </button>
+                  <p className="font-inter text-label-sm text-outline border-t border-outline-variant pt-sm">
+                    No review note stored for this version.
+                  </p>
                 )}
               </div>
             ))}
@@ -258,6 +306,13 @@ export function PublishDrawer({
             </p>
           </div>
         </div>
+
+        <DnsSetupPanel hospitalSlug={hospitalSlug} customDomain={customDomain} />
+        {onOpenSettings ? (
+          <button type="button" className="w-full btn-ghost text-body-sm" onClick={onOpenSettings}>
+            Open hospital settings
+          </button>
+        ) : null}
       </div>
     </div>
   );
