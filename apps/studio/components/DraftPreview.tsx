@@ -8,6 +8,7 @@ import {
   DEFAULT_DESIGN_TOKENS,
   type DesignTokens,
 } from '@nabhicares/section-registry';
+import { ViewportToggle, type PreviewViewport } from './DraftCanvas';
 import { liveSiteUrl } from '@/lib/cdn';
 
 type PreviewSection = {
@@ -22,6 +23,12 @@ type PreviewSection = {
 type PreviewPage = {
   slug: string;
   sections: PreviewSection[];
+};
+
+const VIEWPORT_WIDTH: Record<PreviewViewport, number | undefined> = {
+  mobile: 390,
+  tablet: 768,
+  desktop: undefined,
 };
 
 export function DraftPreview({
@@ -42,6 +49,7 @@ export function DraftPreview({
   const [slug, setSlug] = useState(initialSlug ?? 'home');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [viewport, setViewport] = useState<PreviewViewport>('desktop');
 
   useEffect(() => {
     void (async () => {
@@ -102,6 +110,8 @@ export function DraftPreview({
           <span className="font-inter text-label-sm text-outline">Draft preview</span>
         </div>
         <div className="flex items-center gap-sm overflow-x-auto">
+          <ViewportToggle value={viewport} onChange={setViewport} />
+          <div className="h-6 w-px bg-outline-variant shrink-0" />
           {pages.map((p) => (
             <button
               key={p.slug}
@@ -128,41 +138,60 @@ export function DraftPreview({
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto flex justify-center bg-surface-dim/40 p-lg">
         {loading ? (
           <p className="p-xl text-on-surface-variant">Loading draft…</p>
         ) : error ? (
           <p className="p-xl text-error">{error}</p>
         ) : (
-          <div style={cssVars}>
-            <nav className="p-lg flex justify-between items-center border-b border-outline-variant/40 bg-[var(--color-bg)]">
+          <div
+            className={`bg-white shadow-canvas overflow-hidden min-h-full ${
+              viewport === 'mobile'
+                ? 'rounded-[28px] border-[10px] border-on-surface'
+                : viewport === 'tablet'
+                  ? 'rounded-2xl border-[8px] border-on-surface/80'
+                  : 'rounded-xl hairline w-full max-w-5xl'
+            }`}
+            style={{
+              ...cssVars,
+              width: VIEWPORT_WIDTH[viewport],
+              maxWidth: '100%',
+            }}
+          >
+            <nav className="p-lg flex justify-between items-center border-b border-outline-variant/40 bg-[var(--color-bg)] gap-md">
               <span
-                className="text-lg font-semibold"
+                className="text-lg font-semibold truncate"
                 style={{ fontFamily: 'var(--font-display)' }}
               >
                 {hospitalName}
               </span>
-              <div className="flex gap-lg text-sm" style={{ color: 'var(--color-muted)' }}>
-                {pages.map((p) => (
-                  <button
-                    key={p.slug}
-                    type="button"
-                    onClick={() => setSlug(p.slug)}
-                    style={{
-                      color:
-                        p.slug === page?.slug
-                          ? 'var(--color-accent)'
-                          : 'var(--color-muted)',
-                      fontWeight: p.slug === page?.slug ? 700 : 500,
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                    }}
-                  >
-                    {p.slug}
-                  </button>
-                ))}
-              </div>
+              {viewport === 'mobile' ? (
+                <span className="material-symbols-outlined" style={{ color: 'var(--color-muted)' }}>
+                  menu
+                </span>
+              ) : (
+                <div className="flex gap-lg text-sm flex-wrap justify-end" style={{ color: 'var(--color-muted)' }}>
+                  {pages.map((p) => (
+                    <button
+                      key={p.slug}
+                      type="button"
+                      onClick={() => setSlug(p.slug)}
+                      style={{
+                        color:
+                          p.slug === page?.slug
+                            ? 'var(--color-accent)'
+                            : 'var(--color-muted)',
+                        fontWeight: p.slug === page?.slug ? 700 : 500,
+                        background: 'none',
+                        border: 'none',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {p.slug}
+                    </button>
+                  ))}
+                </div>
+              )}
             </nav>
             {(page?.sections ?? []).map((section) => {
               const Layout = resolveLayout(section.type, section.layoutVersion ?? 1);

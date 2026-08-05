@@ -4,6 +4,10 @@ import './studio.generated.css';
 export const metadata = {
   title: 'Nabhi Studio',
   description: 'Hospital site builder',
+  icons: {
+    icon: [{ url: '/favicon.png', type: 'image/png' }],
+    apple: [{ url: '/favicon.png' }],
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

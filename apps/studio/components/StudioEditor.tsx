@@ -13,7 +13,7 @@ import {
 } from '@nabhicares/section-registry';
 import { DesignPanel } from './DesignPanel';
 import { PublishDrawer } from './PublishDrawer';
-import { DraftCanvas } from './DraftCanvas';
+import { DraftCanvas, ViewportToggle, type PreviewViewport } from './DraftCanvas';
 import { LayoutWireframe } from './LayoutWireframe';
 import { ImageField, looksLikeImageField } from './ImageField';
 import { DraftPreview } from './DraftPreview';
@@ -220,6 +220,7 @@ export function StudioEditor({
   const [renameSlug, setRenameSlug] = useState('');
   const [designTokens, setDesignTokens] = useState<DesignTokens | undefined>(undefined);
   const [showPreview, setShowPreview] = useState(false);
+  const [previewViewport, setPreviewViewport] = useState<PreviewViewport>('desktop');
   const [showSettings, setShowSettings] = useState(false);
   const [dirty, setDirty] = useState(false);
   const dirtyRef = useRef(false);
@@ -511,15 +512,8 @@ export function StudioEditor({
             </div>
           </div>
 
-          <div className="hidden md:flex items-center bg-surface-container-low rounded-lg p-xs hairline gap-xs">
-            <button type="button" className="p-xs hover:bg-surface-container-high rounded text-on-surface-variant">
-              <span className="material-symbols-outlined text-[20px]">near_me</span>
-            </button>
-            <button type="button" className="p-xs hover:bg-surface-container-high rounded text-on-surface-variant">
-              <span className="material-symbols-outlined text-[20px]">pan_tool</span>
-            </button>
-            <div className="w-px h-4 bg-outline-variant mx-xs" />
-            <span className="font-inter text-label-md text-on-surface-variant px-sm">100%</span>
+          <div className="hidden sm:block">
+            <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
           </div>
 
           <div className="flex items-center gap-md">
@@ -871,7 +865,10 @@ export function StudioEditor({
               />
             </div>
           ) : tab === 'design' ? (
-            <div className="w-full h-full overflow-y-auto p-xl flex justify-center">
+            <div className="w-full h-full overflow-y-auto p-xl flex flex-col items-center gap-md">
+              <div className="sm:hidden">
+                <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
+              </div>
               <DraftCanvas
                 hospitalId={hospitalId}
                 hospitalName={hospitalName}
@@ -879,20 +876,23 @@ export function StudioEditor({
                 page={activePage}
                 pages={pages}
                 selectedSectionId={selected?.id}
-                mode="browser"
+                viewport={previewViewport}
                 designTokens={designTokens}
                 onSelectSection={setSelectedSectionId}
               />
             </div>
           ) : (
             <>
-              <div className="w-full p-sm flex justify-center">
+              <div className="w-full p-sm flex flex-wrap justify-center items-center gap-sm">
                 <div className="px-md py-xs bg-error-container text-on-error-container rounded-full font-inter text-label-sm uppercase tracking-widest flex items-center gap-xs">
                   <span className="w-1.5 h-1.5 bg-error rounded-full animate-pulse" />
                   Draft preview — not live
                 </div>
+                <div className="sm:hidden">
+                  <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
+                </div>
               </div>
-              <div className="flex-1 w-full max-w-[1200px] px-xl pb-xxl overflow-y-auto flex justify-center">
+              <div className="flex-1 w-full px-xl pb-xxl overflow-y-auto flex justify-center">
                 <DraftCanvas
                   hospitalId={hospitalId}
                   hospitalName={hospitalName}
@@ -900,7 +900,7 @@ export function StudioEditor({
                   page={activePage}
                   pages={pages}
                   selectedSectionId={selected?.id}
-                  mode="device"
+                  viewport={previewViewport}
                   designTokens={designTokens}
                   onSelectSection={setSelectedSectionId}
                 />

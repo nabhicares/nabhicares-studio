@@ -7,6 +7,19 @@ import { resolveLayout } from '@nabhicares/section-layouts';
 import { DEFAULT_DESIGN_TOKENS, getSectionType, type DesignTokens } from '@nabhicares/section-registry';
 import type { Page } from './StudioEditor';
 
+export type PreviewViewport = 'mobile' | 'tablet' | 'desktop';
+
+export const PREVIEW_VIEWPORTS: {
+  id: PreviewViewport;
+  label: string;
+  icon: string;
+  width: number;
+}[] = [
+  { id: 'mobile', label: 'Mobile', icon: 'smartphone', width: 390 },
+  { id: 'tablet', label: 'Tablet', icon: 'tablet_mac', width: 768 },
+  { id: 'desktop', label: 'Desktop', icon: 'desktop_windows', width: 1200 },
+];
+
 function tokensToStyle(tokens: DesignTokens): CSSProperties {
   return {
     ['--color-bg' as string]: tokens.colors.background,
@@ -27,6 +40,72 @@ function tokensToStyle(tokens: DesignTokens): CSSProperties {
   };
 }
 
+function frameFor(viewport: PreviewViewport) {
+  if (viewport === 'mobile') {
+    return {
+      width: 390,
+      className:
+        'bg-white rounded-[32px] overflow-hidden shadow-canvas border-[10px] border-on-surface relative min-h-[720px] flex flex-col shrink-0',
+      chrome: 'device' as const,
+    };
+  }
+  if (viewport === 'tablet') {
+    return {
+      width: 768,
+      className:
+        'bg-white rounded-2xl overflow-hidden shadow-canvas border-[8px] border-on-surface/80 relative min-h-[800px] flex flex-col shrink-0',
+      chrome: 'device' as const,
+    };
+  }
+  return {
+    width: 1200,
+    className:
+      'w-full max-w-[1200px] bg-white rounded-xl overflow-hidden shadow-canvas hairline min-h-[800px] flex flex-col',
+    chrome: 'browser' as const,
+  };
+}
+
+export function ViewportToggle({
+  value,
+  onChange,
+}: {
+  value: PreviewViewport;
+  onChange: (v: PreviewViewport) => void;
+}) {
+  return (
+    <div
+      className="flex items-center bg-surface-container-low rounded-lg p-xs hairline gap-xs"
+      role="group"
+      aria-label="Preview viewport"
+    >
+      {PREVIEW_VIEWPORTS.map((v) => {
+        const active = value === v.id;
+        return (
+          <button
+            key={v.id}
+            type="button"
+            title={v.label}
+            aria-pressed={active}
+            onClick={() => onChange(v.id)}
+            className={`flex items-center gap-xs px-sm py-xs rounded-md transition-colors ${
+              active
+                ? 'bg-surface text-primary shadow-sm'
+                : 'text-on-surface-variant hover:bg-surface-container-high'
+            }`}
+          >
+            <span className={`material-symbols-outlined text-[20px] ${active ? 'filled' : ''}`}>
+              {v.icon}
+            </span>
+            <span className="font-inter text-label-sm font-semibold hidden lg:inline">
+              {v.label}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 export function DraftCanvas({
   hospitalId,
   hospitalName,
@@ -34,7 +113,7 @@ export function DraftCanvas({
   page,
   pages,
   selectedSectionId,
-  mode,
+  viewport = 'desktop',
   designTokens,
   onSelectSection,
 }: {
@@ -44,7 +123,7 @@ export function DraftCanvas({
   page?: Page;
   pages?: Page[];
   selectedSectionId?: string;
-  mode: 'device' | 'browser';
+  viewport?: PreviewViewport;
   /** When provided, overrides fetched tokens (live Style edits). */
   designTokens?: DesignTokens;
   onSelectSection?: (id: string) => void;
@@ -53,10 +132,8 @@ export function DraftCanvas({
   const tokens = designTokens ?? fetchedTokens;
   const sections = page?.sections ?? [];
   const navPages = (pages ?? []).filter((p) => p.slug);
-  const frameClass =
-    mode === 'device'
-      ? 'w-full bg-white rounded-[32px] overflow-hidden shadow-canvas border-[12px] border-on-surface mt-sm relative min-h-[900px]'
-      : 'w-full max-w-5xl bg-white rounded-xl overflow-hidden shadow-canvas hairline min-h-[800px] flex flex-col';
+  const frame = frameFor(viewport);
+  const compactNav = viewport === 'mobile';
 
   useEffect(() => {
     if (designTokens) return;
@@ -68,9 +145,12 @@ export function DraftCanvas({
   }, [hospitalId, designTokens]);
 
   return (
-    <div className={frameClass}>
-      {mode === 'browser' ? (
-        <div className="h-10 bg-surface-container border-b border-outline-variant flex items-center px-md gap-sm">
+    <div
+      className={frame.className}
+      style={viewport === 'desktop' ? undefined : { width: frame.width, maxWidth: '100%' }}
+    >
+      {frame.chrome === 'browser' ? (
+        <div className="h-10 bg-surface-container border-b border-outline-variant flex items-center px-md gap-sm shrink-0">
           <div className="flex gap-xs">
             <div className="w-3 h-3 rounded-full bg-outline-variant" />
             <div className="w-3 h-3 rounded-full bg-outline-variant" />
@@ -81,37 +161,53 @@ export function DraftCanvas({
             {hospitalSlug}.nabhi.studio/{page?.slug ?? 'home'}
           </div>
         </div>
+      ) : viewport === 'mobile' ? (
+        <div className="h-7 flex items-center justify-center shrink-0 bg-on-surface">
+          <div className="w-20 h-1.5 rounded-full bg-white/25" />
+        </div>
       ) : null}
 
-      <nav className="p-lg flex justify-between items-center bg-white border-b border-outline-variant/40">
-        <div className="flex items-center gap-sm">
-          <span className="material-symbols-outlined text-primary text-3xl">local_hospital</span>
-          <span className="font-outfit text-lg font-semibold text-on-surface">{hospitalName}</span>
+      <nav
+        className={`flex justify-between items-center bg-white border-b border-outline-variant/40 shrink-0 ${
+          compactNav ? 'px-md py-md' : 'p-lg'
+        }`}
+      >
+        <div className="flex items-center gap-sm min-w-0">
+          <span className="material-symbols-outlined text-primary text-3xl shrink-0">
+            local_hospital
+          </span>
+          <span className="font-outfit text-lg font-semibold text-on-surface truncate">
+            {hospitalName}
+          </span>
         </div>
-        <div className="hidden sm:flex gap-lg font-inter text-label-md text-on-surface-variant">
-          {navPages.length > 0
-            ? navPages.map((p) => (
-                <span
-                  key={p.id}
-                  className={p.slug === page?.slug ? 'text-primary font-bold' : ''}
-                >
-                  {p.slug}
-                </span>
-              ))
-            : (
-              <>
-                <span>Services</span>
-                <span>Doctors</span>
-                <span>About</span>
-                <span className="text-primary font-bold">Contact</span>
-              </>
-            )}
-        </div>
+        {compactNav ? (
+          <span className="material-symbols-outlined text-on-surface-variant">menu</span>
+        ) : (
+          <div className="flex gap-lg font-inter text-label-md text-on-surface-variant flex-wrap justify-end">
+            {navPages.length > 0
+              ? navPages.map((p) => (
+                  <span
+                    key={p.id}
+                    className={p.slug === page?.slug ? 'text-primary font-bold' : ''}
+                  >
+                    {p.slug}
+                  </span>
+                ))
+              : (
+                <>
+                  <span>Services</span>
+                  <span>Doctors</span>
+                  <span>About</span>
+                  <span className="text-primary font-bold">Contact</span>
+                </>
+              )}
+          </div>
+        )}
       </nav>
 
-      <div style={tokensToStyle(tokens)}>
+      <div style={tokensToStyle(tokens)} className="flex-1">
         <p className="font-inter text-label-sm text-outline uppercase tracking-widest px-xl pt-lg mb-0 opacity-70">
-          Draft · {page?.slug ?? '—'}
+          Draft · {page?.slug ?? '—'} · {viewport}
         </p>
 
         {sections.length === 0 ? (
