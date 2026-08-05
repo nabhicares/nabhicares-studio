@@ -51,6 +51,7 @@ export default async function HospitalPage({ params }: { params: { slug: string 
       hospitalName={full.name}
       seoTitle={full.seoTitle ?? ''}
       seoDescription={full.seoDescription ?? ''}
+      customDomain={full.customDomain ?? ''}
       migrationWarnings={warningList}
       pages={full.pages.map((p) => ({
         id: p.id,

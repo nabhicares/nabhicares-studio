@@ -187,6 +187,7 @@ export function StudioEditor({
   hospitalName: initialName,
   seoTitle = '',
   seoDescription = '',
+  customDomain = '',
   migrationWarnings = [],
   pages: initialPages,
 }: {
@@ -195,6 +196,7 @@ export function StudioEditor({
   hospitalName: string;
   seoTitle?: string;
   seoDescription?: string;
+  customDomain?: string;
   migrationWarnings?: string[];
   pages: Page[];
 }) {
@@ -938,6 +940,7 @@ export function StudioEditor({
             hospitalSlug={hospitalSlug}
             seoTitle={seoTitle}
             seoDescription={seoDescription}
+            customDomain={customDomain}
             onClose={() => setShowSettings(false)}
             onUpdated={(next) => {
               setHospitalName(next.name);

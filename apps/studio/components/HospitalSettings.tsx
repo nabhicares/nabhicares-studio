@@ -4,7 +4,7 @@ import { apiFetch } from '@/lib/api-client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { liveSiteUrl } from '@/lib/cdn';
+import { liveSiteUrl, pathStyleLiveUrl, cdnRootDomain } from '@/lib/cdn';
 
 export function HospitalSettings({
   hospitalId,
@@ -12,6 +12,7 @@ export function HospitalSettings({
   hospitalSlug,
   seoTitle: initialSeoTitle = '',
   seoDescription: initialSeoDescription = '',
+  customDomain: initialCustomDomain = '',
   onClose,
   onUpdated,
 }: {
@@ -20,6 +21,7 @@ export function HospitalSettings({
   hospitalSlug: string;
   seoTitle?: string;
   seoDescription?: string;
+  customDomain?: string | null;
   onClose: () => void;
   onUpdated: (next: { name: string; slug: string }) => void;
 }) {
@@ -28,8 +30,10 @@ export function HospitalSettings({
   const [slug, setSlug] = useState(hospitalSlug);
   const [seoTitle, setSeoTitle] = useState(initialSeoTitle);
   const [seoDescription, setSeoDescription] = useState(initialSeoDescription);
+  const [customDomain, setCustomDomain] = useState(initialCustomDomain ?? '');
   const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
+  const root = cdnRootDomain();
 
   async function save() {
     setSaving(true);
@@ -37,7 +41,13 @@ export function HospitalSettings({
     const res = await apiFetch(`/api/hospitals/${hospitalId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, slug, seoTitle, seoDescription }),
+      body: JSON.stringify({
+        name,
+        slug,
+        seoTitle,
+        seoDescription,
+        customDomain: customDomain.trim() || null,
+      }),
     });
     const data = await res.json();
     setSaving(false);
@@ -46,6 +56,8 @@ export function HospitalSettings({
       return;
     }
     onUpdated({ name: data.name, slug: data.slug });
+    if (typeof data.customDomain === 'string') setCustomDomain(data.customDomain);
+    if (data.customDomain == null) setCustomDomain('');
     setStatus('Saved');
     if (data.slug !== hospitalSlug) {
       router.replace(`/h/${data.slug}`);
@@ -76,8 +88,54 @@ export function HospitalSettings({
             value={slug}
             onChange={(e) => setSlug(e.target.value)}
           />
+          <p className="font-inter text-label-sm text-outline break-all">
+            {root ? (
+              <>
+                Subdomain:{' '}
+                <a
+                  className="text-primary underline"
+                  href={liveSiteUrl(slug || '…')}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {liveSiteUrl(slug || '…')}
+                </a>
+                <br />
+                Path:{' '}
+                <a
+                  className="text-primary underline"
+                  href={pathStyleLiveUrl(slug || '…')}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {pathStyleLiveUrl(slug || '…')}
+                </a>
+              </>
+            ) : (
+              <>
+                Live:{' '}
+                <a
+                  className="text-primary underline"
+                  href={liveSiteUrl(slug || '…')}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {liveSiteUrl(slug || '…')}
+                </a>
+              </>
+            )}
+          </p>
+        </div>
+        <div className="flex flex-col gap-xs">
+          <label className="font-inter text-label-sm text-outline">Custom domain</label>
+          <input
+            className="field-input"
+            value={customDomain}
+            onChange={(e) => setCustomDomain(e.target.value)}
+            placeholder="www.yourhospital.com"
+          />
           <p className="font-inter text-label-sm text-outline">
-            Live: {liveSiteUrl(slug || '…')}
+            Point DNS (CNAME) at the Nabhi CDN host, then save here. TLS via the CDN provider.
           </p>
         </div>
         <div className="flex flex-col gap-xs">
@@ -98,9 +156,6 @@ export function HospitalSettings({
             placeholder="Short blurb for search results"
           />
         </div>
-        <p className="font-inter text-label-sm text-outline">
-          Custom domains are not available yet.
-        </p>
         <button
           type="button"
           className="btn-primary w-full"

@@ -1,12 +1,28 @@
 /**
- * Public hospital-site CDN — proxies MinIO via LIVE pointer.
- * Single entry so Vercel rewrites always land here.
+ * Public hospital-site CDN — MinIO via LIVE pointer.
+ *
+ * Routing:
+ * - Path:  https://cdn…/{slug}/…          (pilot)
+ * - Subdomain: https://{slug}.{CDN_ROOT_DOMAIN}/…
+ * - Custom: Host in _cdn/domain-map.json or CDN_DOMAIN_MAP env
  */
 const MINIO = (process.env.MINIO_URL || process.env.SNAPSHOT_STORE_ENDPOINT || '').replace(
   /\/$/,
   '',
 );
 const BUCKET = process.env.SNAPSHOT_BUCKET || 'nabhicares-sites';
+const ROOT_DOMAIN = (process.env.CDN_ROOT_DOMAIN || '').replace(/^\./, '').toLowerCase();
+const RESERVED = new Set([
+  'www',
+  'api',
+  'app',
+  'studio',
+  'cdn',
+  'mail',
+  'admin',
+  'status',
+  'assets',
+]);
 
 const CONTENT_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -27,6 +43,8 @@ const CONTENT_TYPES = {
   '.xml': 'application/xml; charset=utf-8',
 };
 
+let domainMapCache = { at: 0, map: /** @type {Record<string, string>} */ ({}) };
+
 function guessType(path) {
   const i = path.lastIndexOf('.');
   if (i < 0) return 'application/octet-stream';
@@ -45,7 +63,6 @@ async function fetchMinio(key) {
 }
 
 function partsFromReq(req) {
-  // Rewrite sends original path as ?p=...
   const q = req.query && req.query.p;
   if (typeof q === 'string' && q.length) {
     return q.split('/').filter(Boolean);
@@ -64,6 +81,82 @@ function partsFromReq(req) {
   return pathname.split('/').filter(Boolean);
 }
 
+function requestHost(req) {
+  const xf = req.headers['x-forwarded-host'];
+  const raw = (Array.isArray(xf) ? xf[0] : xf) || req.headers.host || '';
+  return String(raw).split(',')[0].trim().toLowerCase().replace(/:\d+$/, '');
+}
+
+function envDomainMap() {
+  try {
+    const raw = process.env.CDN_DOMAIN_MAP || '{}';
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+async function loadDomainMap() {
+  const now = Date.now();
+  if (now - domainMapCache.at < 30_000) return domainMapCache.map;
+  const map = { ...envDomainMap() };
+  try {
+    const res = await fetchMinio('_cdn/domain-map.json');
+    if (res.ok) {
+      const body = JSON.parse(await res.text());
+      if (body && typeof body === 'object') Object.assign(map, body);
+    }
+  } catch {
+    /* ignore */
+  }
+  domainMapCache = { at: now, map };
+  return map;
+}
+
+/**
+ * @returns {{ slug: string | null, hostMode: boolean, parts: string[] }}
+ */
+async function resolveTenant(req, parts) {
+  const host = requestHost(req);
+  const map = await loadDomainMap();
+
+  if (host && map[host]) {
+    return { slug: map[host], hostMode: true, parts };
+  }
+
+  if (ROOT_DOMAIN && host && host !== ROOT_DOMAIN && host.endsWith(`.${ROOT_DOMAIN}`)) {
+    const sub = host.slice(0, -(ROOT_DOMAIN.length + 1));
+    if (sub && !sub.includes('.') && !RESERVED.has(sub)) {
+      return { slug: sub, hostMode: true, parts };
+    }
+  }
+
+  // Path-based: /{slug}/…
+  if (parts[0] === 'health') {
+    return { slug: null, hostMode: false, parts };
+  }
+  if (parts.length === 0) {
+    return { slug: null, hostMode: false, parts };
+  }
+  return {
+    slug: parts[0],
+    hostMode: false,
+    parts: parts.slice(1),
+  };
+}
+
+function rewriteHtmlForHost(html, slug) {
+  const prefix = `/${slug}`;
+  return html
+    .split(`${prefix}/`)
+    .join('/')
+    .split(`"${prefix}"`)
+    .join('"/"')
+    .split(`'${prefix}'`)
+    .join("'/'");
+}
+
 module.exports = async function handler(req, res) {
   try {
     if (!MINIO) {
@@ -72,20 +165,31 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    const parts = partsFromReq(req);
+    const rawParts = partsFromReq(req);
+    const { slug, hostMode, parts } = await resolveTenant(req, rawParts);
 
-    if (parts.length === 0 || parts[0] === 'health') {
+    if (!slug) {
       res.statusCode = 200;
-      res.setHeader('Content-Type', 'text/plain');
-      res.end(parts[0] === 'health' ? 'ok\n' : 'nabhicares CDN — request /{hospital_slug}/\n');
+      res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+      const tip = ROOT_DOMAIN
+        ? `Path: /{slug}/  ·  Subdomain: https://{slug}.${ROOT_DOMAIN}/\n`
+        : 'Path: /{hospital_slug}/\n';
+      res.end(
+        rawParts[0] === 'health'
+          ? 'ok\n'
+          : `nabhicares CDN\n${tip}`,
+      );
       return;
     }
 
-    const slug = parts[0];
-    const rest = parts.slice(1).join('/');
+    // Prefixed asset URLs on a subdomain host: /{slug}/_next/… → strip
+    let siteParts = parts;
+    if (hostMode && siteParts[0] === slug) {
+      siteParts = siteParts.slice(1);
+    }
 
-    if (parts[1] === 'assets') {
-      const assetKey = `${slug}/assets/${parts.slice(2).join('/')}`;
+    if (siteParts[0] === 'assets') {
+      const assetKey = `${slug}/assets/${siteParts.slice(1).join('/')}`;
       const upstream = await fetchMinio(assetKey);
       if (!upstream.ok) {
         res.statusCode = upstream.status;
@@ -100,7 +204,7 @@ module.exports = async function handler(req, res) {
       return;
     }
 
-    const objectPath = normalizeSitePath(rest);
+    const objectPath = normalizeSitePath(siteParts.join('/'));
     const liveRes = await fetchMinio(`${slug}/LIVE`);
     let objectKey;
     if (liveRes.ok) {
@@ -122,10 +226,17 @@ module.exports = async function handler(req, res) {
       res.end(`Not found (${objectKey})`);
       return;
     }
-    const buf = Buffer.from(await upstream.arrayBuffer());
+
+    let buf = Buffer.from(await upstream.arrayBuffer());
+    let contentType = guessType(objectPath);
+    if (hostMode && contentType.includes('text/html')) {
+      buf = Buffer.from(rewriteHtmlForHost(buf.toString('utf8'), slug), 'utf8');
+    }
+
     res.statusCode = 200;
-    res.setHeader('Content-Type', guessType(objectPath));
+    res.setHeader('Content-Type', contentType);
     res.setHeader('Cache-Control', 'public, max-age=60');
+    if (hostMode) res.setHeader('X-Nabhi-Tenant', slug);
     res.end(buf);
   } catch (err) {
     console.error(err);

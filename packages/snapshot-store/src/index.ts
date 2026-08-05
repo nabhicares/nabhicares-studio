@@ -231,3 +231,50 @@ export async function uploadAsset(
   ).replace(/\/$/, '');
   return { key, url: `${endpoint}/${BUCKET}/${key}` };
 }
+
+const DOMAIN_MAP_KEY = '_cdn/domain-map.json';
+
+/** Host → hospital slug map for custom domains (CDN reads this). */
+export async function readDomainMap(): Promise<Record<string, string>> {
+  try {
+    const out = await s3.send(
+      new GetObjectCommand({ Bucket: BUCKET, Key: DOMAIN_MAP_KEY }),
+    );
+    const text = await out.Body?.transformToString();
+    const parsed = text ? JSON.parse(text) : {};
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+export async function writeDomainMap(map: Record<string, string>): Promise<void> {
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: BUCKET,
+      Key: DOMAIN_MAP_KEY,
+      Body: JSON.stringify(map, null, 2),
+      ContentType: 'application/json',
+      CacheControl: 'no-store',
+    }),
+  );
+}
+
+/** Bind or clear a custom hostname for a hospital slug. */
+export async function setCustomDomainMapping(
+  slug: string,
+  host: string | null,
+): Promise<void> {
+  const map = await readDomainMap();
+  for (const [h, s] of Object.entries(map)) {
+    if (s === slug) delete map[h];
+  }
+  if (host) {
+    const normalized = host.toLowerCase().replace(/^https?:\/\//, '').replace(/\/$/, '');
+    if (map[normalized] && map[normalized] !== slug) {
+      throw new Error(`Domain ${normalized} is already mapped to ${map[normalized]}`);
+    }
+    map[normalized] = slug;
+  }
+  await writeDomainMap(map);
+}

@@ -1,8 +1,22 @@
 import { prisma } from '@/lib/db';
 import { badRequest, json, notFound } from '@/lib/api';
 import { requireHospitalAccess, writeAudit } from '@/lib/auth';
-import { purgeHospitalStorage } from '@nabhicares/snapshot-store';
+import { purgeHospitalStorage, setCustomDomainMapping } from '@nabhicares/snapshot-store';
 import { ensureHospitalSectionsMigrated } from '@/lib/migrate-sections';
+
+function normalizeCustomDomain(input: string): string | null {
+  const host = input
+    .trim()
+    .toLowerCase()
+    .replace(/^https?:\/\//, '')
+    .replace(/\/.*$/, '')
+    .replace(/\.$/, '');
+  if (!host) return null;
+  if (!/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(host)) {
+    throw new Error('customDomain must be a valid hostname (e.g. www.hospital.com)');
+  }
+  return host;
+}
 
 export async function GET(
   _req: Request,
@@ -52,8 +66,13 @@ export async function PATCH(
   const hospital = access.hospital;
 
   const body = await req.json().catch(() => ({}));
-  const data: { name?: string; slug?: string; seoTitle?: string | null; seoDescription?: string | null } =
-    {};
+  const data: {
+    name?: string;
+    slug?: string;
+    seoTitle?: string | null;
+    seoDescription?: string | null;
+    customDomain?: string | null;
+  } = {};
 
   if (typeof body.name === 'string' && body.name.trim()) {
     data.name = body.name.trim().slice(0, 120);
@@ -73,14 +92,51 @@ export async function PATCH(
   if (typeof body.seoDescription === 'string') {
     data.seoDescription = body.seoDescription.trim().slice(0, 320) || null;
   }
-  if (!data.name && !data.slug && data.seoTitle === undefined && data.seoDescription === undefined) {
-    return badRequest('name, slug, or SEO fields required');
+  if (body.customDomain !== undefined) {
+    try {
+      if (body.customDomain === null || body.customDomain === '') {
+        data.customDomain = null;
+      } else if (typeof body.customDomain === 'string') {
+        const host = normalizeCustomDomain(body.customDomain);
+        if (host) {
+          const taken = await prisma.hospital.findFirst({
+            where: { customDomain: host, NOT: { id: hospital.id } },
+          });
+          if (taken) return badRequest(`Domain "${host}" is already in use`);
+          data.customDomain = host;
+        } else {
+          data.customDomain = null;
+        }
+      }
+    } catch (e) {
+      return badRequest(e instanceof Error ? e.message : 'Invalid customDomain');
+    }
+  }
+  if (
+    !data.name &&
+    !data.slug &&
+    data.seoTitle === undefined &&
+    data.seoDescription === undefined &&
+    data.customDomain === undefined
+  ) {
+    return badRequest('name, slug, SEO, or customDomain required');
   }
 
   const updated = await prisma.hospital.update({
     where: { id: hospital.id },
     data,
   });
+
+  if (data.customDomain !== undefined || data.slug) {
+    try {
+      await setCustomDomainMapping(
+        updated.slug,
+        updated.customDomain,
+      );
+    } catch (e) {
+      return badRequest(e instanceof Error ? e.message : 'Domain map update failed');
+    }
+  }
   await writeAudit({
     actorId: access.user.id,
     hospitalId: hospital.id,
@@ -99,6 +155,12 @@ export async function DELETE(
   if ('error' in access) return access.error;
   const hospital = access.hospital;
   const slug = hospital.slug;
+
+  try {
+    await setCustomDomainMapping(slug, null);
+  } catch (err) {
+    console.error('[hospital.delete] domain map clear failed', err);
+  }
 
   await prisma.section.deleteMany({
     where: { page: { hospitalId: hospital.id } },
