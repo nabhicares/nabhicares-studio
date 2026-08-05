@@ -49,4 +49,4 @@ npx tsx apps/publish-worker/src/index.ts
 ## Notes
 
 - Publishes stay PENDING if no worker is listening on Upstash Redis.
-- Free MinIO is ephemeral; prefer a paid disk or R2 for a real pilot.
+- Free MinIO is ephemeral; prefer a paid disk, R2, or a home PC with persistent MinIO — see [HOME_MINIO_WINDOWS.md](./HOME_MINIO_WINDOWS.md).

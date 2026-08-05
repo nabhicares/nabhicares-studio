@@ -6,6 +6,7 @@ import { join, relative, extname } from 'path';
 import { connection, PublishJobData } from '@nabhicares/queue';
 import { uploadBuildOutput, promoteToLive, BuildFile } from '@nabhicares/snapshot-store';
 import { PrismaClient } from '@nabhicares/db-builder';
+import type { Prisma } from '@prisma/client';
 import { DEFAULT_DESIGN_TOKENS, migrateSectionContent } from '@nabhicares/section-registry';
 
 const prisma = new PrismaClient({
@@ -120,7 +121,7 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
         await prisma.section.update({
           where: { id: section.id },
           data: {
-            content: migrated.content,
+            content: migrated.content as Prisma.InputJsonValue,
             contentSchemaVersion: migrated.version,
           },
         });

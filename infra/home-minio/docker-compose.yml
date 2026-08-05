@@ -1,0 +1,47 @@
+# Persistent MinIO for an always-on Windows PC (Docker Desktop).
+# Bind only to localhost — expose via Cloudflare Tunnel, not port-forward.
+#
+#   cd infra/home-minio
+#   copy .env.example .env   # edit credentials
+#   docker compose up -d
+#   docker compose run --rm minio-init
+
+services:
+  minio:
+    image: minio/minio:latest
+    container_name: nabhi-home-minio
+    restart: unless-stopped
+    command: server /data --address ":9000" --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - "127.0.0.1:9000:9000"
+      - "127.0.0.1:9001:9001"
+    volumes:
+      - nabhi_minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc:latest
+    profiles: ["init"]
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 $${MINIO_ROOT_USER} $${MINIO_ROOT_PASSWORD} &&
+      mc mb -p local/nabhicares-sites || true &&
+      mc anonymous set download local/nabhicares-sites &&
+      echo bucket-ready
+      "
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+
+volumes:
+  nabhi_minio_data:

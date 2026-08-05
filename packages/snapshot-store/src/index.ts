@@ -4,10 +4,13 @@ import {
   GetObjectCommand,
   ListObjectsV2Command,
   HeadObjectCommand,
+  HeadBucketCommand,
+  CreateBucketCommand,
+  PutBucketPolicyCommand,
   DeleteObjectsCommand,
 } from '@aws-sdk/client-s3';
 
-const BUCKET = 'nabhicares-sites';
+const BUCKET = process.env.SNAPSHOT_BUCKET || 'nabhicares-sites';
 
 export const s3 = new S3Client({
   endpoint: process.env.SNAPSHOT_STORE_ENDPOINT ?? 'http://localhost:9000',
@@ -32,6 +35,53 @@ export class IncompleteSnapshotError extends Error {
   }
 }
 
+/** Recreate bucket after free MinIO wipes ephemeral storage. */
+let bucketReady: Promise<void> | null = null;
+export async function ensureSnapshotBucket(): Promise<void> {
+  if (!bucketReady) {
+    bucketReady = (async () => {
+      try {
+        await s3.send(new HeadBucketCommand({ Bucket: BUCKET }));
+        return;
+      } catch {
+        /* create */
+      }
+      try {
+        await s3.send(new CreateBucketCommand({ Bucket: BUCKET }));
+        console.log(`[snapshot-store] created bucket ${BUCKET}`);
+      } catch (err) {
+        // Race: another process created it
+        console.warn('[snapshot-store] CreateBucket', err);
+      }
+      try {
+        const policy = {
+          Version: '2012-10-17',
+          Statement: [
+            {
+              Effect: 'Allow',
+              Principal: { AWS: ['*'] },
+              Action: ['s3:GetObject'],
+              Resource: [`arn:aws:s3:::${BUCKET}/*`],
+            },
+          ],
+        };
+        await s3.send(
+          new PutBucketPolicyCommand({
+            Bucket: BUCKET,
+            Policy: JSON.stringify(policy),
+          }),
+        );
+      } catch (err) {
+        console.warn('[snapshot-store] public policy skipped', err);
+      }
+    })().catch((err) => {
+      bucketReady = null;
+      throw err;
+    });
+  }
+  await bucketReady;
+}
+
 function livePointerKey(hospitalKey: string) {
   return `${hospitalKey}/LIVE`;
 }
@@ -49,6 +99,7 @@ export async function uploadBuildOutput(
   publishId: string,
   files: BuildFile[],
 ) {
+  await ensureSnapshotBucket();
   for (const file of files) {
     await s3.send(
       new PutObjectCommand({
@@ -214,6 +265,7 @@ export async function uploadAsset(
   body: Buffer,
   contentType: string,
 ): Promise<{ key: string; url: string }> {
+  await ensureSnapshotBucket();
   const key = `${hospitalKey}/assets/${filename}`;
   await s3.send(
     new PutObjectCommand({
