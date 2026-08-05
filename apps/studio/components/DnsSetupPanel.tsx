@@ -74,8 +74,9 @@ export function DnsSetupPanel({
       <div>
         <h4 className="font-outfit text-[15px] font-semibold text-on-surface">DNS setup</h4>
         <p className="mt-xs font-inter text-label-sm text-outline">
-          Studio does not change DNS for you. Add these at your domain provider (e.g. Cloudflare),
-          then attach the same hostnames in Vercel → nabhi-cdn → Domains.
+          Studio does not change DNS for you. Add these at Cloudflare (not BigRock, if nameservers
+          are already Cloudflare). Use <span className="font-semibold">DNS only</span> (grey cloud)
+          until Vercel shows Valid. Never point records at 127.0.0.1.
         </p>
       </div>
 

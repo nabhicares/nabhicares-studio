@@ -55,19 +55,33 @@ export type DnsRecordHint = {
 export function platformDnsRecords(): DnsRecordHint[] {
   const root = cdnRootDomain();
   if (!root) return [];
-  const target = cdnDnsCnameTarget();
+  // Vercel Hobby commonly asks for A → 76.76.21.21; CNAME to cname.vercel-dns.com also works.
+  const aTarget = process.env.NEXT_PUBLIC_CDN_DNS_A || '76.76.21.21';
+  const cnameTarget = cdnDnsCnameTarget();
   return [
     {
-      type: 'CNAME',
+      type: 'A',
       name: '*',
-      value: target,
-      note: `Covers every hospital: {slug}.${root}`,
+      value: aTarget,
+      note: `Covers every hospital: {slug}.${root}. DNS only (grey cloud) in Cloudflare until Valid.`,
+    },
+    {
+      type: 'A',
+      name: '@',
+      value: aTarget,
+      note: 'Apex. Or use CNAME/ALIAS per Vercel Domains → View DNS configuration.',
+    },
+    {
+      type: 'A',
+      name: 'studio',
+      value: aTarget,
+      note: `Studio host studio.${root}. Never point at 127.0.0.1.`,
     },
     {
       type: 'CNAME',
-      name: '@',
-      value: target,
-      note: 'Optional apex. Vercel may ask for A records instead — use what Domains shows.',
+      name: '*',
+      value: cnameTarget,
+      note: 'Alternative to A records if Vercel shows CNAME instead.',
     },
   ];
 }
