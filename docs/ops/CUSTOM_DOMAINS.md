@@ -24,7 +24,11 @@ Subdomain = `{slug}.{CDN_ROOT_DOMAIN}`. Custom domains are stored on `Hospital.c
 ```bash
 CDN_ROOT_DOMAIN=nabhicares.com
 NEXT_PUBLIC_CDN_ROOT_DOMAIN=nabhicares.com   # Studio only
+# Optional — override CNAME target shown in Studio DNS panel (default cname.vercel-dns.com)
+# NEXT_PUBLIC_CDN_DNS_CNAME=cname.vercel-dns.com
 ```
+
+**Studio UI:** Hospital settings → **DNS setup** shows platform wildcard records, this hospital’s `{slug}.{root}` mapping, and custom-domain CNAMEs with copy buttons. Studio does not push DNS to Cloudflare/Vercel for you.
 
 Optional static map (overrides / supplements MinIO map):
 

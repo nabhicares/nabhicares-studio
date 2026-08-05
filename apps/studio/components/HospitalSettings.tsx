@@ -5,6 +5,7 @@ import { apiFetch } from '@/lib/api-client';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { liveSiteUrl, pathStyleLiveUrl, cdnRootDomain } from '@/lib/cdn';
+import { DnsSetupPanel } from './DnsSetupPanel';
 
 export function HospitalSettings({
   hospitalId,
@@ -65,7 +66,7 @@ export function HospitalSettings({
   }
 
   return (
-    <aside className="w-80 bg-surface-container-lowest border-l border-outline-variant flex flex-col z-40 shrink-0">
+    <aside className="w-96 bg-surface-container-lowest border-l border-outline-variant flex flex-col z-40 shrink-0">
       <div className="flex items-center justify-between p-lg border-b border-outline-variant">
         <h3 className="font-outfit text-[18px] font-semibold">Hospital settings</h3>
         <button type="button" className="p-xs" onClick={onClose} title="Close">
@@ -135,9 +136,12 @@ export function HospitalSettings({
             placeholder="www.yourhospital.com"
           />
           <p className="font-inter text-label-sm text-outline">
-            Point DNS (CNAME) at the Nabhi CDN host, then save here. TLS via the CDN provider.
+            Optional. Save here after DNS + Vercel Domains are ready. See DNS setup below.
           </p>
         </div>
+
+        <DnsSetupPanel hospitalSlug={slug} customDomain={customDomain} />
+
         <div className="flex flex-col gap-xs">
           <label className="font-inter text-label-sm text-outline">SEO title</label>
           <input
