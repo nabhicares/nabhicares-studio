@@ -170,6 +170,22 @@ export const SECTION_REGISTRY: SectionTypeDef[] = [
       },
     ],
   },
+  {
+    key: 'contact',
+    label: 'Contact',
+    description: 'Phone, address, hours, and map link from Maps',
+    componentRef: 'sections/contact',
+    fields: [
+      { name: 'title', label: 'Title', type: 'string' },
+      { name: 'body', label: 'Intro', type: 'text' },
+      { name: 'phone', label: 'Phone', type: 'string' },
+      { name: 'email', label: 'Email', type: 'string' },
+      { name: 'address', label: 'Address', type: 'text' },
+      { name: 'hours', label: 'Hours', type: 'text' },
+      { name: 'mapUrl', label: 'Google Maps URL', type: 'string' },
+      { name: 'ctaPrimary', label: 'Primary CTA', type: 'string' },
+    ],
+  },
 ];
 
 export function getSectionType(key: string): SectionTypeDef | undefined {
@@ -263,6 +279,17 @@ export function exampleContentForSection(key: string): Record<string, unknown> {
             image: '',
           },
         ],
+      };
+    case 'contact':
+      return {
+        title: 'Visit us',
+        body: 'We are here when you need us.',
+        phone: '+91 98765 43210',
+        email: 'care@example-hospital.com',
+        address: '123 Care Road, Your City, State 560001',
+        hours: 'Mon–Sat 8:00–20:00\nEmergency 24/7',
+        mapUrl: 'https://maps.google.com/?q=hospital',
+        ctaPrimary: 'Get directions',
       };
     default:
       return { title: 'Section' };
@@ -441,27 +468,181 @@ export function importContentJson(
 
 export const DEFAULT_DESIGN_TOKENS = {
   colors: {
-    background: '#F5F5F3',
-    foreground: '#0C0900',
-    accent: '#B1EA55',
-    muted: '#888888',
-    surface: '#B8BDB1',
+    background: '#F3F1EC',
+    foreground: '#0F1C1A',
+    accent: '#1F7A6C',
+    muted: '#5C6B67',
+    surface: '#E4E8E5',
   },
   typography: {
-    displayFamily: 'Outfit, system-ui, sans-serif',
-    bodyFamily: 'Inter, system-ui, sans-serif',
+    displayFamily: 'Sora, system-ui, sans-serif',
+    bodyFamily: 'Source Sans 3, system-ui, sans-serif',
     baseSize: '16px',
   },
   spacing: {
-    sectionY: '2rem',
-    contentMax: '1100px',
+    sectionY: '3.5rem',
+    contentMax: '1120px',
   },
   radii: {
-    button: '12px',
+    button: '6px',
   },
 };
 
 export type DesignTokens = typeof DEFAULT_DESIGN_TOKENS;
+
+/** Section keys included in the Maps→Gemini hospital bundle. */
+export const HOSPITAL_BUNDLE_SECTION_KEYS = [
+  'hero',
+  'about',
+  'doctors',
+  'services',
+  'contact',
+  'faq',
+  'testimonials',
+] as const;
+
+export type HospitalBundleHospital = {
+  name?: string;
+  slug?: string;
+  seoTitle?: string;
+  seoDescription?: string;
+};
+
+export type HospitalBundleImportResult =
+  | {
+      ok: true;
+      hospital: HospitalBundleHospital;
+      sections: Record<string, Record<string, unknown>>;
+    }
+  | { ok: false; error: string };
+
+/**
+ * Parse a whole-hospital Gemini JSON bundle.
+ * Shape: { hospital: {...}, sections: { hero: {...}, ... } }
+ */
+export function importHospitalBundleJson(raw: string): HospitalBundleImportResult {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    return { ok: false, error: 'Invalid JSON — check commas and quotes' };
+  }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    return { ok: false, error: 'JSON must be an object { hospital, sections }' };
+  }
+  const root = parsed as Record<string, unknown>;
+  const hospitalRaw =
+    root.hospital && typeof root.hospital === 'object' && !Array.isArray(root.hospital)
+      ? (root.hospital as Record<string, unknown>)
+      : {};
+  const sectionsRaw =
+    root.sections && typeof root.sections === 'object' && !Array.isArray(root.sections)
+      ? (root.sections as Record<string, unknown>)
+      : null;
+  if (!sectionsRaw) {
+    return { ok: false, error: 'Missing "sections" object' };
+  }
+
+  const hospital: HospitalBundleHospital = {};
+  for (const k of ['name', 'slug', 'seoTitle', 'seoDescription'] as const) {
+    if (typeof hospitalRaw[k] === 'string' && (hospitalRaw[k] as string).trim()) {
+      hospital[k] = (hospitalRaw[k] as string).trim();
+    }
+  }
+
+  const sections: Record<string, Record<string, unknown>> = {};
+  for (const key of Object.keys(sectionsRaw)) {
+    if (!getSectionType(key)) {
+      return { ok: false, error: `Unknown section key "${key}"` };
+    }
+    const value = sectionsRaw[key];
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      return { ok: false, error: `sections.${key} must be an object` };
+    }
+    const result = validateSectionContent(key, value as Record<string, unknown>, undefined, {
+      strictUnknown: true,
+    });
+    if (!result.ok) {
+      return { ok: false, error: `sections.${key}: ${result.error}` };
+    }
+    sections[key] = result.content;
+  }
+  if (Object.keys(sections).length === 0) {
+    return { ok: false, error: 'sections must include at least one section' };
+  }
+
+  return { ok: true, hospital, sections };
+}
+
+/** Prompt operators paste into Gemini (Chrome) after opening a Maps listing. */
+export const GEMINI_HOSPITAL_BUNDLE_PROMPT = `You are helping build a hospital marketing website for Nabhi Studio.
+
+I am viewing a hospital on Google Maps (or I will paste listing details below). Extract only what you can reasonably infer from the listing / my paste. Do not invent clinical claims, doctor credentials, or fake patient quotes. If unknown, use "" or [].
+
+Return ONLY valid JSON (no markdown fences, no commentary) matching this exact shape:
+
+{
+  "hospital": {
+    "name": "string",
+    "slug": "lowercase-kebab-slug",
+    "seoTitle": "string",
+    "seoDescription": "string under 160 chars"
+  },
+  "sections": {
+    "hero": {
+      "title": "string",
+      "body": "string",
+      "ctaPrimary": "string",
+      "ctaSecondary": "string",
+      "image": ""
+    },
+    "about": {
+      "title": "string",
+      "body": "string",
+      "image": "",
+      "highlights": [{ "label": "string", "text": "string" }]
+    },
+    "doctors": {
+      "title": "string",
+      "body": "string",
+      "doctors": [{ "name": "string", "specialty": "string", "bio": "string", "image": "" }]
+    },
+    "services": {
+      "title": "string",
+      "body": "string",
+      "items": [{ "title": "string", "description": "string", "icon": "" }]
+    },
+    "contact": {
+      "title": "string",
+      "body": "string",
+      "phone": "string",
+      "email": "string",
+      "address": "string",
+      "hours": "string (use \\\\n between lines)",
+      "mapUrl": "https://maps.google.com/...",
+      "ctaPrimary": "Get directions"
+    },
+    "faq": {
+      "title": "string",
+      "body": "string",
+      "items": [{ "question": "string", "answer": "string" }]
+    },
+    "testimonials": {
+      "title": "string",
+      "body": "string",
+      "items": []
+    }
+  }
+}
+
+Rules:
+- No HTML tags in any string.
+- Prefer empty testimonials.items [] unless the listing clearly has public reviews you can paraphrase carefully.
+- Leave image fields as "" (operator will add URLs in Studio).
+- Include contact.phone, contact.address, contact.hours, contact.mapUrl from Maps when available.
+
+Hospital / listing context:
+`;
 
 export {
   CONTENT_SCHEMA_VERSION,

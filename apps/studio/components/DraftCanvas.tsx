@@ -144,6 +144,17 @@ export function DraftCanvas({
     })();
   }, [hospitalId, designTokens]);
 
+  useEffect(() => {
+    const id = 'nabhi-patient-fonts';
+    if (document.getElementById(id)) return;
+    const link = document.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    link.href =
+      'https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap';
+    document.head.appendChild(link);
+  }, []);
+
   return (
     <div
       className={frame.className}
@@ -168,27 +179,48 @@ export function DraftCanvas({
       ) : null}
 
       <nav
-        className={`flex justify-between items-center bg-white border-b border-outline-variant/40 shrink-0 ${
+        className={`flex justify-between items-center border-b shrink-0 ${
           compactNav ? 'px-md py-md' : 'p-lg'
         }`}
+        style={{
+          background: tokens.colors.background,
+          borderColor: 'color-mix(in srgb, var(--color-fg) 10%, transparent)',
+          color: tokens.colors.foreground,
+          ...tokensToStyle(tokens),
+        }}
       >
         <div className="flex items-center gap-sm min-w-0">
-          <span className="material-symbols-outlined text-primary text-3xl shrink-0">
+          <span
+            className="material-symbols-outlined text-3xl shrink-0"
+            style={{ color: tokens.colors.accent }}
+          >
             local_hospital
           </span>
-          <span className="font-outfit text-lg font-semibold text-on-surface truncate">
+          <span
+            className="text-lg font-semibold truncate"
+            style={{ fontFamily: tokens.typography.displayFamily, letterSpacing: '-0.03em' }}
+          >
             {hospitalName}
           </span>
         </div>
         {compactNav ? (
-          <span className="material-symbols-outlined text-on-surface-variant">menu</span>
+          <span className="material-symbols-outlined" style={{ color: tokens.colors.muted }}>
+            menu
+          </span>
         ) : (
-          <div className="flex gap-lg font-inter text-label-md text-on-surface-variant flex-wrap justify-end">
+          <div
+            className="flex gap-lg text-label-md flex-wrap justify-end"
+            style={{ fontFamily: tokens.typography.bodyFamily, color: tokens.colors.muted }}
+          >
             {navPages.length > 0
               ? navPages.map((p) => (
                   <span
                     key={p.id}
-                    className={p.slug === page?.slug ? 'text-primary font-bold' : ''}
+                    style={
+                      p.slug === page?.slug
+                        ? { color: tokens.colors.accent, fontWeight: 700 }
+                        : undefined
+                    }
                   >
                     {p.slug}
                   </span>
@@ -198,7 +230,7 @@ export function DraftCanvas({
                   <span>Services</span>
                   <span>Doctors</span>
                   <span>About</span>
-                  <span className="text-primary font-bold">Contact</span>
+                  <span style={{ color: tokens.colors.accent, fontWeight: 700 }}>Contact</span>
                 </>
               )}
           </div>

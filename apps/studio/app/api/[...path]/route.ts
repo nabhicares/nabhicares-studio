@@ -82,6 +82,11 @@ async function dispatch(
         hospitalId,
       });
     }
+    if (c === 'import-bundle' && !d) {
+      return call(import('@/lib/api-handlers/hospital-import-bundle'), method, {
+        hospitalId,
+      });
+    }
     if (!c) {
       return call(import('@/lib/api-handlers/hospital'), method, { hospitalId });
     }

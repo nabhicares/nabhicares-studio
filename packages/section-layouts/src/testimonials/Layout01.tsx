@@ -1,36 +1,62 @@
 import type { LayoutProps } from '../types';
 import {
+  accentBarStyle,
   bodyStyle,
-  cardStyle,
+  kickerStyle,
   mutedStyle,
-  placeholderGradient,
   sectionBaseStyle,
   titleStyle,
-  wideContainerStyle
+  wideContainerStyle,
 } from '../styles';
 import { normalizeTestimonials } from '../content';
 
-/** Quote cards grid */
+/** Quote stack — accent bar, no card grid */
 export function Layout01({ content }: LayoutProps) {
   const c = normalizeTestimonials(content);
   return (
-    <section style={sectionBaseStyle}>
+    <section
+      style={{
+        ...sectionBaseStyle,
+        background: 'color-mix(in srgb, var(--color-surface) 40%, var(--color-bg))',
+      }}
+    >
       <div style={wideContainerStyle}>
+        <p style={kickerStyle}>Stories</p>
         <h2 style={titleStyle}>{c.title}</h2>
         {c.body ? <p style={bodyStyle}>{c.body}</p> : null}
-        <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))' }}>
+        <div
+          style={{
+            display: 'grid',
+            gap: '2rem',
+            marginTop: '0.75rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+          }}
+        >
           {(c.items ?? []).map((item) => (
-            <blockquote key={item.author + item.quote.slice(0, 12)} style={{ ...cardStyle, margin: 0 }}>
-              <p style={{ margin: '0 0 1rem', fontStyle: 'italic', lineHeight: 1.55 }}>&ldquo;{item.quote}&rdquo;</p>
-              <footer style={{ display: 'flex', gap: '0.65rem', alignItems: 'center' }}>
-                <div style={{ width: 36, height: 36, borderRadius: '50%', background: placeholderGradient, overflow: 'hidden', flexShrink: 0 }}>
-                  {item.image ? <img src={item.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : null}
-                </div>
-                <div>
+            <blockquote
+              key={item.author + item.quote.slice(0, 12)}
+              style={{ margin: 0, display: 'flex', gap: '1rem', alignItems: 'flex-start' }}
+            >
+              <span style={{ ...accentBarStyle, alignSelf: 'stretch', minHeight: 64 }} />
+              <div>
+                <p
+                  style={{
+                    margin: '0 0 1rem',
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '1.15rem',
+                    lineHeight: 1.45,
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  &ldquo;{item.quote}&rdquo;
+                </p>
+                <footer>
                   <div style={{ fontWeight: 600 }}>{item.author}</div>
-                  {item.role ? <div style={{ ...mutedStyle, fontSize: '0.85rem' }}>{item.role}</div> : null}
-                </div>
-              </footer>
+                  {item.role ? (
+                    <div style={{ ...mutedStyle, fontSize: '0.88rem', marginTop: 2 }}>{item.role}</div>
+                  ) : null}
+                </footer>
+              </div>
             </blockquote>
           ))}
         </div>

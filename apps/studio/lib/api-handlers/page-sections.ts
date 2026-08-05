@@ -39,6 +39,17 @@ function defaultContent(key: string): Record<string, unknown> {
         title: 'Patient stories',
         items: [{ quote: 'Excellent care.', author: 'Patient', role: '' }],
       };
+    case 'contact':
+      return {
+        title: 'Visit us',
+        body: 'Find us or get in touch.',
+        phone: '',
+        email: '',
+        address: '',
+        hours: '',
+        mapUrl: '',
+        ctaPrimary: 'Get directions',
+      };
     default:
       return { title: getSectionType(key)?.label ?? 'Section' };
   }

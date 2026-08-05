@@ -2,9 +2,11 @@ import { describe, it } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   importContentJson,
+  importHospitalBundleJson,
   validateSectionContent,
   sanitizeContentString,
   migrateSectionContent,
+  exampleContentForSection,
   CONTENT_SCHEMA_VERSION,
 } from './index';
 
@@ -76,5 +78,40 @@ describe('migrateSectionContent', () => {
     const r = migrateSectionContent('hero', { title: 'Hi' }, CONTENT_SCHEMA_VERSION);
     assert.equal(r.version, CONTENT_SCHEMA_VERSION);
     assert.equal(r.changed, false);
+  });
+});
+
+describe('contact + hospital bundle', () => {
+  it('validates contact example content', () => {
+    const r = validateSectionContent('contact', exampleContentForSection('contact'));
+    assert.equal(r.ok, true);
+  });
+
+  it('imports a whole-hospital Gemini bundle', () => {
+    const raw = JSON.stringify({
+      hospital: {
+        name: 'Greenfield Multispecialty',
+        slug: 'greenfield',
+        seoTitle: 'Greenfield',
+        seoDescription: 'Local care',
+      },
+      sections: {
+        hero: exampleContentForSection('hero'),
+        contact: exampleContentForSection('contact'),
+      },
+    });
+    const r = importHospitalBundleJson(raw);
+    assert.equal(r.ok, true);
+    if (!r.ok) return;
+    assert.equal(r.hospital.name, 'Greenfield Multispecialty');
+    assert.equal(typeof r.sections.hero.title, 'string');
+    assert.equal(typeof r.sections.contact.phone, 'string');
+  });
+
+  it('rejects unknown section keys in the bundle', () => {
+    const r = importHospitalBundleJson(
+      JSON.stringify({ hospital: {}, sections: { nope: { title: 'x' } } }),
+    );
+    assert.equal(r.ok, false);
   });
 });

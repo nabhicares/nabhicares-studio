@@ -1,5 +1,6 @@
 import type {
   AboutContent,
+  ContactContent,
   DoctorsContent,
   FaqContent,
   GalleryContent,
@@ -139,5 +140,18 @@ export function normalizeTestimonials(raw: Record<string, unknown>): Testimonial
           { quote: 'Doctors explained every step and followed up after discharge.', author: 'S. Alvarez', role: 'Surgery' },
           { quote: 'Clean facilities and kind staff — we felt looked after.', author: 'K. Singh', role: 'Maternity' },
         ],
+  };
+}
+
+export function normalizeContact(raw: Record<string, unknown>): ContactContent {
+  return {
+    title: str(raw.title, 'Visit us'),
+    body: str(raw.body) || undefined,
+    phone: str(raw.phone) || undefined,
+    email: str(raw.email) || undefined,
+    address: str(raw.address) || undefined,
+    hours: str(raw.hours) || undefined,
+    mapUrl: str(raw.mapUrl) || undefined,
+    ctaPrimary: str(raw.ctaPrimary) || undefined,
   };
 }

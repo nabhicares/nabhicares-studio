@@ -79,6 +79,17 @@ export type TestimonialsContent = {
   items?: TestimonialItem[];
 };
 
+export type ContactContent = {
+  title: string;
+  body?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  hours?: string;
+  mapUrl?: string;
+  ctaPrimary?: string;
+};
+
 export type SectionContent =
   | HeroContent
   | AboutContent
@@ -86,7 +97,8 @@ export type SectionContent =
   | ServicesContent
   | GalleryContent
   | FaqContent
-  | TestimonialsContent;
+  | TestimonialsContent
+  | ContactContent;
 
 export type LayoutProps = { content: Record<string, unknown> };
 

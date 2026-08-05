@@ -7,6 +7,7 @@ export type {
   GalleryContent,
   FaqContent,
   TestimonialsContent,
+  ContactContent,
   LayoutProps,
   LayoutComponent,
   SectionContent,

@@ -147,6 +147,21 @@ export async function POST(req: Request) {
                     ],
                   },
                 },
+                {
+                  order: 3,
+                  enabled: true,
+                  templateId: await templateId('contact'),
+                  content: {
+                    title: 'Visit us',
+                    body: `Find ${name} on the map or call the front desk.`,
+                    phone: '',
+                    email: '',
+                    address: '',
+                    hours: 'Mon–Sat 8:00–20:00',
+                    mapUrl: '',
+                    ctaPrimary: 'Get directions',
+                  },
+                },
               ],
             },
           },
@@ -176,6 +191,21 @@ export async function POST(req: Request) {
               create: [
                 {
                   order: 0,
+                  enabled: true,
+                  templateId: await templateId('contact'),
+                  content: {
+                    title: 'Visit us',
+                    body: `Reach ${name} by phone or visit our campus.`,
+                    phone: '',
+                    email: '',
+                    address: '',
+                    hours: 'Mon–Sat 8:00–20:00',
+                    mapUrl: '',
+                    ctaPrimary: 'Get directions',
+                  },
+                },
+                {
+                  order: 1,
                   enabled: true,
                   templateId: await templateId('faq'),
                   content: {

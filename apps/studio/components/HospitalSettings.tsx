@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { liveSiteUrl, pathStyleLiveUrl, cdnRootDomain } from '@/lib/cdn';
 import { DnsSetupPanel } from './DnsSetupPanel';
+import { GeminiHospitalImport } from './GeminiHospitalImport';
 
 export function HospitalSettings({
   hospitalId,
@@ -139,6 +140,8 @@ export function HospitalSettings({
             Optional. Save here after DNS + Vercel Domains are ready. See DNS setup below.
           </p>
         </div>
+
+        <GeminiHospitalImport hospitalId={hospitalId} />
 
         <DnsSetupPanel hospitalSlug={slug} customDomain={customDomain} />
 
