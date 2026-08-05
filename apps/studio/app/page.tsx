@@ -73,7 +73,7 @@ export default async function HomePage() {
                 {hospitals.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-lg py-xl text-on-surface-variant text-body-sm">
-                      No hospitals yet. Click <strong>Create Hospital</strong> to start a new site.
+                      No hospitals yet. Click <strong>Create Hospital</strong> to start the onboarding wizard.
                     </td>
                   </tr>
                 ) : (
