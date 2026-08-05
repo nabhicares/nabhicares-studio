@@ -7,7 +7,6 @@ import {
   getSectionType,
   importHospitalBundleJson,
 } from '@nabhicares/section-registry';
-import { Prisma } from '@prisma/client';
 
 /**
  * POST /api/hospitals/:hospitalId/import-bundle
@@ -82,7 +81,7 @@ export async function POST(
       await prisma.section.update({
         where: { id: target.section.id },
         data: {
-          content: content as Prisma.InputJsonValue,
+          content: content as object,
           contentSchemaVersion: CONTENT_SCHEMA_VERSION,
         },
       });
@@ -109,7 +108,7 @@ export async function POST(
         templateId: template.id,
         content: (Object.keys(content).length
           ? content
-          : exampleContentForSection(key)) as Prisma.InputJsonValue,
+          : exampleContentForSection(key)) as object,
         contentSchemaVersion: CONTENT_SCHEMA_VERSION,
       },
     });
