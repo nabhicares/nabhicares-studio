@@ -5,6 +5,7 @@ import { apiFetch } from '@/lib/api-client';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { liveSiteUrl } from '@/lib/cdn';
+import { GeminiOnboardingGuide } from './GeminiOnboardingGuide';
 
 function slugify(input: string) {
   return input
@@ -73,21 +74,25 @@ export function CreateHospitalButton() {
             aria-label="Close"
             onClick={() => !busy && setOpen(false)}
           />
-          <div className="relative w-full max-w-md bg-surface-container-lowest border border-brand-sage rounded-xl shadow-canvas p-lg">
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-surface-container-lowest border border-brand-sage rounded-xl shadow-canvas p-lg">
             <div className="flex items-center justify-between mb-lg">
               <div>
                 <h3 className="font-outfit text-h3 text-brand-ink">New hospital site</h3>
                 <p className="font-inter text-body-sm text-on-surface-variant mt-xs">
-                  Creates home, doctors, and contact pages you can edit and publish.
+                  Creates home, doctors, and contact pages. Use Maps → Gemini for content.
                 </p>
               </div>
               <button
                 type="button"
-                className="p-sm rounded-full hover:bg-surface-container"
+                className="p-sm rounded-full hover:bg-surface-container shrink-0"
                 onClick={() => !busy && setOpen(false)}
               >
                 <span className="material-symbols-outlined">close</span>
               </button>
+            </div>
+
+            <div className="mb-lg pb-lg border-b border-outline-variant">
+              <GeminiOnboardingGuide variant="create" />
             </div>
 
             <form onSubmit={submit} className="space-y-md">
