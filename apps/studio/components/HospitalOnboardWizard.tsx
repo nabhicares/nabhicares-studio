@@ -135,20 +135,14 @@ export function HospitalOnboardWizard() {
 
   return (
     <div className="w-full max-w-2xl mx-auto">
-      <div className="mb-xl">
-        <p className="font-inter text-label-sm text-primary font-semibold tracking-wide uppercase mb-sm">
-          Hospital onboarding
-        </p>
-        <h1 className="font-outfit text-h1 text-brand-ink tracking-tight">
-          Maps → Gemini → Studio
-        </h1>
-        <p className="font-inter text-body-md text-on-surface-variant mt-sm max-w-xl">
-          One hospital at a time. Pull listing details with Gemini, create the site, paste JSON, then
-          polish in the editor.
+      <div className="mb-lg">
+        <h1 className="font-outfit text-h2 text-brand-ink tracking-tight">New hospital</h1>
+        <p className="font-inter text-body-sm text-on-surface-variant mt-xs">
+          Maps → Gemini → create site → import JSON → polish in the editor.
         </p>
       </div>
 
-      <nav aria-label="Onboarding steps" className="mb-xl">
+      <nav aria-label="Onboarding steps" className="mb-lg">
         <ol className="flex flex-col sm:flex-row sm:items-center gap-sm sm:gap-0">
           {STEPS.map((s, i) => {
             const active = s.id === step;
@@ -157,16 +151,16 @@ export function HospitalOnboardWizard() {
               <li key={s.id} className="flex items-center flex-1 min-w-0">
                 <div className="flex items-center gap-sm min-w-0">
                   <span
-                    className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center font-outfit text-label-sm font-semibold ${
+                    className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center font-outfit text-label-sm font-semibold ${
                       active
-                        ? 'bg-primary text-white'
+                        ? 'bg-primary text-on-primary'
                         : done
                           ? 'bg-primary-container text-on-primary-container'
                           : 'bg-surface-container text-outline'
                     }`}
                   >
                     {done ? (
-                      <span className="material-symbols-outlined text-[18px] filled">check</span>
+                      <span className="material-symbols-outlined text-[16px] filled">check</span>
                     ) : (
                       i + 1
                     )}
@@ -182,7 +176,7 @@ export function HospitalOnboardWizard() {
                 {i < STEPS.length - 1 ? (
                   <div
                     className={`hidden sm:block flex-1 h-px mx-md ${
-                      done ? 'bg-primary/40' : 'bg-outline-variant'
+                      done ? 'bg-primary/35' : 'bg-outline-variant'
                     }`}
                   />
                 ) : null}
@@ -192,7 +186,7 @@ export function HospitalOnboardWizard() {
         </ol>
       </nav>
 
-      <div className="bg-surface-container-lowest border border-brand-sage rounded-xl shadow-soft p-xl">
+      <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-soft p-lg">
         {step === 'maps' ? (
           <div className="flex flex-col gap-lg">
             <div>

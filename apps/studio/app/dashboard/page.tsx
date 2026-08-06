@@ -52,11 +52,11 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-canvas flex flex-col">
       <TopNav active="dashboard" user={user} />
 
-      <main className="pt-xxl px-lg max-w-5xl mx-auto mb-xxl w-full flex-1">
-        <section className="mt-xl mb-xl">
-          <h1 className="font-outfit text-h1 text-brand-ink mb-sm">Dashboard</h1>
-          <p className="font-inter text-body-lg text-on-surface-variant max-w-2xl">
-            Overview of hospital portals, live publishes, and recent deployment activity.
+      <main className="pt-24 px-lg max-w-5xl mx-auto mb-xxl w-full flex-1">
+        <section className="mb-xl">
+          <h1 className="font-outfit text-h2 text-brand-ink tracking-tight mb-xs">Dashboard</h1>
+          <p className="font-inter text-body-sm text-on-surface-variant max-w-2xl">
+            Hospitals, live publishes, and recent activity.
           </p>
         </section>
 

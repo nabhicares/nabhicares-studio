@@ -11,11 +11,11 @@ export default async function OnboardPage() {
   return (
     <div className="min-h-screen bg-canvas flex flex-col">
       <TopNav active="hospitals" user={user} />
-      <main className="pt-xxl px-lg pb-xxl flex-1 w-full">
-        <div className="max-w-2xl mx-auto mb-lg pt-xl">
+      <main className="pt-20 px-lg pb-xxl flex-1 w-full">
+        <div className="max-w-2xl mx-auto mb-md">
           <Link
             href="/"
-            className="inline-flex items-center gap-xs font-inter text-label-sm text-on-surface-variant hover:text-primary"
+            className="inline-flex items-center gap-xs font-inter text-label-sm text-outline hover:text-primary"
           >
             <span className="material-symbols-outlined text-[18px]">arrow_back</span>
             Hospitals

@@ -498,19 +498,22 @@ export function StudioEditor({
   );
 
   return (
-    <div className="bg-surface text-on-surface font-inter overflow-hidden h-screen">
+    <div className="bg-canvas text-on-surface font-inter overflow-hidden h-screen">
       {/* Top bar */}
-      <header className="fixed top-0 left-0 right-0 h-16 bg-surface border-b border-outline-variant z-50">
+      <header className="fixed top-0 left-0 right-0 h-14 bg-surface-container-lowest border-b border-outline-variant z-50">
         <div className="flex justify-between items-center h-full px-lg">
           <div className="flex items-center gap-md min-w-0">
-            <Link href="/" className="font-outfit text-h3 font-bold text-on-surface shrink-0">
+            <Link href="/" className="font-outfit text-[17px] font-semibold text-brand-ink shrink-0 tracking-tight">
               Nabhi Studio
             </Link>
-            <div className="h-6 w-px bg-outline-variant mx-sm shrink-0" />
-            <div className="flex items-center gap-sm text-on-surface-variant text-label-md truncate">
-              <span className="truncate">{hospitalName}</span>
-              <span className="material-symbols-outlined text-sm">chevron_right</span>
-              <span className="text-on-surface font-semibold">{activePage?.slug ?? '—'}</span>
+            <div className="h-5 w-px bg-outline-variant mx-xs shrink-0" />
+            <div className="flex items-center gap-sm text-outline text-label-md truncate">
+              <span className="truncate text-on-surface-variant">{hospitalName}</span>
+              <span className="material-symbols-outlined text-[16px]">chevron_right</span>
+              <span className="text-brand-ink font-semibold">{activePage?.slug ?? '—'}</span>
+              <span className="ml-sm rounded-md bg-surface-container px-sm py-xs font-inter text-label-sm text-outline font-medium">
+                Draft
+              </span>
             </div>
           </div>
 
@@ -518,11 +521,11 @@ export function StudioEditor({
             <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
           </div>
 
-          <div className="flex items-center gap-md">
+          <div className="flex items-center gap-sm">
             <button
               type="button"
               onClick={() => setShowPreview(true)}
-              className="p-sm text-on-surface-variant hover:bg-surface-container rounded-full"
+              className="p-sm text-on-surface-variant hover:bg-surface-container rounded-lg"
               title="Draft preview"
             >
               <span className="material-symbols-outlined">visibility</span>
@@ -530,16 +533,13 @@ export function StudioEditor({
             <button type="button" className="btn-primary" onClick={() => setTab('publish')}>
               Publish
             </button>
-            <div className="w-10 h-10 rounded-full bg-surface-container-highest hairline flex items-center justify-center">
-              <span className="material-symbols-outlined text-on-surface">account_circle</span>
-            </div>
           </div>
         </div>
       </header>
 
-      <div className="flex pt-16 h-screen overflow-hidden min-h-0">
+      <div className="flex pt-14 h-screen overflow-hidden min-h-0">
         {/* Icon rail */}
-        <nav className="w-16 bg-surface-container-lowest border-r border-outline-variant flex flex-col items-center py-md gap-lg z-40 shrink-0">
+        <nav className="w-14 bg-surface-container-lowest border-r border-outline-variant flex flex-col items-center py-md gap-md z-40 shrink-0">
           <div className="flex flex-col gap-sm w-full px-xs">
             {railBtn('pages', 'description', 'Pages')}
             {railBtn('sections', 'layers', 'Sections')}
@@ -577,7 +577,7 @@ export function StudioEditor({
 
         {/* Left panel — keep Sections visible in Style so you can switch back easily */}
         {(tab === 'pages' || tab === 'sections' || tab === 'content' || tab === 'design') && (
-          <aside className="w-64 bg-surface-container-lowest border-r border-outline-variant p-md flex flex-col gap-md z-30 shrink-0">
+          <aside className="w-60 bg-surface-container-lowest border-r border-outline-variant p-md flex flex-col gap-md z-30 shrink-0">
             {tab === 'pages' ? (
               <>
                 <div>
@@ -892,17 +892,11 @@ export function StudioEditor({
             </div>
           ) : (
             <>
-              <div className="w-full p-sm flex flex-wrap justify-center items-center gap-sm shrink-0">
-                <div className="px-md py-xs bg-error-container text-on-error-container rounded-full font-inter text-label-sm uppercase tracking-widest flex items-center gap-xs">
-                  <span className="w-1.5 h-1.5 bg-error rounded-full animate-pulse" />
-                  Draft preview — not live
-                </div>
-                <div className="sm:hidden">
-                  <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
-                </div>
+              <div className="sm:hidden w-full px-md pt-sm shrink-0 flex justify-center">
+                <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
               </div>
               <div className="flex-1 min-h-0 w-full overflow-y-auto">
-                <div className="px-xl pb-32 pt-sm flex justify-center items-start w-full">
+                <div className="px-xl pb-xl pt-md flex justify-center items-start w-full">
                   <DraftCanvas
                     hospitalId={hospitalId}
                     hospitalName={hospitalName}
@@ -914,27 +908,6 @@ export function StudioEditor({
                     designTokens={designTokens}
                     onSelectSection={setSelectedSectionId}
                   />
-                </div>
-              </div>
-              <div className="absolute bottom-md left-1/2 -translate-x-1/2 w-full max-w-lg px-md pointer-events-none z-10">
-                <div className="bg-surface-container-highest shadow-xl rounded-full p-xs hairline flex items-center gap-sm pointer-events-auto">
-                  <div className="flex-1 flex items-center gap-sm pl-md">
-                    <span className="material-symbols-outlined text-primary filled">
-                      auto_awesome
-                    </span>
-                    <input
-                      className="bg-transparent border-none outline-none w-full text-on-surface text-body-sm placeholder:text-outline"
-                      placeholder="Suggest copy for this section"
-                      disabled
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    className="bg-primary text-on-primary px-lg py-sm rounded-full text-label-md font-bold opacity-60 cursor-not-allowed"
-                    disabled
-                  >
-                    Generate
-                  </button>
                 </div>
               </div>
             </>

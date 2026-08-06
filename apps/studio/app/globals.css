@@ -35,15 +35,15 @@
   }
 
   .btn-primary {
-    @apply bg-primary-container text-on-primary-container font-medium text-label-md px-lg py-sm rounded-lg hover:opacity-90 transition-opacity font-semibold;
+    @apply bg-primary text-on-primary font-medium text-label-md px-lg py-sm rounded-lg hover:opacity-90 transition-opacity font-semibold;
   }
 
   .btn-ghost {
-    @apply border border-brand-sage text-on-surface-variant rounded-lg px-sm py-xs text-label-sm font-medium hover:bg-surface-container transition-colors;
+    @apply border border-outline-variant text-on-surface-variant rounded-lg px-sm py-xs text-label-sm font-medium hover:bg-surface-container transition-colors;
   }
 
   .field-input {
-    @apply w-full bg-white hairline rounded-lg p-sm font-inter text-body-md outline-none focus:ring-2 focus:ring-primary-container focus:border-primary-container;
+    @apply w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-sm font-inter text-body-md outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary;
   }
 }
 
