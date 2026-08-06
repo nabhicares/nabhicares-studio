@@ -40,6 +40,20 @@ function tokensToStyle(tokens: DesignTokens): CSSProperties {
   };
 }
 
+function googleFontHrefFromTokens(tokens: DesignTokens): string {
+  const normalize = (value: string) =>
+    value
+      .split(',')[0]
+      ?.trim()
+      .replace(/^['"]|['"]$/g, '');
+  const families = [normalize(tokens.typography.displayFamily), normalize(tokens.typography.bodyFamily)].filter(
+    (name): name is string => Boolean(name && name.length > 0),
+  );
+  const unique = Array.from(new Set(families));
+  const parts = unique.map((name) => `family=${encodeURIComponent(name).replace(/%20/g, '+')}:wght@400;500;600;700`);
+  return `https://fonts.googleapis.com/css2?${parts.join('&')}&display=swap`;
+}
+
 function frameFor(viewport: PreviewViewport) {
   if (viewport === 'mobile') {
     return {
@@ -146,14 +160,18 @@ export function DraftCanvas({
 
   useEffect(() => {
     const id = 'nabhi-patient-fonts';
-    if (document.getElementById(id)) return;
-    const link = document.createElement('link');
-    link.id = id;
-    link.rel = 'stylesheet';
-    link.href =
-      'https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap';
-    document.head.appendChild(link);
-  }, []);
+    const href = googleFontHrefFromTokens(tokens);
+    let link = document.getElementById(id) as HTMLLinkElement | null;
+    if (!link) {
+      link = document.createElement('link');
+      link.id = id;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+    }
+    if (link.href !== href) {
+      link.href = href;
+    }
+  }, [tokens.typography.displayFamily, tokens.typography.bodyFamily]);
 
   return (
     <div

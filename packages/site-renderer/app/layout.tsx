@@ -3,6 +3,21 @@ import { loadSiteData, tokensToCssVars } from '@/lib/site-data';
 import { DEFAULT_DESIGN_TOKENS } from '@nabhicares/section-registry';
 import '../styles/nabhi-site.css';
 
+function googleFontHrefFromTokens(displayFamily: string, bodyFamily: string): string | null {
+  const normalize = (value: string) =>
+    value
+      .split(',')[0]
+      ?.trim()
+      .replace(/^['"]|['"]$/g, '');
+  const families = [normalize(displayFamily), normalize(bodyFamily)].filter(
+    (name): name is string => Boolean(name && name.length > 0),
+  );
+  const unique = Array.from(new Set(families));
+  if (unique.length === 0) return null;
+  const parts = unique.map((name) => `family=${encodeURIComponent(name).replace(/%20/g, '+')}:wght@400;500;600;700`);
+  return `https://fonts.googleapis.com/css2?${parts.join('&')}&display=swap`;
+}
+
 export function generateMetadata() {
   const site = loadSiteData();
   const title = site.seoTitle?.trim() || site.hospitalName;
@@ -28,6 +43,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const site = loadSiteData();
   const tokens = site.designTokens ?? DEFAULT_DESIGN_TOKENS;
   const cssVars = tokensToCssVars(tokens);
+  const fontHref = googleFontHrefFromTokens(
+    tokens.typography.displayFamily,
+    tokens.typography.bodyFamily,
+  );
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -40,12 +59,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
+        {fontHref ? (
+          <>
+            <link rel="preconnect" href="https://fonts.googleapis.com" />
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+            <link href={fontHref} rel="stylesheet" />
+          </>
+        ) : null}
       </head>
       <body
         style={
