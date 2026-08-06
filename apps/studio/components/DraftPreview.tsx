@@ -138,14 +138,15 @@ export function DraftPreview({
         </div>
       </header>
 
-      <div className="flex-1 overflow-y-auto flex justify-center bg-surface-dim/40 p-lg">
+      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain bg-surface-dim/40">
+        <div className="flex justify-center items-start p-lg pb-24 min-h-full">
         {loading ? (
           <p className="p-xl text-on-surface-variant">Loading draft…</p>
         ) : error ? (
           <p className="p-xl text-error">{error}</p>
         ) : (
           <div
-            className={`bg-white shadow-canvas overflow-hidden min-h-full ${
+            className={`bg-white shadow-canvas h-auto ${
               viewport === 'mobile'
                 ? 'rounded-[28px] border-[10px] border-on-surface'
                 : viewport === 'tablet'
@@ -156,6 +157,7 @@ export function DraftPreview({
               ...cssVars,
               width: VIEWPORT_WIDTH[viewport],
               maxWidth: '100%',
+              ['--hero-vh' as string]: '52vh',
             }}
           >
             <nav className="p-lg flex justify-between items-center border-b border-outline-variant/40 bg-[var(--color-bg)] gap-md">
@@ -208,6 +210,7 @@ export function DraftPreview({
             ) : null}
           </div>
         )}
+        </div>
       </div>
     </div>
   );

@@ -199,6 +199,16 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
     throw new Error(`Next.js export produced no out/ directory at ${outDir}`);
   }
 
+  // Guard against stale/old worker images that still emit the pre-SiteChrome
+  // "wireframe" header. Never upload those builds to LIVE.
+  const indexHtml = await readFile(join(outDir, 'index.html'), 'utf8');
+  if (!indexHtml.includes('nabhi-site-header')) {
+    throw new Error(
+      `Build rejected: out/index.html missing nabhi-site-header (wireframe/old renderer). ` +
+        `SITE_RENDERER_ROOT=${SITE_RENDERER_ROOT}`,
+    );
+  }
+
   const files = await collectFiles(outDir);
   const base = `/${hospital.slug}`;
   const sitemapUrls = [
@@ -267,14 +277,32 @@ const worker = new Worker<PublishJobData>(
       throw err;
     }
   },
-  { connection },
+  {
+    connection,
+    concurrency: 1,
+    // Next export routinely exceeds BullMQ's 30s default lock.
+    lockDuration: 15 * 60 * 1000,
+  },
 );
+
+worker.on('completed', (job) => {
+  console.log(`Publish job ${job.id} completed`);
+});
 
 worker.on('failed', (job, err) => {
   console.error(`Publish job ${job?.id} failed:`, err);
 });
 
+worker.on('stalled', (jobId) => {
+  console.warn(`Publish job ${jobId} stalled — will retry`);
+});
+
 console.log('Publish worker listening for jobs...');
+console.log(`[worker] site-renderer root: ${SITE_RENDERER_ROOT}`);
+console.log(`[worker] pid=${process.pid} cwd=${process.cwd()}`);
+console.log(
+  `[worker] SNAPSHOT_STORE_ENDPOINT=${process.env.SNAPSHOT_STORE_ENDPOINT ?? '(unset)'}`,
+);
 
 // On Render, bind PORT for the free-web health check. Skip locally (PORT may be HMS).
 const healthPort = process.env.RENDER ? Number(process.env.PORT || 10000) : 0;

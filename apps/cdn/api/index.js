@@ -146,15 +146,43 @@ async function resolveTenant(req, parts) {
   };
 }
 
+/**
+ * Hospital subdomains serve at /, so strip the path-style /{slug} prefix.
+ * Absolute CDN URLs must become root-relative on this host — never
+ * `https://cdn…/assets/…` (missing slug → 404). Prefer `/assets/…`.
+ */
 function rewriteHtmlForHost(html, slug) {
   const prefix = `/${slug}`;
-  return html
+  const cdnBases = [
+    process.env.CDN_PUBLIC_URL,
+    process.env.NEXT_PUBLIC_CDN_PUBLIC_URL,
+  ]
+    .filter(Boolean)
+    .map((u) => String(u).replace(/\/$/, ''));
+
+  // Always include the production CDN host used in stored media URLs.
+  if (!cdnBases.includes('https://nabhi-cdn.vercel.app')) {
+    cdnBases.push('https://nabhi-cdn.vercel.app');
+  }
+
+  let out = html;
+  for (const base of cdnBases) {
+    // https://cdn/{slug}/assets/x → /assets/x  (works on subdomain host)
+    out = out.split(`${base}${prefix}/`).join('/');
+    out = out.split(`${base}${prefix}"`).join('/"');
+    out = out.split(`${base}${prefix}'`).join("/'");
+  }
+
+  // Relative path-style links: /{slug}/contact/ → /contact/
+  out = out
     .split(`${prefix}/`)
     .join('/')
     .split(`"${prefix}"`)
     .join('"/"')
     .split(`'${prefix}'`)
     .join("'/'");
+
+  return out;
 }
 
 module.exports = async function handler(req, res) {
@@ -207,15 +235,17 @@ module.exports = async function handler(req, res) {
     const objectPath = normalizeSitePath(siteParts.join('/'));
     const liveRes = await fetchMinio(`${slug}/LIVE`);
     let objectKey;
+    let liveId = '';
     if (liveRes.ok) {
-      const publishId = (await liveRes.text()).trim();
-      if (!publishId) {
+      liveId = (await liveRes.text()).trim();
+      if (!liveId) {
         res.statusCode = 404;
         res.end('Live pointer empty');
         return;
       }
-      objectKey = `${slug}/versions/${publishId}/${objectPath}`;
+      objectKey = `${slug}/versions/${liveId}/${objectPath}`;
     } else {
+      // Legacy fallback — prefer failing closed when LIVE is missing after migrate.
       objectKey = `${slug}/current/${objectPath}`;
     }
 
@@ -223,6 +253,9 @@ module.exports = async function handler(req, res) {
     if (!upstream.ok) {
       res.statusCode = upstream.status;
       res.setHeader('Content-Type', 'text/plain');
+      res.setHeader('X-Nabhi-Object-Key', objectKey);
+      res.setHeader('X-Nabhi-Live-Id', liveId || 'none');
+      res.setHeader('X-Nabhi-Minio', MINIO.replace(/^https?:\/\//, '').split('/')[0] || '');
       res.end(`Not found (${objectKey})`);
       return;
     }
@@ -236,6 +269,10 @@ module.exports = async function handler(req, res) {
     res.statusCode = 200;
     res.setHeader('Content-Type', contentType);
     res.setHeader('Cache-Control', 'public, max-age=60');
+    res.setHeader('X-Nabhi-Object-Key', objectKey);
+    res.setHeader('X-Nabhi-Live-Id', liveId || 'legacy-current');
+    res.setHeader('X-Nabhi-Minio', MINIO.replace(/^https?:\/\//, '').split('/')[0] || '');
+    res.setHeader('X-Nabhi-Bytes', String(buf.length));
     if (hostMode) res.setHeader('X-Nabhi-Tenant', slug);
     res.end(buf);
   } catch (err) {

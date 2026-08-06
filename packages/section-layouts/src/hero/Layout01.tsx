@@ -34,7 +34,7 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
         ...sectionBaseStyle,
         padding: 0,
         position: 'relative',
-        minHeight: 'min(88vh, 720px)',
+        minHeight: 'min(var(--hero-vh, 88vh), 720px)',
         display: 'flex',
         alignItems: 'flex-end',
         overflow: 'hidden',

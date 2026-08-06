@@ -55,11 +55,13 @@ function googleFontHrefFromTokens(tokens: DesignTokens): string {
 }
 
 function frameFor(viewport: PreviewViewport) {
+  // h-auto + overflow-visible so the parent pane scrolls the full page.
+  // (overflow-hidden + flex stretch was clipping sections below the fold.)
   if (viewport === 'mobile') {
     return {
       width: 390,
       className:
-        'bg-white rounded-[32px] overflow-hidden shadow-canvas border-[10px] border-on-surface relative flex flex-col shrink-0 h-auto',
+        'nabhi-draft-canvas bg-white rounded-[32px] shadow-canvas border-[10px] border-on-surface relative flex flex-col shrink-0 h-auto overflow-visible',
       chrome: 'device' as const,
     };
   }
@@ -67,14 +69,14 @@ function frameFor(viewport: PreviewViewport) {
     return {
       width: 768,
       className:
-        'bg-white rounded-2xl overflow-hidden shadow-canvas border-[8px] border-on-surface/80 relative flex flex-col shrink-0 h-auto',
+        'nabhi-draft-canvas bg-white rounded-2xl shadow-canvas border-[8px] border-on-surface/80 relative flex flex-col shrink-0 h-auto overflow-visible',
       chrome: 'device' as const,
     };
   }
   return {
     width: 1200,
     className:
-      'w-full max-w-[1200px] bg-white rounded-xl overflow-hidden shadow-canvas hairline flex flex-col shrink-0 h-auto',
+      'nabhi-draft-canvas w-full max-w-[1200px] bg-white rounded-xl shadow-canvas hairline flex flex-col shrink-0 h-auto overflow-visible',
     chrome: 'browser' as const,
   };
 }
@@ -295,7 +297,15 @@ export function DraftCanvas({
         </nav>
       </div>
 
-      <div style={tokensToStyle(tokens)} className="w-full">
+      <div
+        style={{
+          ...tokensToStyle(tokens),
+          // Live sites keep tall heroes (88vh). Draft canvas sets --hero-vh lower
+          // so the full page is visible while scrolling the editor pane.
+          ['--hero-vh' as string]: '52vh',
+        }}
+        className="w-full"
+      >
         <style>{`
           .nabhi-btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
           .nabhi-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
@@ -345,13 +355,23 @@ export function DraftCanvas({
               section.template.key === 'testimonials' ||
               section.template.key === 'contact' ||
               section.template.key === 'doctors';
+            // Use a div, not <button>: section layouts are block-level and nesting
+            // them in a button is invalid HTML — browsers clip/break the tree so
+            // only the first section appears and the pane won't scroll.
             return (
-              <button
+              <div
                 key={section.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 onClick={() => onSelectSection?.(section.id)}
-                className={`relative block w-full text-left transition-all border-0 p-0 bg-transparent ${
-                  selected ? 'ring-4 ring-primary ring-inset' : ''
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onSelectSection?.(section.id);
+                  }
+                }}
+                className={`relative block w-full text-left transition-shadow cursor-pointer ${
+                  selected ? 'ring-4 ring-primary ring-inset' : 'hover:ring-2 hover:ring-primary/30 hover:ring-inset'
                 } ${section.enabled ? '' : 'opacity-50'}`}
                 style={{
                   ['--section-bg' as string]: emphasize
@@ -365,14 +385,17 @@ export function DraftCanvas({
                 }}
               >
                 {selected ? (
-                  <div className="absolute top-3 left-3 z-10 bg-primary text-white px-sm py-xs text-[10px] font-bold uppercase rounded">
+                  <div className="absolute top-3 left-3 z-10 bg-primary text-white px-sm py-xs text-[10px] font-bold uppercase rounded pointer-events-none">
                     {label} · L{String(section.template.version).padStart(2, '0')}
                   </div>
                 ) : null}
-                <div id={section.template.key === 'services' ? 'services' : undefined}>
+                <div
+                  id={section.template.key === 'services' ? 'services' : undefined}
+                  data-section-type={section.template.key}
+                >
                   <Layout content={section.content ?? {}} siteLinks={siteLinks} />
                 </div>
-              </button>
+              </div>
             );
           })
         )}

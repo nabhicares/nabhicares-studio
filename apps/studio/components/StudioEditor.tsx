@@ -549,7 +549,7 @@ export function StudioEditor({
         </div>
       </header>
 
-      <div className="flex pt-14 h-screen overflow-hidden min-h-0">
+      <div className="flex h-[calc(100dvh-3.5rem)] mt-14 overflow-hidden min-h-0">
         {/* Icon rail */}
         <nav className="w-14 bg-surface-container-lowest border-r border-outline-variant flex flex-col items-center py-md gap-md z-40 shrink-0">
           <div className="flex flex-col gap-sm w-full px-xs">
@@ -863,8 +863,8 @@ export function StudioEditor({
               />
             </div>
           ) : tab === 'design' ? (
-            <div className="w-full h-full min-h-0 overflow-y-auto p-xl">
-              <div className="flex flex-col items-center gap-md w-full">
+            <div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain">
+              <div className="px-xl py-xl flex flex-col items-center gap-md w-full pb-24">
                 <div className="sm:hidden">
                   <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
                 </div>
@@ -894,8 +894,8 @@ export function StudioEditor({
               <div className="sm:hidden w-full px-md pt-sm shrink-0 flex justify-center">
                 <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
               </div>
-              <div className="flex-1 min-h-0 w-full overflow-y-auto">
-                <div className="px-xl pb-xl pt-md flex justify-center items-start w-full">
+              <div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain">
+                <div className="px-xl pb-24 pt-md flex justify-center items-start w-full">
                   <DraftCanvas
                     hospitalId={hospitalId}
                     hospitalName={hospitalName}

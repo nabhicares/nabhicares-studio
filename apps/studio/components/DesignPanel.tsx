@@ -248,19 +248,25 @@ export function DesignPanel({
     onTokensChange?.(next);
   }
 
-  async function save() {
+  async function save(override?: DesignTokens) {
+    const payload = override ?? tokens;
     setStatus('Saving…');
     const res = await apiFetch(`/api/hospitals/${hospitalId}/design`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ tokens }),
+      body: JSON.stringify({ tokens: payload }),
     });
     if (!res.ok) {
       setStatus('Save failed');
       return;
     }
-    onTokensChange?.(tokens);
+    onTokensChange?.(payload);
     setStatus('Saved — canvas updated · publish to go live');
+  }
+
+  async function applyAndSave(next: DesignTokens) {
+    update(next);
+    await save(next);
   }
 
   const radiusPx = parseInt(String(tokens.radii.button).replace('px', ''), 10) || 12;
@@ -289,7 +295,7 @@ export function DesignPanel({
   }, [tokens]);
 
   function applyTheme(theme: ThemeBundle) {
-    update({
+    void applyAndSave({
       ...tokens,
       colors: { ...theme.colors },
       typography: {
@@ -302,11 +308,11 @@ export function DesignPanel({
   }
 
   function applyPalette(colors: ColorPalette) {
-    update({ ...tokens, colors: { ...colors } });
+    void applyAndSave({ ...tokens, colors: { ...colors } });
   }
 
   function applyFontPair(displayFamily: string, bodyFamily: string) {
-    update({
+    void applyAndSave({
       ...tokens,
       typography: { ...tokens.typography, displayFamily, bodyFamily },
     });
@@ -636,7 +642,7 @@ export function DesignPanel({
       <div className="bg-surface-container p-md rounded-lg flex items-start gap-sm">
         <span className="material-symbols-outlined text-primary text-[20px]">info</span>
         <p className="font-inter text-body-sm text-on-surface-variant">
-          Canvas updates as you edit. Save to persist; publish to update the live site.
+          Themes/colors/fonts save immediately. Publish to push the live hospital site.
           <span className="block mt-xs font-semibold text-primary">
             {status || 'Live preview in canvas'}
           </span>
