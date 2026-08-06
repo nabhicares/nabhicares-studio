@@ -19,6 +19,7 @@ import { ImageField, looksLikeImageField } from './ImageField';
 import { DraftPreview } from './DraftPreview';
 import { HospitalSettings } from './HospitalSettings';
 import { ContentJsonImport } from './ContentJsonImport';
+import { SectionRowMenu } from './SectionRowMenu';
 import type { DesignTokens } from '@nabhicares/section-registry';
 
 type LayoutTemplate = { id: string; key: string; version: number };
@@ -38,7 +39,7 @@ export type Page = {
   sections: Section[];
 };
 
-type Tab = 'pages' | 'sections' | 'content' | 'design' | 'publish';
+type Tab = 'pages' | 'sections' | 'design' | 'publish';
 
 function ContentForm({
   fields,
@@ -210,7 +211,7 @@ export function StudioEditor({
   );
   const [dragIndex, setDragIndex] = useState<number | null>(null);
   const [pageDragIndex, setPageDragIndex] = useState<number | null>(null);
-  const [inspectorPane, setInspectorPane] = useState<'content' | 'config'>('content');
+  const [inspectorPane, setInspectorPane] = useState<'content' | 'layout' | 'config'>('content');
   const [contentMode, setContentMode] = useState<'form' | 'json'>('form');
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
@@ -336,7 +337,8 @@ export function StudioEditor({
     const created = (await res.json()) as Section;
     updateLocalSections([...sections, created]);
     setSelectedSectionId(created.id);
-    setTab('content');
+    setTab('sections');
+    setInspectorPane('content');
     setSaving(false);
     setMessage(`Added ${getSectionType(type)?.label ?? type}`);
   }
@@ -372,7 +374,8 @@ export function StudioEditor({
     // normalize local orders to match server shift
     updateLocalSections(next.map((s, i) => ({ ...s, order: i })));
     setSelectedSectionId(created.id);
-    setTab('content');
+    setTab('sections');
+    setInspectorPane('content');
     setSaving(false);
     setMessage('Section duplicated');
   }
@@ -543,7 +546,6 @@ export function StudioEditor({
           <div className="flex flex-col gap-sm w-full px-xs">
             {railBtn('pages', 'description', 'Pages')}
             {railBtn('sections', 'layers', 'Sections')}
-            {railBtn('content', 'edit_note', 'Content')}
             {railBtn('design', 'palette', 'Design')}
             {railBtn('publish', 'cloud_upload', 'Publish')}
           </div>
@@ -576,7 +578,7 @@ export function StudioEditor({
         ) : null}
 
         {/* Left panel — keep Sections visible in Style so you can switch back easily */}
-        {(tab === 'pages' || tab === 'sections' || tab === 'content' || tab === 'design') && (
+        {(tab === 'pages' || tab === 'sections' || tab === 'design') && (
           <aside className="w-60 bg-surface-container-lowest border-r border-outline-variant p-md flex flex-col gap-md z-30 shrink-0">
             {tab === 'pages' ? (
               <>
@@ -729,74 +731,54 @@ export function StudioEditor({
                         : message || 'Drag to reorder'}
                   </p>
                 </div>
-                <div className="flex flex-col gap-xs overflow-y-auto flex-1 min-h-0">
+                <div className="flex flex-col gap-0 overflow-y-auto flex-1 min-h-0 -mx-xs">
                   {sections.map((section, index) => {
                     const label =
                       getSectionType(section.template.key)?.label ?? section.template.key;
                     const active = section.id === selected?.id;
                     return (
-                      <button
+                      <div
                         key={section.id}
-                        type="button"
                         draggable
                         onDragStart={() => setDragIndex(index)}
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={() => onDrop(index)}
-                        onClick={() => {
-                          setSelectedSectionId(section.id);
-                          setTab('content');
-                        }}
-                        className={`flex items-center gap-sm p-sm rounded-lg text-left transition-colors group ${
+                        className={`flex items-center gap-xs px-sm py-xs rounded-md group ${
                           active
-                            ? 'bg-primary-container/10 border-2 border-primary-container text-on-primary-container'
-                            : 'hover:bg-surface-container text-on-surface-variant border-2 border-transparent'
-                        } ${section.enabled ? '' : 'opacity-50'}`}
+                            ? 'bg-primary-container/50 text-on-primary-container'
+                            : 'hover:bg-surface-container text-on-surface'
+                        } ${section.enabled ? '' : 'opacity-45'}`}
                       >
-                        <span className="material-symbols-outlined text-outline text-[20px]">
+                        <span className="material-symbols-outlined text-outline text-[18px] cursor-grab shrink-0">
                           drag_indicator
                         </span>
-                        <span className="font-inter text-label-md font-semibold flex-1">
-                          {label}
-                          <span className="ml-1 font-normal opacity-60">
+                        <button
+                          type="button"
+                          className="flex-1 min-w-0 text-left py-xs border-0 bg-transparent p-0 cursor-pointer"
+                          onClick={() => {
+                            setSelectedSectionId(section.id);
+                            if (tab !== 'design') {
+                              setTab('sections');
+                              setInspectorPane('content');
+                            }
+                          }}
+                        >
+                          <span className="font-inter text-label-md font-semibold block truncate">
+                            {label}
+                          </span>
+                          <span className="font-inter text-[11px] text-outline">
                             L{String(section.template.version).padStart(2, '0')}
                           </span>
-                        </span>
-                        <button
-                          type="button"
-                          className="p-0.5"
-                          title={section.enabled ? 'Disable' : 'Enable'}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            void patchSection(section.id, { enabled: !section.enabled });
-                          }}
-                        >
-                          <span className="material-symbols-outlined text-[18px]">
-                            {section.enabled ? 'visibility' : 'visibility_off'}
-                          </span>
                         </button>
-                        <button
-                          type="button"
-                          className="p-0.5 opacity-0 group-hover:opacity-100"
-                          title="Duplicate section"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            void duplicateSection(section.id);
-                          }}
-                        >
-                          <span className="material-symbols-outlined text-[18px]">content_copy</span>
-                        </button>
-                        <button
-                          type="button"
-                          className="p-0.5 opacity-0 group-hover:opacity-100"
-                          title="Delete section"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            void deleteSection(section.id);
-                          }}
-                        >
-                          <span className="material-symbols-outlined text-[18px]">delete</span>
-                        </button>
-                      </button>
+                        <SectionRowMenu
+                          enabled={section.enabled}
+                          onToggleEnabled={() =>
+                            void patchSection(section.id, { enabled: !section.enabled })
+                          }
+                          onDuplicate={() => void duplicateSection(section.id)}
+                          onDelete={() => void deleteSection(section.id)}
+                        />
+                      </div>
                     );
                   })}
                 </div>
@@ -886,7 +868,13 @@ export function StudioEditor({
                   selectedSectionId={selected?.id}
                   viewport={previewViewport}
                   designTokens={designTokens}
-                  onSelectSection={setSelectedSectionId}
+                  onSelectSection={(id) => {
+                    setSelectedSectionId(id);
+                    if (tab !== 'design') {
+                      setTab('sections');
+                      setInspectorPane('content');
+                    }
+                  }}
                 />
               </div>
             </div>
@@ -906,7 +894,13 @@ export function StudioEditor({
                     selectedSectionId={selected?.id}
                     viewport={previewViewport}
                     designTokens={designTokens}
-                    onSelectSection={setSelectedSectionId}
+                    onSelectSection={(id) => {
+                    setSelectedSectionId(id);
+                    if (tab !== 'design') {
+                      setTab('sections');
+                      setInspectorPane('content');
+                    }
+                  }}
                   />
                 </div>
               </div>
@@ -929,52 +923,41 @@ export function StudioEditor({
               setHospitalSlug(next.slug);
             }}
           />
-        ) : tab !== 'publish' && selected ? (
+        ) : tab === 'design' ? (
+          <aside className="w-80 bg-surface-container-lowest border-l border-outline-variant flex flex-col z-40 shrink-0">
+            <div className="px-lg py-md border-b border-outline-variant">
+              <h3 className="font-outfit text-[15px] font-semibold text-brand-ink">Design</h3>
+              <p className="font-inter text-label-sm text-outline mt-xs">
+                Site-wide tokens for the patient preview
+              </p>
+            </div>
+            <DesignPanel hospitalId={hospitalId} onTokensChange={setDesignTokens} />
+          </aside>
+        ) : selected ? (
           <aside className="w-80 bg-surface-container-lowest border-l border-outline-variant flex flex-col z-40 shrink-0">
             <div className="flex border-b border-outline-variant">
-              <button
-                type="button"
-                className={`flex-1 py-md font-inter text-label-md transition-colors ${
-                  tab === 'design'
-                    ? 'text-primary font-bold border-b-2 border-primary bg-surface-container-low'
-                    : 'text-on-surface-variant hover:bg-surface-container'
-                }`}
-                onClick={() => setTab('design')}
-              >
-                Style
-              </button>
-              <button
-                type="button"
-                className={`flex-1 py-md font-inter text-label-md transition-colors ${
-                  tab !== 'design' && inspectorPane === 'content'
-                    ? 'text-primary font-bold border-b-2 border-primary bg-surface-container-low'
-                    : 'text-on-surface-variant hover:bg-surface-container'
-                }`}
-                onClick={() => {
-                  setTab('content');
-                  setInspectorPane('content');
-                }}
-              >
-                Content
-              </button>
-              <button
-                type="button"
-                className={`flex-1 py-md font-inter text-label-md transition-colors ${
-                  tab !== 'design' && inspectorPane === 'config'
-                    ? 'text-primary font-bold border-b-2 border-primary bg-surface-container-low'
-                    : 'text-on-surface-variant hover:bg-surface-container'
-                }`}
-                onClick={() => {
-                  setTab('content');
-                  setInspectorPane('config');
-                }}
-              >
-                Config
-              </button>
+              {(
+                [
+                  { id: 'content' as const, label: 'Content' },
+                  { id: 'layout' as const, label: 'Layout' },
+                  { id: 'config' as const, label: 'Config' },
+                ] as const
+              ).map((pane) => (
+                <button
+                  key={pane.id}
+                  type="button"
+                  className={`flex-1 py-md font-inter text-label-md transition-colors ${
+                    inspectorPane === pane.id
+                      ? 'text-primary font-bold border-b-2 border-primary bg-surface-container-low'
+                      : 'text-on-surface-variant hover:bg-surface-container'
+                  }`}
+                  onClick={() => setInspectorPane(pane.id)}
+                >
+                  {pane.label}
+                </button>
+              ))}
             </div>
-            {tab === 'design' ? (
-              <DesignPanel hospitalId={hospitalId} onTokensChange={setDesignTokens} />
-            ) : inspectorPane === 'config' ? (
+            {inspectorPane === 'config' ? (
               <div className="p-lg flex flex-col gap-lg overflow-y-auto flex-1">
                 <div className="flex flex-col gap-xs">
                   <label className="font-inter text-label-sm text-outline">Section ID</label>
@@ -1042,55 +1025,56 @@ export function StudioEditor({
                   Section enabled (included in publish)
                 </label>
               </div>
-            ) : (
-              <div className="p-lg flex flex-col gap-xl overflow-y-auto flex-1">
-                <div className="flex flex-col gap-sm">
-                  <h3 className="font-inter text-label-md text-on-surface-variant flex items-center gap-sm uppercase tracking-wide">
-                    <span className="material-symbols-outlined text-[18px]">dashboard</span>
-                    Layout
+            ) : inspectorPane === 'layout' ? (
+              <div className="p-lg flex flex-col gap-md overflow-y-auto flex-1">
+                <div>
+                  <h3 className="font-inter text-label-md font-semibold text-on-surface">
+                    Layout variant
                   </h3>
-                  <div className="grid grid-cols-2 gap-sm">
-                    {Array.from({ length: LAYOUT_COUNT }, (_, i) => i + 1).map((version) => {
-                      const tpl = layoutOptions.find((t) => t.version === version) ?? null;
-                      const active = selected.template.version === version;
-                      return (
-                        <button
-                          key={version}
-                          type="button"
-                          disabled={!tpl || saving}
-                          title={tpl ? `Layout ${String(version).padStart(2, '0')}` : 'Not seeded'}
-                          onClick={() => {
-                            if (!tpl) return;
-                            void patchSection(selected.id, { templateId: tpl.id });
-                          }}
-                          className={`relative aspect-[4/3] rounded-lg overflow-hidden transition-all text-on-surface-variant disabled:opacity-40 ${
-                            active
-                              ? 'layout-thumb-active ring-2 ring-primary bg-primary/10 text-primary'
-                              : 'layout-thumb-shimmer bg-surface-container hover:bg-surface-container-high hairline'
-                          }`}
-                        >
-                          <div className="absolute inset-1.5 text-inherit">
-                            <LayoutWireframe
-                              sectionType={selected.template.key}
-                              version={version}
-                            />
-                          </div>
-                          <span className="absolute bottom-1 right-1.5 font-inter text-[10px] font-bold opacity-70">
-                            {String(version).padStart(2, '0')}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p className="font-inter text-label-sm text-outline">
+                  <p className="font-inter text-label-sm text-outline mt-xs">
                     Same content · different structure
                   </p>
                 </div>
+                <div className="grid grid-cols-2 gap-sm">
+                  {Array.from({ length: LAYOUT_COUNT }, (_, i) => i + 1).map((version) => {
+                    const tpl = layoutOptions.find((t) => t.version === version) ?? null;
+                    const active = selected.template.version === version;
+                    return (
+                      <button
+                        key={version}
+                        type="button"
+                        disabled={!tpl || saving}
+                        title={tpl ? `Layout ${String(version).padStart(2, '0')}` : 'Not seeded'}
+                        onClick={() => {
+                          if (!tpl) return;
+                          void patchSection(selected.id, { templateId: tpl.id });
+                        }}
+                        className={`relative aspect-[4/3] rounded-lg overflow-hidden transition-colors text-on-surface-variant disabled:opacity-40 border ${
+                          active
+                            ? 'border-primary bg-primary-container/40 text-primary ring-1 ring-primary'
+                            : 'border-outline-variant bg-surface-container-low hover:bg-surface-container'
+                        }`}
+                      >
+                        <div className="absolute inset-1.5 text-inherit">
+                          <LayoutWireframe
+                            sectionType={selected.template.key}
+                            version={version}
+                          />
+                        </div>
+                        <span className="absolute bottom-1 right-1.5 font-inter text-[10px] font-bold opacity-70">
+                          {String(version).padStart(2, '0')}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            ) : (
+              <div className="p-lg flex flex-col gap-lg overflow-y-auto flex-1">
                 <div className="flex flex-col gap-sm">
                   <div className="flex items-center justify-between gap-sm">
-                    <h3 className="font-inter text-label-md text-on-surface-variant flex items-center gap-sm uppercase tracking-wide">
-                      <span className="material-symbols-outlined text-[18px]">text_fields</span>
-                      {def?.label ?? selected.template.key} content
+                    <h3 className="font-inter text-label-md font-semibold text-on-surface">
+                      {def?.label ?? selected.template.key}
                     </h3>
                     {def ? (
                       <div className="flex rounded-lg bg-surface-container p-xs gap-xs">
@@ -1098,7 +1082,7 @@ export function StudioEditor({
                           type="button"
                           className={`px-sm py-xs rounded text-label-sm font-semibold ${
                             contentMode === 'form'
-                              ? 'bg-primary-container text-on-primary-container'
+                              ? 'bg-primary text-on-primary'
                               : 'text-on-surface-variant'
                           }`}
                           onClick={() => setContentMode('form')}
@@ -1109,7 +1093,7 @@ export function StudioEditor({
                           type="button"
                           className={`px-sm py-xs rounded text-label-sm font-semibold ${
                             contentMode === 'json'
-                              ? 'bg-primary-container text-on-primary-container'
+                              ? 'bg-primary text-on-primary'
                               : 'text-on-surface-variant'
                           }`}
                           onClick={() => setContentMode('json')}
@@ -1171,30 +1155,6 @@ export function StudioEditor({
                 >
                   {dirty ? 'Save now' : 'Saved'}
                 </button>
-                <div className="pt-lg border-t border-outline-variant space-y-md">
-                  <label className="flex items-center gap-sm text-body-sm text-on-surface-variant">
-                    <input
-                      type="checkbox"
-                      checked={selected.enabled}
-                      onChange={(e) => patchSection(selected.id, { enabled: e.target.checked })}
-                    />
-                    Section enabled (included in publish)
-                  </label>
-                  <button
-                    type="button"
-                    className="btn-ghost w-full"
-                    onClick={() => void duplicateSection(selected.id)}
-                  >
-                    Duplicate section
-                  </button>
-                  <button
-                    type="button"
-                    className="btn-ghost w-full text-error"
-                    onClick={() => void deleteSection(selected.id)}
-                  >
-                    Delete section
-                  </button>
-                </div>
               </div>
             )}
           </aside>

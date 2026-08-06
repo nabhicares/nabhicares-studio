@@ -6,14 +6,14 @@ import { useEffect, useState } from 'react';
 import { DEFAULT_DESIGN_TOKENS, type DesignTokens } from '@nabhicares/section-registry';
 
 const SWATCHES: { key: keyof DesignTokens['colors']; label: string; fallback: string }[] = [
-  { key: 'accent', label: 'Primary Lime', fallback: '#B1EA55' },
-  { key: 'background', label: 'Background', fallback: '#F5F5F3' },
-  { key: 'foreground', label: 'Ink Black', fallback: '#0C0900' },
-  { key: 'muted', label: 'Mid Grey', fallback: '#888888' },
-  { key: 'surface', label: 'Soft Sage Surface', fallback: '#B8BDB1' },
+  { key: 'accent', label: 'Accent', fallback: '#1F7A6C' },
+  { key: 'background', label: 'Background', fallback: '#F3F1EC' },
+  { key: 'foreground', label: 'Ink', fallback: '#0F1C1A' },
+  { key: 'muted', label: 'Muted', fallback: '#5C6B67' },
+  { key: 'surface', label: 'Surface', fallback: '#E4E8E5' },
 ];
 
-/** Token editor body — rendered inside the shared Style | Content inspector. */
+/** Hospital-level design tokens — shown when Design rail is active. */
 export function DesignPanel({
   hospitalId,
   onTokensChange,
