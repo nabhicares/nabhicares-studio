@@ -537,7 +537,7 @@ export function StudioEditor({
         </div>
       </header>
 
-      <div className="flex pt-16 h-screen overflow-hidden">
+      <div className="flex pt-16 h-screen overflow-hidden min-h-0">
         {/* Icon rail */}
         <nav className="w-16 bg-surface-container-lowest border-r border-outline-variant flex flex-col items-center py-md gap-lg z-40 shrink-0">
           <div className="flex flex-col gap-sm w-full px-xs">
@@ -847,7 +847,7 @@ export function StudioEditor({
         )}
 
         {/* Center */}
-        <main className="flex-1 bg-surface-container relative flex flex-col items-center justify-start overflow-hidden min-w-0">
+        <main className="flex-1 bg-surface-container relative flex flex-col items-stretch justify-start overflow-hidden min-w-0 min-h-0">
           {tab === 'publish' ? (
             <div className="w-full h-full flex items-center justify-center p-lg bg-surface-dim relative">
               <div className="absolute inset-0 opacity-40 pointer-events-none p-xl">
@@ -872,34 +872,11 @@ export function StudioEditor({
               />
             </div>
           ) : tab === 'design' ? (
-            <div className="w-full h-full overflow-y-auto p-xl flex flex-col items-center gap-md">
-              <div className="sm:hidden">
-                <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
-              </div>
-              <DraftCanvas
-                hospitalId={hospitalId}
-                hospitalName={hospitalName}
-                hospitalSlug={hospitalSlug}
-                page={activePage}
-                pages={pages}
-                selectedSectionId={selected?.id}
-                viewport={previewViewport}
-                designTokens={designTokens}
-                onSelectSection={setSelectedSectionId}
-              />
-            </div>
-          ) : (
-            <>
-              <div className="w-full p-sm flex flex-wrap justify-center items-center gap-sm">
-                <div className="px-md py-xs bg-error-container text-on-error-container rounded-full font-inter text-label-sm uppercase tracking-widest flex items-center gap-xs">
-                  <span className="w-1.5 h-1.5 bg-error rounded-full animate-pulse" />
-                  Draft preview — not live
-                </div>
+            <div className="w-full h-full min-h-0 overflow-y-auto p-xl">
+              <div className="flex flex-col items-center gap-md w-full">
                 <div className="sm:hidden">
                   <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
                 </div>
-              </div>
-              <div className="flex-1 w-full px-xl pb-xxl overflow-y-auto flex justify-center">
                 <DraftCanvas
                   hospitalId={hospitalId}
                   hospitalName={hospitalName}
@@ -912,8 +889,35 @@ export function StudioEditor({
                   onSelectSection={setSelectedSectionId}
                 />
               </div>
-              <div className="absolute bottom-md left-1/2 -translate-x-1/2 w-full max-w-lg px-md">
-                <div className="bg-surface-container-highest shadow-xl rounded-full p-xs hairline flex items-center gap-sm">
+            </div>
+          ) : (
+            <>
+              <div className="w-full p-sm flex flex-wrap justify-center items-center gap-sm shrink-0">
+                <div className="px-md py-xs bg-error-container text-on-error-container rounded-full font-inter text-label-sm uppercase tracking-widest flex items-center gap-xs">
+                  <span className="w-1.5 h-1.5 bg-error rounded-full animate-pulse" />
+                  Draft preview — not live
+                </div>
+                <div className="sm:hidden">
+                  <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
+                </div>
+              </div>
+              <div className="flex-1 min-h-0 w-full overflow-y-auto">
+                <div className="px-xl pb-32 pt-sm flex justify-center items-start w-full">
+                  <DraftCanvas
+                    hospitalId={hospitalId}
+                    hospitalName={hospitalName}
+                    hospitalSlug={hospitalSlug}
+                    page={activePage}
+                    pages={pages}
+                    selectedSectionId={selected?.id}
+                    viewport={previewViewport}
+                    designTokens={designTokens}
+                    onSelectSection={setSelectedSectionId}
+                  />
+                </div>
+              </div>
+              <div className="absolute bottom-md left-1/2 -translate-x-1/2 w-full max-w-lg px-md pointer-events-none z-10">
+                <div className="bg-surface-container-highest shadow-xl rounded-full p-xs hairline flex items-center gap-sm pointer-events-auto">
                   <div className="flex-1 flex items-center gap-sm pl-md">
                     <span className="material-symbols-outlined text-primary filled">
                       auto_awesome

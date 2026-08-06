@@ -45,7 +45,7 @@ function frameFor(viewport: PreviewViewport) {
     return {
       width: 390,
       className:
-        'bg-white rounded-[32px] overflow-hidden shadow-canvas border-[10px] border-on-surface relative min-h-[720px] flex flex-col shrink-0',
+        'bg-white rounded-[32px] overflow-hidden shadow-canvas border-[10px] border-on-surface relative flex flex-col shrink-0 h-auto',
       chrome: 'device' as const,
     };
   }
@@ -53,14 +53,14 @@ function frameFor(viewport: PreviewViewport) {
     return {
       width: 768,
       className:
-        'bg-white rounded-2xl overflow-hidden shadow-canvas border-[8px] border-on-surface/80 relative min-h-[800px] flex flex-col shrink-0',
+        'bg-white rounded-2xl overflow-hidden shadow-canvas border-[8px] border-on-surface/80 relative flex flex-col shrink-0 h-auto',
       chrome: 'device' as const,
     };
   }
   return {
     width: 1200,
     className:
-      'w-full max-w-[1200px] bg-white rounded-xl overflow-hidden shadow-canvas hairline min-h-[800px] flex flex-col',
+      'w-full max-w-[1200px] bg-white rounded-xl overflow-hidden shadow-canvas hairline flex flex-col shrink-0 h-auto',
     chrome: 'browser' as const,
   };
 }
@@ -237,7 +237,7 @@ export function DraftCanvas({
         )}
       </nav>
 
-      <div style={tokensToStyle(tokens)} className="flex-1">
+      <div style={tokensToStyle(tokens)} className="w-full">
         <p className="font-inter text-label-sm text-outline uppercase tracking-widest px-xl pt-lg mb-0 opacity-70">
           Draft · {page?.slug ?? '—'} · {viewport}
         </p>
