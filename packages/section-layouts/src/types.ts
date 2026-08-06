@@ -80,6 +80,11 @@ export type TestimonialItem = {
   author: string;
   role?: string;
   image?: string;
+  /**
+   * Optional patient rating (0–5).
+   * Gemini import / Studio paste may provide it as a string; normalization parses it.
+   */
+  rating?: number;
 };
 
 export type TestimonialsContent = {

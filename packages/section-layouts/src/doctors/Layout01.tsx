@@ -20,7 +20,6 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
     <section
       style={{
         ...sectionBaseStyle,
-        background: 'color-mix(in srgb, var(--color-surface) 45%, var(--color-bg))',
       }}
     >
       <div style={wideContainerStyle}>

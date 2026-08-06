@@ -73,6 +73,7 @@ export function SiteFooter({
   contact: SiteContactSummary;
 }) {
   const isHome = currentSlug === 'home' || currentSlug === '';
+  const year = new Date().getFullYear();
   return (
     <footer className="nabhi-site-footer">
       <div className="nabhi-footer-inner">
@@ -100,7 +101,7 @@ export function SiteFooter({
           <div className="nabhi-footer-label">Visit</div>
           {contact.phone ? (
             <a href={telHref(contact.phone)} className="nabhi-footer-link">
-              {contact.phone}
+              Emergency: {contact.phone}
             </a>
           ) : null}
           {contact.email ? (
@@ -117,6 +118,9 @@ export function SiteFooter({
             <span className="nabhi-footer-meta">Add contact details in Studio</span>
           ) : null}
         </div>
+      </div>
+      <div className="nabhi-footer-bottom">
+        © {year} {hospitalName}. All rights reserved.
       </div>
     </footer>
   );

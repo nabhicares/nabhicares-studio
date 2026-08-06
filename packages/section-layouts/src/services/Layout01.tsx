@@ -1,7 +1,7 @@
 import type { LayoutProps } from '../types';
 import {
-  accentBarStyle,
   bodyStyle,
+  cardStyle,
   kickerStyle,
   mutedStyle,
   sectionBaseStyle,
@@ -10,7 +10,16 @@ import {
 } from '../styles';
 import { normalizeServices } from '../content';
 
-/** Numbered list of services — one job, minimal chrome */
+function looksLikeUrl(s: string) {
+  return /^https?:\/\//i.test(s.trim());
+}
+
+function serviceIconFallback(icon?: string) {
+  const v = (icon ?? '').trim();
+  return v ? v : '+';
+}
+
+/** Services — icon + card grid */
 export function Layout01({ content }: LayoutProps) {
   const c = normalizeServices(content);
   const items = (c.items as { title: string; description?: string; icon?: string }[]) ?? [];
@@ -25,60 +34,73 @@ export function Layout01({ content }: LayoutProps) {
             Services will appear here once added in Studio.
           </p>
         ) : (
-        <div
-          style={{
-            display: 'grid',
-            gap: 0,
-            borderTop: '1px solid color-mix(in srgb, var(--color-fg) 10%, transparent)',
-            marginTop: '0.75rem',
-          }}
-        >
-          {items.map((item, i) => (
-            <article
-              key={item.title}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'auto 1fr',
-                gap: '1.25rem',
-                alignItems: 'start',
-                padding: '1.35rem 0',
-                borderBottom: '1px solid color-mix(in srgb, var(--color-fg) 10%, transparent)',
-              }}
-            >
-              <span
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '0.95rem',
-                  fontWeight: 600,
-                  color: 'var(--color-accent)',
-                  minWidth: '2ch',
-                }}
-              >
-                {String(i + 1).padStart(2, '0')}
-              </span>
-              <div style={{ display: 'flex', gap: '0.85rem' }}>
-                <span style={{ ...accentBarStyle, alignSelf: 'stretch', minHeight: 36 }} />
-                <div>
-                  <h3
-                    style={{
-                      margin: '0 0 0.35rem',
-                      fontFamily: 'var(--font-display)',
-                      fontSize: '1.2rem',
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {item.title}
-                  </h3>
-                  {item.description ? (
-                    <p style={{ ...mutedStyle, margin: 0, maxWidth: '40rem', lineHeight: 1.6 }}>
-                      {item.description}
-                    </p>
-                  ) : null}
-                </div>
-              </div>
-            </article>
-          ))}
-        </div>
+          <div
+            style={{
+              display: 'grid',
+              gap: 'clamp(0.9rem, 2vw, 1.25rem)',
+              marginTop: '1rem',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+            }}
+          >
+            {items.map((item) => {
+              const icon = (item.icon ?? '').trim();
+              const iconText = serviceIconFallback(icon);
+              const iconIsUrl = looksLikeUrl(icon);
+              return (
+                <article
+                  key={item.title}
+                  style={{
+                    ...cardStyle,
+                    padding: '1.25rem 1.25rem',
+                    boxShadow: '0 10px 28px color-mix(in srgb, var(--color-fg) 8%, transparent)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.95rem' }}>
+                    <div
+                      style={{
+                        width: 44,
+                        height: 44,
+                        borderRadius: 'calc(var(--radius-button) + 2px)',
+                        border: '1px solid color-mix(in srgb, var(--color-fg) 12%, transparent)',
+                        background: 'color-mix(in srgb, var(--color-surface) 60%, var(--color-bg))',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {iconIsUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-accent)' }}>
+                          {iconText}
+                        </span>
+                      )}
+                    </div>
+
+                    <div>
+                      <h3
+                        style={{
+                          margin: '0 0 0.45rem',
+                          fontFamily: 'var(--font-display)',
+                          fontSize: '1.2rem',
+                          letterSpacing: '-0.02em',
+                          lineHeight: 1.2,
+                        }}
+                      >
+                        {item.title}
+                      </h3>
+                      {item.description ? (
+                        <p style={{ ...mutedStyle, margin: 0, lineHeight: 1.65 }}>{item.description}</p>
+                      ) : null}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         )}
       </div>
     </section>

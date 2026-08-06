@@ -46,8 +46,13 @@ export function PageView({
             No enabled sections on this page.
           </p>
         ) : (
-          page.sections.map((section) => (
-            <SectionRenderer key={section.id} section={section} pageSlug={page.slug} />
+          page.sections.map((section, index) => (
+            <SectionRenderer
+              key={section.id}
+              section={section}
+              pageSlug={page.slug}
+              index={index}
+            />
           ))
         )}
       </main>

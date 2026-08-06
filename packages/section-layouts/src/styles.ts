@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 
 export const sectionBaseStyle: CSSProperties = {
-  background: 'var(--color-bg)',
+  background: 'var(--section-bg, var(--color-bg))',
   color: 'var(--color-fg)',
   fontFamily: 'var(--font-body)',
   fontSize: 'var(--font-size-base)',
@@ -24,18 +24,18 @@ export const wideContainerStyle: CSSProperties = {
 
 export const titleStyle: CSSProperties = {
   fontFamily: 'var(--font-display)',
-  fontSize: 'clamp(1.65rem, 2.8vw, 2.35rem)',
+  fontSize: 'clamp(1.7rem, 2.9vw, 2.5rem)',
   fontWeight: 600,
   letterSpacing: '-0.03em',
   margin: '0 0 0.85rem',
   color: 'var(--color-fg)',
-  lineHeight: 1.15,
+  lineHeight: 1.08,
 };
 
 export const bodyStyle: CSSProperties = {
   margin: '0 0 1.35rem',
   color: 'var(--color-muted)',
-  lineHeight: 1.7,
+  lineHeight: 1.75,
   maxWidth: '38rem',
   fontSize: '1.05rem',
 };

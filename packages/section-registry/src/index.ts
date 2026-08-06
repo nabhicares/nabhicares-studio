@@ -169,6 +169,7 @@ export const SECTION_REGISTRY: SectionTypeDef[] = [
           { name: 'author', label: 'Author', type: 'string' },
           { name: 'role', label: 'Role', type: 'string' },
           { name: 'image', label: 'Image URL', type: 'string' },
+          { name: 'rating', label: 'Rating (0-5)', type: 'string' },
         ],
       },
     ],
@@ -285,6 +286,7 @@ export function exampleContentForSection(key: string): Record<string, unknown> {
             author: 'R. Mehta',
             role: 'Outpatient',
             image: '',
+            rating: '5',
           },
         ],
       };

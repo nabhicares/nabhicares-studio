@@ -118,6 +118,17 @@ export function normalizeTestimonials(raw: Record<string, unknown>): Testimonial
       author: str(i.author),
       role: str(i.role) || undefined,
       image: str(i.image) || undefined,
+      rating: (() => {
+        const v = (i as Record<string, unknown>).rating;
+        const n =
+          typeof v === 'number'
+            ? v
+            : typeof v === 'string' && v.trim()
+              ? Number(v)
+              : undefined;
+        if (typeof n !== 'number' || !Number.isFinite(n)) return undefined;
+        return Math.max(0, Math.min(5, n));
+      })(),
     }))
     .filter((i) => i.quote.trim());
   return {
