@@ -868,13 +868,7 @@ export function StudioEditor({
                   selectedSectionId={selected?.id}
                   viewport={previewViewport}
                   designTokens={designTokens}
-                  onSelectSection={(id) => {
-                    setSelectedSectionId(id);
-                    if (tab !== 'design') {
-                      setTab('sections');
-                      setInspectorPane('content');
-                    }
-                  }}
+                  onSelectSection={setSelectedSectionId}
                 />
               </div>
             </div>
@@ -895,12 +889,10 @@ export function StudioEditor({
                     viewport={previewViewport}
                     designTokens={designTokens}
                     onSelectSection={(id) => {
-                    setSelectedSectionId(id);
-                    if (tab !== 'design') {
+                      setSelectedSectionId(id);
                       setTab('sections');
                       setInspectorPane('content');
-                    }
-                  }}
+                    }}
                   />
                 </div>
               </div>
