@@ -38,12 +38,31 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
         display: 'flex',
         alignItems: 'flex-end',
         overflow: 'hidden',
-        background: c.image ? undefined : placeholderGradient,
+        background: c.image ? undefined : undefined,
         backgroundImage: c.image ? `url(${c.image})` : undefined,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
     >
+      {!c.image ? (
+        <div
+          aria-hidden
+          className="nabhi-empty-media"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            minHeight: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: placeholderGradient,
+          }}
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: 48, color: 'var(--color-accent)' }}>
+            local_hospital
+          </span>
+          <span style={{ fontFamily: 'var(--font-body)' }}>Add a hero image in Studio</span>
+        </div>
+      ) : null}
       <div
         aria-hidden
         style={{
@@ -51,7 +70,7 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
           inset: 0,
           background: c.image
             ? 'linear-gradient(105deg, color-mix(in srgb, var(--color-fg) 78%, transparent) 0%, color-mix(in srgb, var(--color-fg) 35%, transparent) 48%, transparent 78%)'
-            : 'linear-gradient(160deg, color-mix(in srgb, var(--color-bg) 55%, transparent) 0%, transparent 55%)',
+            : 'linear-gradient(160deg, color-mix(in srgb, var(--color-bg) 70%, transparent) 0%, color-mix(in srgb, var(--color-bg) 35%, transparent) 55%)',
         }}
       />
       <div

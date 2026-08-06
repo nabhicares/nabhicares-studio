@@ -9,15 +9,7 @@ import {
   wideContainerStyle,
 } from '../styles';
 import { normalizeServices } from '../content';
-
-function looksLikeUrl(s: string) {
-  return /^https?:\/\//i.test(s.trim());
-}
-
-function serviceIconFallback(icon?: string) {
-  const v = (icon ?? '').trim();
-  return v ? v : '+';
-}
+import { IconBadge, resolveServiceIcon } from '../icons';
 
 /** Services — icon + card grid */
 export function Layout01({ content }: LayoutProps) {
@@ -44,42 +36,21 @@ export function Layout01({ content }: LayoutProps) {
           >
             {items.map((item) => {
               const icon = (item.icon ?? '').trim();
-              const iconText = serviceIconFallback(icon);
-              const iconIsUrl = looksLikeUrl(icon);
+              const iconIsUrl = /^https?:\/\//i.test(icon);
+              const symbol = resolveServiceIcon(item.title, iconIsUrl ? undefined : icon);
               return (
                 <article
                   key={item.title}
                   style={{
                     ...cardStyle,
-                    padding: '1.25rem 1.25rem',
-                    boxShadow: '0 10px 28px color-mix(in srgb, var(--color-fg) 8%, transparent)',
+                    background: 'var(--color-bg)',
+                    padding: '1.35rem 1.25rem',
+                    border: '1px solid color-mix(in srgb, var(--color-fg) 12%, transparent)',
+                    boxShadow: '0 4px 18px color-mix(in srgb, var(--color-fg) 6%, transparent)',
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.95rem' }}>
-                    <div
-                      style={{
-                        width: 44,
-                        height: 44,
-                        borderRadius: 'calc(var(--radius-button) + 2px)',
-                        border: '1px solid color-mix(in srgb, var(--color-fg) 12%, transparent)',
-                        background: 'color-mix(in srgb, var(--color-surface) 60%, var(--color-bg))',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                        overflow: 'hidden',
-                      }}
-                    >
-                      {iconIsUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={icon} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                      ) : (
-                        <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-accent)' }}>
-                          {iconText}
-                        </span>
-                      )}
-                    </div>
-
+                    <IconBadge name={symbol} imageUrl={iconIsUrl ? icon : undefined} />
                     <div>
                       <h3
                         style={{

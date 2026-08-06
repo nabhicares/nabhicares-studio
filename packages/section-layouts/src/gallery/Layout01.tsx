@@ -4,7 +4,6 @@ import {
   imageTreatmentStyle,
   kickerStyle,
   mutedStyle,
-  placeholderGradient,
   sectionBaseStyle,
   titleStyle,
   wideContainerStyle,
@@ -23,17 +22,19 @@ export function Layout01({ content }: LayoutProps) {
         {c.body ? <p style={bodyStyle}>{c.body}</p> : null}
         {images.length === 0 ? (
           <div
+            className="nabhi-empty-media"
             style={{
               ...imageTreatmentStyle,
               aspectRatio: '21 / 9',
-              background: placeholderGradient,
-              display: 'flex',
+              marginTop: '0.75rem',
+              minHeight: 180,
               alignItems: 'center',
               justifyContent: 'center',
-              marginTop: '0.75rem',
-              minHeight: 160,
             }}
           >
+            <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'var(--color-accent)' }}>
+              photo_library
+            </span>
             <p className="nabhi-empty" style={{ ...mutedStyle, margin: 0, textAlign: 'center' }}>
               Photos coming soon. Add images in Studio or import from Maps.
             </p>

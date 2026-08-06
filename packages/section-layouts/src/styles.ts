@@ -70,12 +70,13 @@ export const surfaceStyle: CSSProperties = {
   borderRadius: 'calc(var(--radius-button) + 2px)',
 };
 
-/** Soft list row — not a heavy card chrome */
+/** Soft list row — clear border, light surface */
 export const cardStyle: CSSProperties = {
-  background: 'color-mix(in srgb, var(--color-surface) 70%, var(--color-bg))',
+  background: 'var(--color-bg)',
   borderRadius: 'calc(var(--radius-button) + 2px)',
-  border: '1px solid color-mix(in srgb, var(--color-fg) 7%, transparent)',
+  border: '1px solid color-mix(in srgb, var(--color-fg) 12%, transparent)',
   padding: '1.2rem 1.25rem',
+  boxShadow: '0 4px 16px color-mix(in srgb, var(--color-fg) 5%, transparent)',
 };
 
 export const mutedStyle: CSSProperties = {

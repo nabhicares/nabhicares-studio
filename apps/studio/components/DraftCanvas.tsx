@@ -173,6 +173,17 @@ export function DraftCanvas({
     }
   }, [tokens.typography.displayFamily, tokens.typography.bodyFamily]);
 
+  useEffect(() => {
+    const id = 'nabhi-material-symbols';
+    if (document.getElementById(id)) return;
+    const link = document.createElement('link');
+    link.id = id;
+    link.rel = 'stylesheet';
+    link.href =
+      'https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0&display=swap';
+    document.head.appendChild(link);
+  }, []);
+
   return (
     <div
       className={frame.className}
@@ -196,74 +207,120 @@ export function DraftCanvas({
         </div>
       ) : null}
 
-      <nav
-        className={`flex justify-between items-center border-b shrink-0 ${
-          compactNav ? 'px-md py-md' : 'p-lg'
-        }`}
-        style={{
-          background: tokens.colors.background,
-          borderColor: 'color-mix(in srgb, var(--color-fg) 10%, transparent)',
-          color: tokens.colors.foreground,
-          ...tokensToStyle(tokens),
-        }}
-      >
-        <div className="flex items-center gap-sm min-w-0">
-          <span
-            className="material-symbols-outlined text-3xl shrink-0"
-            style={{ color: tokens.colors.accent }}
-          >
-            local_hospital
+      <div style={tokensToStyle(tokens)}>
+        <div
+          className="flex items-center justify-between gap-sm px-lg py-sm text-label-sm font-semibold border-b"
+          style={{
+            background: `color-mix(in srgb, ${tokens.colors.accent} 14%, ${tokens.colors.background})`,
+            borderColor: 'color-mix(in srgb, var(--color-fg) 8%, transparent)',
+          }}
+        >
+          <span className="inline-flex items-center gap-xs">
+            <span className="material-symbols-outlined text-[18px]">emergency</span>
+            Emergency line
           </span>
+          <span className="inline-flex items-center gap-xs" style={{ color: tokens.colors.accent }}>
+            <span className="material-symbols-outlined text-[18px]">call</span>
+            Call Now
+          </span>
+        </div>
+        <nav
+          className={`flex justify-between items-center border-b shrink-0 ${
+            compactNav ? 'px-md py-md' : 'px-lg py-md'
+          }`}
+          style={{
+            background: tokens.colors.background,
+            borderColor: 'color-mix(in srgb, var(--color-fg) 10%, transparent)',
+            color: tokens.colors.foreground,
+          }}
+        >
           <span
-            className="text-lg font-semibold truncate"
-            style={{ fontFamily: tokens.typography.displayFamily, letterSpacing: '-0.03em' }}
+            className="text-lg font-bold truncate"
+            style={{
+              fontFamily: tokens.typography.displayFamily,
+              letterSpacing: '-0.03em',
+              color: tokens.colors.accent,
+            }}
           >
             {hospitalName}
           </span>
-        </div>
-        {compactNav ? (
-          <span className="material-symbols-outlined" style={{ color: tokens.colors.muted }}>
-            menu
-          </span>
-        ) : (
-          <div
-            className="flex gap-lg text-label-md flex-wrap justify-end"
-            style={{ fontFamily: tokens.typography.bodyFamily, color: tokens.colors.muted }}
-          >
-            {navPages.length > 0
-              ? navPages.map((p) => {
-                  const label =
-                    p.slug === 'home'
-                      ? 'Home'
-                      : p.slug.charAt(0).toUpperCase() + p.slug.slice(1);
-                  return (
-                    <span
-                      key={p.id}
-                      style={
-                        p.slug === page?.slug
-                          ? { color: tokens.colors.accent, fontWeight: 700 }
-                          : undefined
-                      }
-                    >
-                      {label}
-                    </span>
-                  );
-                })
-              : (
-                <>
-                  <span>Home</span>
-                  <span>Doctors</span>
-                  <span style={{ color: tokens.colors.accent, fontWeight: 700 }}>Contact</span>
-                </>
-              )}
-          </div>
-        )}
-      </nav>
+          {compactNav ? (
+            <span className="material-symbols-outlined" style={{ color: tokens.colors.muted }}>
+              menu
+            </span>
+          ) : (
+            <div
+              className="flex items-center gap-lg text-label-md flex-wrap justify-end"
+              style={{ fontFamily: tokens.typography.bodyFamily, color: tokens.colors.muted }}
+            >
+              {navPages.length > 0
+                ? navPages.map((p) => {
+                    const label =
+                      p.slug === 'home'
+                        ? 'Home'
+                        : p.slug.charAt(0).toUpperCase() + p.slug.slice(1);
+                    return (
+                      <span
+                        key={p.id}
+                        style={
+                          p.slug === page?.slug
+                            ? {
+                                color: tokens.colors.accent,
+                                fontWeight: 700,
+                                borderBottom: `2px solid ${tokens.colors.accent}`,
+                                paddingBottom: 2,
+                              }
+                            : undefined
+                        }
+                      >
+                        {label}
+                      </span>
+                    );
+                  })
+                : (
+                  <>
+                    <span>Home</span>
+                    <span>Doctors</span>
+                    <span>Contact</span>
+                  </>
+                )}
+              <span
+                className="rounded px-md py-xs font-semibold"
+                style={{ background: tokens.colors.accent, color: tokens.colors.background }}
+              >
+                Call Now
+              </span>
+            </div>
+          )}
+        </nav>
+      </div>
 
       <div style={tokensToStyle(tokens)} className="w-full">
         <style>{`
           .nabhi-btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
           .nabhi-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+          .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            line-height: 1;
+            display: inline-block;
+            font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+          }
+          .nabhi-empty-media {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-end;
+            gap: 0.35rem;
+            width: 100%;
+            height: 100%;
+            min-height: 160px;
+            padding: 1rem;
+            box-sizing: border-box;
+            color: var(--color-muted);
+            font-size: 0.88rem;
+          }
         `}</style>
         <p className="font-inter text-label-sm text-outline uppercase tracking-widest px-xl pt-lg mb-0 opacity-70">
           Draft · {page?.slug ?? '—'} · {viewport}
@@ -272,7 +329,7 @@ export function DraftCanvas({
         {sections.length === 0 ? (
           <p className="text-on-surface-variant text-body-md p-xl">No sections on this page.</p>
         ) : (
-          sections.map((section) => {
+          sections.map((section, index) => {
             const label = getSectionType(section.template.key)?.label ?? section.template.key;
             const selected = section.id === selectedSectionId;
             const Layout = resolveLayout(section.template.key, section.template.version);
@@ -282,6 +339,12 @@ export function DraftCanvas({
               doctors: '#',
               services: '#services',
             };
+            const isHero = section.template.key === 'hero';
+            const emphasize =
+              section.template.key === 'services' ||
+              section.template.key === 'testimonials' ||
+              section.template.key === 'contact' ||
+              section.template.key === 'doctors';
             return (
               <button
                 key={section.id}
@@ -290,6 +353,16 @@ export function DraftCanvas({
                 className={`relative block w-full text-left transition-all border-0 p-0 bg-transparent ${
                   selected ? 'ring-4 ring-primary ring-inset' : ''
                 } ${section.enabled ? '' : 'opacity-50'}`}
+                style={{
+                  ['--section-bg' as string]: emphasize
+                    ? `color-mix(in srgb, ${tokens.colors.surface} 45%, ${tokens.colors.background})`
+                    : index % 2 === 0
+                      ? tokens.colors.background
+                      : `color-mix(in srgb, ${tokens.colors.surface} 55%, ${tokens.colors.background})`,
+                  borderTop: isHero
+                    ? undefined
+                    : '1px solid color-mix(in srgb, var(--color-fg) 8%, transparent)',
+                }}
               >
                 {selected ? (
                   <div className="absolute top-3 left-3 z-10 bg-primary text-white px-sm py-xs text-[10px] font-bold uppercase rounded">
@@ -303,6 +376,21 @@ export function DraftCanvas({
             );
           })
         )}
+        <div
+          className="px-xl py-lg border-t text-label-sm"
+          style={{
+            borderColor: 'color-mix(in srgb, var(--color-fg) 10%, transparent)',
+            color: tokens.colors.muted,
+            background: `color-mix(in srgb, ${tokens.colors.surface} 70%, ${tokens.colors.background})`,
+          }}
+        >
+          <div className="flex flex-wrap justify-between gap-sm">
+            <span>© {hospitalName}</span>
+            <span>
+              Website by <span style={{ color: tokens.colors.accent, fontWeight: 600 }}>Nabhi Labs</span>
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   );

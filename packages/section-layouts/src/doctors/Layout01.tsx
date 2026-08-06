@@ -61,16 +61,17 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
                     />
                   ) : (
                     <div
+                      className="nabhi-empty-media"
                       style={{
                         width: '100%',
                         height: '100%',
                         background: placeholderGradient,
-                        display: 'flex',
-                        alignItems: 'flex-end',
-                        padding: '0.85rem',
                       }}
                     >
-                      <span style={{ ...mutedStyle, fontSize: '0.8rem' }}>Photo coming soon</span>
+                      <span className="material-symbols-outlined" style={{ fontSize: 28, color: 'var(--color-accent)' }}>
+                        person
+                      </span>
+                      <span style={{ fontSize: '0.8rem' }}>Photo coming soon</span>
                     </div>
                   )}
                 </div>

@@ -14,50 +14,70 @@ export function SiteHeader({
 }) {
   const isHome = currentSlug === 'home' || currentSlug === '';
   const homeHref = hrefForPage(currentSlug, 'home');
+  const phone = contact.phone?.trim();
 
   return (
-    <header className="nabhi-site-header">
-      <a href={homeHref} className="nabhi-site-brand">
-        {hospitalName}
-      </a>
-      <nav className="nabhi-site-nav nabhi-site-nav-desktop" aria-label="Primary">
-        {pages.map((p) => {
-          const active = p.slug === currentSlug || (p.slug === 'home' && isHome);
-          return (
-            <a
-              key={p.slug}
-              href={hrefForPage(currentSlug, p.slug)}
-              className={active ? 'nabhi-nav-link nabhi-nav-link-active' : 'nabhi-nav-link'}
-            >
-              {p.label}
-            </a>
-          );
-        })}
-        {contact.phone ? (
-          <a href={telHref(contact.phone)} className="nabhi-nav-phone">
-            {contact.phone}
+    <div className="nabhi-chrome-top">
+      {phone ? (
+        <div className="nabhi-emergency-bar">
+          <span className="nabhi-emergency-left">
+            <span className="material-symbols-outlined" aria-hidden>
+              emergency
+            </span>
+            Emergency: {phone}
+          </span>
+          <a href={telHref(phone)} className="nabhi-emergency-right">
+            <span className="material-symbols-outlined" aria-hidden>
+              call
+            </span>
+            Call now
           </a>
-        ) : null}
-      </nav>
-      <details className="nabhi-menu">
-        <summary className="nabhi-menu-btn">Menu</summary>
-        <nav className="nabhi-site-nav-mobile" aria-label="Mobile">
-          {pages.map((p) => (
-            <a key={p.slug} href={hrefForPage(currentSlug, p.slug)} className="nabhi-nav-link">
-              {p.label}
-            </a>
-          ))}
-          {contact.phone ? (
-            <a href={telHref(contact.phone)} className="nabhi-nav-phone">
-              Call {contact.phone}
+        </div>
+      ) : null}
+
+      <header className="nabhi-site-header">
+        <a href={homeHref} className="nabhi-site-brand">
+          {hospitalName}
+        </a>
+        <nav className="nabhi-site-nav nabhi-site-nav-desktop" aria-label="Primary">
+          {pages.map((p) => {
+            const active = p.slug === currentSlug || (p.slug === 'home' && isHome);
+            return (
+              <a
+                key={p.slug}
+                href={hrefForPage(currentSlug, p.slug)}
+                className={active ? 'nabhi-nav-link nabhi-nav-link-active' : 'nabhi-nav-link'}
+              >
+                {p.label}
+              </a>
+            );
+          })}
+          {phone ? (
+            <a href={telHref(phone)} className="nabhi-nav-cta nabhi-btn">
+              Call Now
             </a>
           ) : null}
-          <a href={isHome ? 'privacy/' : '../privacy/'} className="nabhi-nav-link">
-            Privacy
-          </a>
         </nav>
-      </details>
-    </header>
+        <details className="nabhi-menu">
+          <summary className="nabhi-menu-btn">Menu</summary>
+          <nav className="nabhi-site-nav-mobile" aria-label="Mobile">
+            {pages.map((p) => (
+              <a key={p.slug} href={hrefForPage(currentSlug, p.slug)} className="nabhi-nav-link">
+                {p.label}
+              </a>
+            ))}
+            {phone ? (
+              <a href={telHref(phone)} className="nabhi-nav-cta">
+                Call Now
+              </a>
+            ) : null}
+            <a href={isHome ? 'privacy/' : '../privacy/'} className="nabhi-nav-link">
+              Privacy
+            </a>
+          </nav>
+        </details>
+      </header>
+    </div>
   );
 }
 
@@ -120,7 +140,15 @@ export function SiteFooter({
         </div>
       </div>
       <div className="nabhi-footer-bottom">
-        © {year} {hospitalName}. All rights reserved.
+        <span>
+          © {year} {hospitalName}. All rights reserved.
+        </span>
+        <span className="nabhi-footer-credit">
+          Website by{' '}
+          <a href="https://nabhilabs.info" target="_blank" rel="noreferrer">
+            Nabhi Labs
+          </a>
+        </span>
       </div>
     </footer>
   );

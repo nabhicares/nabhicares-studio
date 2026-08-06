@@ -1,18 +1,18 @@
 import type { LayoutProps } from '../types';
 import {
-  accentBarStyle,
   bodyStyle,
+  cardStyle,
   imageTreatmentStyle,
   kickerStyle,
   mutedStyle,
-  placeholderGradient,
   sectionBaseStyle,
   titleStyle,
   wideContainerStyle,
 } from '../styles';
 import { normalizeAbout } from '../content';
+import { IconBadge, resolveServiceIcon } from '../icons';
 
-/** Text + image; highlights as accent rows, not card clutter */
+/** Text + image; highlight cards with icons */
 export function Layout01({ content }: LayoutProps) {
   const c = normalizeAbout(content);
   return (
@@ -31,10 +31,29 @@ export function Layout01({ content }: LayoutProps) {
           <h2 style={titleStyle}>{c.title}</h2>
           <p style={bodyStyle}>{c.body}</p>
           {c.highlights?.length ? (
-            <ul style={{ listStyle: 'none', padding: 0, margin: '1.5rem 0 0', display: 'grid', gap: '1rem' }}>
+            <ul
+              style={{
+                listStyle: 'none',
+                padding: 0,
+                margin: '1.5rem 0 0',
+                display: 'grid',
+                gap: '0.85rem',
+              }}
+            >
               {c.highlights.map((h) => (
-                <li key={h.label} style={{ display: 'flex', gap: '0.9rem', alignItems: 'flex-start' }}>
-                  <span style={{ ...accentBarStyle, alignSelf: 'stretch', minHeight: 40 }} />
+                <li
+                  key={h.label}
+                  style={{
+                    ...cardStyle,
+                    display: 'flex',
+                    gap: '0.9rem',
+                    alignItems: 'flex-start',
+                    background: 'var(--color-bg)',
+                    border: '1px solid color-mix(in srgb, var(--color-fg) 12%, transparent)',
+                    boxShadow: '0 4px 16px color-mix(in srgb, var(--color-fg) 5%, transparent)',
+                  }}
+                >
+                  <IconBadge name={resolveServiceIcon(h.label)} size={42} />
                   <div>
                     <strong
                       style={{
@@ -61,7 +80,12 @@ export function Layout01({ content }: LayoutProps) {
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
           ) : (
-            <div style={{ width: '100%', height: '100%', minHeight: 280, background: placeholderGradient }} />
+            <div className="nabhi-empty-media" style={{ minHeight: 280 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 36, color: 'var(--color-accent)' }}>
+                image
+              </span>
+              <span>Add a hospital photo in Studio</span>
+            </div>
           )}
         </div>
       </div>
