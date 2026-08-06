@@ -4,6 +4,11 @@ import { apiFetch } from '@/lib/api-client';
 
 import { useEffect, useState } from 'react';
 import { DEFAULT_DESIGN_TOKENS, type DesignTokens } from '@nabhicares/section-registry';
+import {
+  FAVICON_PRESETS,
+  isFaviconPresetId,
+  type FaviconPresetId,
+} from '@nabhicares/section-registry';
 
 const SWATCHES: { key: keyof DesignTokens['colors']; label: string; fallback: string }[] = [
   { key: 'accent', label: 'Accent', fallback: '#1F7A6C' },
@@ -12,6 +17,18 @@ const SWATCHES: { key: keyof DesignTokens['colors']; label: string; fallback: st
   { key: 'muted', label: 'Muted', fallback: '#5C6B67' },
   { key: 'surface', label: 'Surface', fallback: '#E4E8E5' },
 ];
+
+function normalizeTokens(raw: DesignTokens): DesignTokens {
+  return {
+    ...DEFAULT_DESIGN_TOKENS,
+    ...raw,
+    colors: { ...DEFAULT_DESIGN_TOKENS.colors, ...raw.colors },
+    typography: { ...DEFAULT_DESIGN_TOKENS.typography, ...raw.typography },
+    spacing: { ...DEFAULT_DESIGN_TOKENS.spacing, ...raw.spacing },
+    radii: { ...DEFAULT_DESIGN_TOKENS.radii, ...raw.radii },
+    favicon: isFaviconPresetId(raw.favicon) ? raw.favicon : DEFAULT_DESIGN_TOKENS.favicon,
+  };
+}
 
 /** Hospital-level design tokens — shown when Design rail is active. */
 export function DesignPanel({
@@ -30,7 +47,7 @@ export function DesignPanel({
       const res = await apiFetch(`/api/hospitals/${hospitalId}/design`);
       const data = await res.json();
       if (data.tokens) {
-        const next = data.tokens as DesignTokens;
+        const next = normalizeTokens(data.tokens as DesignTokens);
         setTokens(next);
         onTokensChange?.(next);
       }
@@ -179,6 +196,58 @@ export function DesignPanel({
               })
             }
           />
+        </div>
+      </div>
+
+      <div className="h-px bg-outline-variant" />
+
+      <div className="space-y-md">
+        <label className="font-inter text-label-md text-on-surface-variant">
+          Favicon
+        </label>
+        <p className="font-inter text-label-sm text-outline">
+          Browser tab icon. Default uses the hospital’s first letter.
+        </p>
+        <div className="grid grid-cols-1 gap-xs">
+          {FAVICON_PRESETS.map((preset) => {
+            const active = tokens.favicon === preset.id;
+            return (
+              <button
+                key={preset.id}
+                type="button"
+                className={`flex items-start gap-sm rounded-lg border px-sm py-sm text-left transition-colors ${
+                  active
+                    ? 'border-primary bg-primary-container/50'
+                    : 'border-outline-variant hover:bg-surface-container'
+                }`}
+                onClick={() =>
+                  update({ ...tokens, favicon: preset.id as FaviconPresetId })
+                }
+              >
+                <span
+                  className={`mt-0.5 material-symbols-outlined text-[20px] ${
+                    active ? 'text-primary' : 'text-outline'
+                  }`}
+                >
+                  {preset.id === 'initial'
+                    ? 'title'
+                    : preset.id === 'cross'
+                      ? 'medical_services'
+                      : preset.id === 'heart'
+                        ? 'favorite'
+                        : preset.id === 'pulse'
+                          ? 'monitor_heart'
+                          : 'apartment'}
+                </span>
+                <span className="min-w-0">
+                  <span className="font-inter text-label-md font-semibold text-on-surface block">
+                    {preset.label}
+                  </span>
+                  <span className="font-inter text-label-sm text-outline">{preset.hint}</span>
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
 

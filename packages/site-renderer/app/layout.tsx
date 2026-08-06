@@ -8,9 +8,13 @@ export function generateMetadata() {
   const description =
     site.seoDescription?.trim() ||
     `${site.hospitalName} — hospital website published with Nabhi Studio`;
+  const base = process.env.SITE_BASE_PATH?.replace(/\/$/, '') || '';
   return {
     title,
     description,
+    icons: {
+      icon: [{ url: `${base}/favicon.svg`, type: 'image/svg+xml' }],
+    },
     openGraph: {
       title,
       description,

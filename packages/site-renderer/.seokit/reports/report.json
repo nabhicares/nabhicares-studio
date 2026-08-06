@@ -1,0 +1,2507 @@
+{
+  "schemaVersion": "3.0.0",
+  "id": "report_1786005449049_x192ij3",
+  "metadata": {
+    "timestamp": "2026-08-06T08:37:29.049Z",
+    "durationMs": 1500,
+    "engineVersion": "3.0.0",
+    "pagesCount": 1,
+    "execution": {
+      "durationMs": 1500,
+      "provider": "StaticProvider",
+      "framework": "Vanilla",
+      "pluginVersions": {
+        "@seokit/core": "3.0.0"
+      },
+      "environment": {
+        "NODE_ENV": "test"
+      }
+    }
+  },
+  "summary": {
+    "score": 53,
+    "errors": 0,
+    "warnings": 0,
+    "info": 104
+  },
+  "evidences": [
+    {
+      "ruleId": "seo.metadata.exists",
+      "passed": true,
+      "severity": "info",
+      "output": "Page metadata tags verified successfully.",
+      "source": "metadata-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.canonical.exists",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing canonical URL link tag",
+      "source": "canonical-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.opengraph.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Open Graph meta tags: og:image",
+      "source": "opengraph-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.twitter.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All essential Twitter Cards meta tags are present.",
+      "source": "twitter-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "Successfully validated 1 JSON-LD blocks.",
+      "source": "schema-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.robots.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing robots.txt content",
+      "source": "robots-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.sitemap.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing sitemap.xml content",
+      "source": "sitemap-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.lighthouse.score",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"lighthouse\":{\"performance\":90,\"accessibility\":95,\"bestPractices\":95,\"seo\":95}}",
+      "source": "lighthouse-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.webvitals.lcp",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"webVitals\":{\"lcp\":1.5,\"cls\":0.02,\"inp\":100}}",
+      "source": "webvitals-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.bundle.size",
+      "passed": true,
+      "severity": "info",
+      "output": "Script tags count (5) is within target limit (8).",
+      "source": "bundle-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.images.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "All images are properly sized, lazy-loaded, and use modern formats.",
+      "source": "image-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.fonts.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.",
+      "source": "font-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.resources.renderblocking",
+      "passed": false,
+      "severity": "info",
+      "output": "Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.",
+      "source": "renderblocking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.compression.caching",
+      "passed": false,
+      "severity": "info",
+      "output": "Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined",
+      "source": "compression-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.wcag.lang",
+      "passed": true,
+      "severity": "info",
+      "output": "HTML lang attribute verified: \"en\".",
+      "source": "wcag-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.roles",
+      "passed": true,
+      "severity": "info",
+      "output": "ARIA role configurations verified successfully.",
+      "source": "aria-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.semantic.structure",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing semantic structural HTML elements: <header>, <main>, <footer>.",
+      "source": "semantic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.heading.hierarchy",
+      "passed": true,
+      "severity": "info",
+      "output": "Heading element flow conforms to strict semantic hierarchy requirements.",
+      "source": "heading-hierarchy-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.form.labels",
+      "passed": true,
+      "severity": "info",
+      "output": "All form controls are correctly bound to accessible text labels.",
+      "source": "accessibility-form-labels-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.images.alt",
+      "passed": true,
+      "severity": "info",
+      "output": "Image elements feature valid alternative text attributes.",
+      "source": "image-alt-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.interactive",
+      "passed": true,
+      "severity": "info",
+      "output": "All custom interactive element ARIA and focus configurations are valid.",
+      "source": "accessibility-aria-interactive-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.content.structure",
+      "passed": true,
+      "severity": "info",
+      "output": "Paragraph boundaries and structure meet layout recommendations.",
+      "source": "aeo-structure-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.headings.questions",
+      "passed": false,
+      "severity": "info",
+      "output": "Answer Engine target: headings should align directly with user query terms.",
+      "source": "aeo-headings-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.faq.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "FAQ Schema check failed: No FAQPage JSON-LD schemas detected.",
+      "source": "aeo-faq-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.entity.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Entity density verified successfully (score: 100, ratio: 3.8).",
+      "source": "aeo-entity-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.chunking.suitability",
+      "passed": false,
+      "severity": "info",
+      "output": "AEO chunking check: 1 of 2 chunks are not suitable as standalone answers.",
+      "source": "aeo-chunking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.extractability.wordcount",
+      "passed": false,
+      "severity": "info",
+      "output": "AEO target: page word count is only 151 words (threshold: 200 words).",
+      "source": "aeo-extractability-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.org.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing valid Organization JSON-LD block.",
+      "source": "geo-org-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.author.attribution",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Page is missing explicit author attribution signals.",
+      "source": "geo-author-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.citation.markup",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing outbound citation hyperlinks.",
+      "source": "geo-citation-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.geographic.address",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured geographic location signals.",
+      "source": "geo-geographic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.knowledge.sameas",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured sameAs links mapping entities to official KG records.",
+      "source": "geo-knowledge-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.provenance.dates",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured date metadata signals.",
+      "source": "geo-provenance-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.statistics.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Statistics density validated successfully (found 27 numerical claims).",
+      "source": "geo-statistics-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.quotes.authority",
+      "passed": true,
+      "severity": "info",
+      "output": "Authoritative quotation and testimonial references verified.",
+      "source": "geo-quotes-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "security.headers.csp",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.",
+      "source": "security-headers-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "structured.data.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All JSON-LD structured data blocks are valid.",
+      "source": "structured-data-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.metadata.exists",
+      "passed": true,
+      "severity": "info",
+      "output": "Page metadata tags verified successfully.",
+      "source": "metadata-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.canonical.exists",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing canonical URL link tag",
+      "source": "canonical-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.opengraph.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Open Graph meta tags: og:image",
+      "source": "opengraph-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.twitter.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All essential Twitter Cards meta tags are present.",
+      "source": "twitter-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "Successfully validated 1 JSON-LD blocks.",
+      "source": "schema-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.robots.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing robots.txt content",
+      "source": "robots-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.sitemap.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing sitemap.xml content",
+      "source": "sitemap-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.lighthouse.score",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"lighthouse\":{\"performance\":90,\"accessibility\":95,\"bestPractices\":95,\"seo\":95}}",
+      "source": "lighthouse-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.webvitals.lcp",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"webVitals\":{\"lcp\":1.5,\"cls\":0.02,\"inp\":100}}",
+      "source": "webvitals-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.bundle.size",
+      "passed": true,
+      "severity": "info",
+      "output": "Script tags count (5) is within target limit (8).",
+      "source": "bundle-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.images.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "All images are properly sized, lazy-loaded, and use modern formats.",
+      "source": "image-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.fonts.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.",
+      "source": "font-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.resources.renderblocking",
+      "passed": false,
+      "severity": "info",
+      "output": "Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.",
+      "source": "renderblocking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.compression.caching",
+      "passed": false,
+      "severity": "info",
+      "output": "Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined",
+      "source": "compression-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.wcag.lang",
+      "passed": true,
+      "severity": "info",
+      "output": "HTML lang attribute verified: \"en\".",
+      "source": "wcag-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.roles",
+      "passed": true,
+      "severity": "info",
+      "output": "ARIA role configurations verified successfully.",
+      "source": "aria-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.semantic.structure",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing semantic structural HTML elements: <header>, <main>, <footer>.",
+      "source": "semantic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.heading.hierarchy",
+      "passed": true,
+      "severity": "info",
+      "output": "Heading element flow conforms to strict semantic hierarchy requirements.",
+      "source": "heading-hierarchy-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.form.labels",
+      "passed": true,
+      "severity": "info",
+      "output": "All form controls are correctly bound to accessible text labels.",
+      "source": "accessibility-form-labels-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.images.alt",
+      "passed": true,
+      "severity": "info",
+      "output": "Image elements feature valid alternative text attributes.",
+      "source": "image-alt-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.interactive",
+      "passed": true,
+      "severity": "info",
+      "output": "All custom interactive element ARIA and focus configurations are valid.",
+      "source": "accessibility-aria-interactive-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.content.structure",
+      "passed": true,
+      "severity": "info",
+      "output": "Paragraph boundaries and structure meet layout recommendations.",
+      "source": "aeo-structure-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.headings.questions",
+      "passed": false,
+      "severity": "info",
+      "output": "Answer Engine target: headings should align directly with user query terms.",
+      "source": "aeo-headings-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.faq.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "FAQ Schema check failed: No FAQPage JSON-LD schemas detected.",
+      "source": "aeo-faq-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.entity.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Entity density verified successfully (score: 100, ratio: 3.8).",
+      "source": "aeo-entity-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.chunking.suitability",
+      "passed": false,
+      "severity": "info",
+      "output": "AEO chunking check: 1 of 2 chunks are not suitable as standalone answers.",
+      "source": "aeo-chunking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.extractability.wordcount",
+      "passed": false,
+      "severity": "info",
+      "output": "AEO target: page word count is only 151 words (threshold: 200 words).",
+      "source": "aeo-extractability-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.org.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing valid Organization JSON-LD block.",
+      "source": "geo-org-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.author.attribution",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Page is missing explicit author attribution signals.",
+      "source": "geo-author-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.citation.markup",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing outbound citation hyperlinks.",
+      "source": "geo-citation-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.geographic.address",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured geographic location signals.",
+      "source": "geo-geographic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.knowledge.sameas",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured sameAs links mapping entities to official KG records.",
+      "source": "geo-knowledge-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.provenance.dates",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured date metadata signals.",
+      "source": "geo-provenance-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.statistics.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Statistics density validated successfully (found 27 numerical claims).",
+      "source": "geo-statistics-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.quotes.authority",
+      "passed": true,
+      "severity": "info",
+      "output": "Authoritative quotation and testimonial references verified.",
+      "source": "geo-quotes-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "security.headers.csp",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.",
+      "source": "security-headers-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "structured.data.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All JSON-LD structured data blocks are valid.",
+      "source": "structured-data-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.metadata.exists",
+      "passed": true,
+      "severity": "info",
+      "output": "Page metadata tags verified successfully.",
+      "source": "metadata-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.canonical.exists",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing canonical URL link tag",
+      "source": "canonical-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.opengraph.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Open Graph meta tags: og:image",
+      "source": "opengraph-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.twitter.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All essential Twitter Cards meta tags are present.",
+      "source": "twitter-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "Successfully validated 1 JSON-LD blocks.",
+      "source": "schema-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.robots.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing robots.txt content",
+      "source": "robots-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.sitemap.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing sitemap.xml content",
+      "source": "sitemap-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.lighthouse.score",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"lighthouse\":{\"performance\":90,\"accessibility\":95,\"bestPractices\":95,\"seo\":95}}",
+      "source": "lighthouse-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.webvitals.lcp",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"webVitals\":{\"lcp\":1.5,\"cls\":0.02,\"inp\":100}}",
+      "source": "webvitals-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.bundle.size",
+      "passed": true,
+      "severity": "info",
+      "output": "Script tags count (5) is within target limit (8).",
+      "source": "bundle-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.images.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "All images are properly sized, lazy-loaded, and use modern formats.",
+      "source": "image-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.fonts.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.",
+      "source": "font-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.resources.renderblocking",
+      "passed": false,
+      "severity": "info",
+      "output": "Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.",
+      "source": "renderblocking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.compression.caching",
+      "passed": false,
+      "severity": "info",
+      "output": "Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined",
+      "source": "compression-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.wcag.lang",
+      "passed": true,
+      "severity": "info",
+      "output": "HTML lang attribute verified: \"en\".",
+      "source": "wcag-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.roles",
+      "passed": true,
+      "severity": "info",
+      "output": "ARIA role configurations verified successfully.",
+      "source": "aria-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.semantic.structure",
+      "passed": true,
+      "severity": "info",
+      "output": "Page contains valid semantic block structural containers.",
+      "source": "semantic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.heading.hierarchy",
+      "passed": true,
+      "severity": "info",
+      "output": "Heading element flow conforms to strict semantic hierarchy requirements.",
+      "source": "heading-hierarchy-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.form.labels",
+      "passed": true,
+      "severity": "info",
+      "output": "All form controls are correctly bound to accessible text labels.",
+      "source": "accessibility-form-labels-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.images.alt",
+      "passed": true,
+      "severity": "info",
+      "output": "Image elements feature valid alternative text attributes.",
+      "source": "image-alt-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.interactive",
+      "passed": true,
+      "severity": "info",
+      "output": "All custom interactive element ARIA and focus configurations are valid.",
+      "source": "accessibility-aria-interactive-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.content.structure",
+      "passed": true,
+      "severity": "info",
+      "output": "Paragraph boundaries and structure meet layout recommendations.",
+      "source": "aeo-structure-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.headings.questions",
+      "passed": false,
+      "severity": "info",
+      "output": "Answer Engine target: headings should align directly with user query terms.",
+      "source": "aeo-headings-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.faq.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "FAQ Schema check failed: No FAQPage JSON-LD schemas detected.",
+      "source": "aeo-faq-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.entity.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Entity density verified successfully (score: 100, ratio: 7).",
+      "source": "aeo-entity-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.chunking.suitability",
+      "passed": false,
+      "severity": "info",
+      "output": "AEO chunking check: 1 of 2 chunks are not suitable as standalone answers.",
+      "source": "aeo-chunking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.extractability.wordcount",
+      "passed": false,
+      "severity": "info",
+      "output": "AEO target: page word count is only 190 words (threshold: 200 words).",
+      "source": "aeo-extractability-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.org.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing valid Organization JSON-LD block.",
+      "source": "geo-org-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.author.attribution",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Page is missing explicit author attribution signals.",
+      "source": "geo-author-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.citation.markup",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing outbound citation hyperlinks.",
+      "source": "geo-citation-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.geographic.address",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured geographic location signals.",
+      "source": "geo-geographic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.knowledge.sameas",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured sameAs links mapping entities to official KG records.",
+      "source": "geo-knowledge-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.provenance.dates",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured date metadata signals.",
+      "source": "geo-provenance-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.statistics.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Statistics density validated successfully (found 34 numerical claims).",
+      "source": "geo-statistics-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.quotes.authority",
+      "passed": true,
+      "severity": "info",
+      "output": "Authoritative quotation and testimonial references verified.",
+      "source": "geo-quotes-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "security.headers.csp",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.",
+      "source": "security-headers-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "structured.data.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All JSON-LD structured data blocks are valid.",
+      "source": "structured-data-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.metadata.exists",
+      "passed": true,
+      "severity": "info",
+      "output": "Page metadata tags verified successfully.",
+      "source": "metadata-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.canonical.exists",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing canonical URL link tag",
+      "source": "canonical-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.opengraph.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Open Graph meta tags: og:image",
+      "source": "opengraph-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.twitter.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All essential Twitter Cards meta tags are present.",
+      "source": "twitter-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "Successfully validated 1 JSON-LD blocks.",
+      "source": "schema-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.robots.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing robots.txt content",
+      "source": "robots-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.sitemap.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing sitemap.xml content",
+      "source": "sitemap-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.lighthouse.score",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"lighthouse\":{\"performance\":90,\"accessibility\":95,\"bestPractices\":95,\"seo\":95}}",
+      "source": "lighthouse-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.webvitals.lcp",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"webVitals\":{\"lcp\":1.5,\"cls\":0.02,\"inp\":100}}",
+      "source": "webvitals-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.bundle.size",
+      "passed": true,
+      "severity": "info",
+      "output": "Script tags count (5) is within target limit (8).",
+      "source": "bundle-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.images.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "All images are properly sized, lazy-loaded, and use modern formats.",
+      "source": "image-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.fonts.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.",
+      "source": "font-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.resources.renderblocking",
+      "passed": false,
+      "severity": "info",
+      "output": "Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.",
+      "source": "renderblocking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.compression.caching",
+      "passed": false,
+      "severity": "info",
+      "output": "Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined",
+      "source": "compression-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.wcag.lang",
+      "passed": true,
+      "severity": "info",
+      "output": "HTML lang attribute verified: \"en\".",
+      "source": "wcag-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.roles",
+      "passed": true,
+      "severity": "info",
+      "output": "ARIA role configurations verified successfully.",
+      "source": "aria-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.semantic.structure",
+      "passed": true,
+      "severity": "info",
+      "output": "Page contains valid semantic block structural containers.",
+      "source": "semantic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.heading.hierarchy",
+      "passed": true,
+      "severity": "info",
+      "output": "Heading element flow conforms to strict semantic hierarchy requirements.",
+      "source": "heading-hierarchy-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.form.labels",
+      "passed": true,
+      "severity": "info",
+      "output": "All form controls are correctly bound to accessible text labels.",
+      "source": "accessibility-form-labels-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.images.alt",
+      "passed": true,
+      "severity": "info",
+      "output": "Image elements feature valid alternative text attributes.",
+      "source": "image-alt-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.interactive",
+      "passed": true,
+      "severity": "info",
+      "output": "All custom interactive element ARIA and focus configurations are valid.",
+      "source": "accessibility-aria-interactive-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.content.structure",
+      "passed": true,
+      "severity": "info",
+      "output": "Paragraph boundaries and structure meet layout recommendations.",
+      "source": "aeo-structure-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.headings.questions",
+      "passed": false,
+      "severity": "info",
+      "output": "Answer Engine target: headings should align directly with user query terms.",
+      "source": "aeo-headings-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.faq.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "FAQ Schema check failed: No FAQPage JSON-LD schemas detected.",
+      "source": "aeo-faq-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.entity.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Entity density verified successfully (score: 100, ratio: 7.67).",
+      "source": "aeo-entity-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.chunking.suitability",
+      "passed": false,
+      "severity": "info",
+      "output": "AEO chunking check: 2 of 3 chunks are not suitable as standalone answers.",
+      "source": "aeo-chunking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.extractability.wordcount",
+      "passed": false,
+      "severity": "info",
+      "output": "AEO target: page word count is only 170 words (threshold: 200 words).",
+      "source": "aeo-extractability-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.org.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing valid Organization JSON-LD block.",
+      "source": "geo-org-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.author.attribution",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Page is missing explicit author attribution signals.",
+      "source": "geo-author-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.citation.markup",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing outbound citation hyperlinks.",
+      "source": "geo-citation-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.geographic.address",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured geographic location signals.",
+      "source": "geo-geographic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.knowledge.sameas",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured sameAs links mapping entities to official KG records.",
+      "source": "geo-knowledge-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.provenance.dates",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured date metadata signals.",
+      "source": "geo-provenance-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.statistics.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Statistics density validated successfully (found 37 numerical claims).",
+      "source": "geo-statistics-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.quotes.authority",
+      "passed": true,
+      "severity": "info",
+      "output": "Authoritative quotation and testimonial references verified.",
+      "source": "geo-quotes-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "security.headers.csp",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.",
+      "source": "security-headers-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "structured.data.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All JSON-LD structured data blocks are valid.",
+      "source": "structured-data-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.metadata.exists",
+      "passed": true,
+      "severity": "info",
+      "output": "Page metadata tags verified successfully.",
+      "source": "metadata-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.canonical.exists",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing canonical URL link tag",
+      "source": "canonical-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.opengraph.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Open Graph meta tags: og:image",
+      "source": "opengraph-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.twitter.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All essential Twitter Cards meta tags are present.",
+      "source": "twitter-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "Successfully validated 1 JSON-LD blocks.",
+      "source": "schema-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.robots.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing robots.txt content",
+      "source": "robots-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.sitemap.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing sitemap.xml content",
+      "source": "sitemap-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.lighthouse.score",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"lighthouse\":{\"performance\":90,\"accessibility\":95,\"bestPractices\":95,\"seo\":95}}",
+      "source": "lighthouse-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.webvitals.lcp",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"webVitals\":{\"lcp\":1.5,\"cls\":0.02,\"inp\":100}}",
+      "source": "webvitals-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.bundle.size",
+      "passed": true,
+      "severity": "info",
+      "output": "Script tags count (5) is within target limit (8).",
+      "source": "bundle-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.images.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "All images are properly sized, lazy-loaded, and use modern formats.",
+      "source": "image-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.fonts.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.",
+      "source": "font-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.resources.renderblocking",
+      "passed": false,
+      "severity": "info",
+      "output": "Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.",
+      "source": "renderblocking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.compression.caching",
+      "passed": false,
+      "severity": "info",
+      "output": "Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined",
+      "source": "compression-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.wcag.lang",
+      "passed": true,
+      "severity": "info",
+      "output": "HTML lang attribute verified: \"en\".",
+      "source": "wcag-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.roles",
+      "passed": true,
+      "severity": "info",
+      "output": "ARIA role configurations verified successfully.",
+      "source": "aria-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.semantic.structure",
+      "passed": true,
+      "severity": "info",
+      "output": "Page contains valid semantic block structural containers.",
+      "source": "semantic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.heading.hierarchy",
+      "passed": false,
+      "severity": "info",
+      "output": "Heading hierarchy issues: Multiple (2) H1 heading tags found.",
+      "source": "heading-hierarchy-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.form.labels",
+      "passed": true,
+      "severity": "info",
+      "output": "All form controls are correctly bound to accessible text labels.",
+      "source": "accessibility-form-labels-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.images.alt",
+      "passed": true,
+      "severity": "info",
+      "output": "Image elements feature valid alternative text attributes.",
+      "source": "image-alt-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.interactive",
+      "passed": true,
+      "severity": "info",
+      "output": "All custom interactive element ARIA and focus configurations are valid.",
+      "source": "accessibility-aria-interactive-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.content.structure",
+      "passed": true,
+      "severity": "info",
+      "output": "Paragraph boundaries and structure meet layout recommendations.",
+      "source": "aeo-structure-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.headings.questions",
+      "passed": false,
+      "severity": "info",
+      "output": "Answer Engine target: headings should align directly with user query terms.",
+      "source": "aeo-headings-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.faq.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "FAQ Schema check failed: No FAQPage JSON-LD schemas detected.",
+      "source": "aeo-faq-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.entity.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Entity density verified successfully (score: 100, ratio: 5).",
+      "source": "aeo-entity-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.chunking.suitability",
+      "passed": false,
+      "severity": "info",
+      "output": "AEO chunking check: 6 of 7 chunks are not suitable as standalone answers.",
+      "source": "aeo-chunking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.extractability.wordcount",
+      "passed": true,
+      "severity": "info",
+      "output": "Page word count verified (288 words).",
+      "source": "aeo-extractability-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.org.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing valid Organization JSON-LD block.",
+      "source": "geo-org-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.author.attribution",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Page is missing explicit author attribution signals.",
+      "source": "geo-author-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.citation.markup",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing outbound citation hyperlinks.",
+      "source": "geo-citation-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.geographic.address",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured geographic location signals.",
+      "source": "geo-geographic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.knowledge.sameas",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured sameAs links mapping entities to official KG records.",
+      "source": "geo-knowledge-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.provenance.dates",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured date metadata signals.",
+      "source": "geo-provenance-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.statistics.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Statistics density validated successfully (found 48 numerical claims).",
+      "source": "geo-statistics-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.quotes.authority",
+      "passed": true,
+      "severity": "info",
+      "output": "Authoritative quotation and testimonial references verified.",
+      "source": "geo-quotes-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "security.headers.csp",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.",
+      "source": "security-headers-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "structured.data.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All JSON-LD structured data blocks are valid.",
+      "source": "structured-data-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.metadata.exists",
+      "passed": true,
+      "severity": "info",
+      "output": "Page metadata tags verified successfully.",
+      "source": "metadata-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.canonical.exists",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing canonical URL link tag",
+      "source": "canonical-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.opengraph.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Open Graph meta tags: og:image",
+      "source": "opengraph-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.twitter.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All essential Twitter Cards meta tags are present.",
+      "source": "twitter-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "Successfully validated 1 JSON-LD blocks.",
+      "source": "schema-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.robots.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing robots.txt content",
+      "source": "robots-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "seo.sitemap.valid",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing sitemap.xml content",
+      "source": "sitemap-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.lighthouse.score",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"lighthouse\":{\"performance\":90,\"accessibility\":95,\"bestPractices\":95,\"seo\":95}}",
+      "source": "lighthouse-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.webvitals.lcp",
+      "passed": true,
+      "severity": "info",
+      "output": "{\"webVitals\":{\"lcp\":1.5,\"cls\":0.02,\"inp\":100}}",
+      "source": "webvitals-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.bundle.size",
+      "passed": true,
+      "severity": "info",
+      "output": "Script tags count (7) is within target limit (8).",
+      "source": "bundle-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.images.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "All images are properly sized, lazy-loaded, and use modern formats.",
+      "source": "image-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.fonts.optimized",
+      "passed": true,
+      "severity": "info",
+      "output": "Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.",
+      "source": "font-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.resources.renderblocking",
+      "passed": false,
+      "severity": "info",
+      "output": "Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.",
+      "source": "renderblocking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "performance.compression.caching",
+      "passed": false,
+      "severity": "info",
+      "output": "Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined",
+      "source": "compression-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.wcag.lang",
+      "passed": true,
+      "severity": "info",
+      "output": "HTML lang attribute verified: \"en\".",
+      "source": "wcag-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.roles",
+      "passed": true,
+      "severity": "info",
+      "output": "ARIA role configurations verified successfully.",
+      "source": "aria-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.semantic.structure",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing semantic structural HTML elements: <header>, <footer>.",
+      "source": "semantic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.heading.hierarchy",
+      "passed": true,
+      "severity": "info",
+      "output": "Heading element flow conforms to strict semantic hierarchy requirements.",
+      "source": "heading-hierarchy-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.form.labels",
+      "passed": true,
+      "severity": "info",
+      "output": "All form controls are correctly bound to accessible text labels.",
+      "source": "accessibility-form-labels-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.images.alt",
+      "passed": true,
+      "severity": "info",
+      "output": "Image elements feature valid alternative text attributes.",
+      "source": "image-alt-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "accessibility.aria.interactive",
+      "passed": true,
+      "severity": "info",
+      "output": "All custom interactive element ARIA and focus configurations are valid.",
+      "source": "accessibility-aria-interactive-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.content.structure",
+      "passed": true,
+      "severity": "info",
+      "output": "Paragraph boundaries and structure meet layout recommendations.",
+      "source": "aeo-structure-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.headings.questions",
+      "passed": false,
+      "severity": "info",
+      "output": "Answer Engine target: headings should align directly with user query terms.",
+      "source": "aeo-headings-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.faq.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "FAQ Schema check failed: No FAQPage JSON-LD schemas detected.",
+      "source": "aeo-faq-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.entity.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Entity density verified successfully (score: 70, ratio: 0.96).",
+      "source": "aeo-entity-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.chunking.suitability",
+      "passed": false,
+      "severity": "info",
+      "output": "AEO chunking check: 4 of 4 chunks are not suitable as standalone answers.",
+      "source": "aeo-chunking-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "aeo.extractability.wordcount",
+      "passed": true,
+      "severity": "info",
+      "output": "Page word count verified (388 words).",
+      "source": "aeo-extractability-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.org.schema",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing valid Organization JSON-LD block.",
+      "source": "geo-org-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.author.attribution",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Page is missing explicit author attribution signals.",
+      "source": "geo-author-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.citation.markup",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing outbound citation hyperlinks.",
+      "source": "geo-citation-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.geographic.address",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured geographic location signals.",
+      "source": "geo-geographic-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.knowledge.sameas",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured sameAs links mapping entities to official KG records.",
+      "source": "geo-knowledge-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.provenance.dates",
+      "passed": false,
+      "severity": "info",
+      "output": "GEO check failed: Missing structured date metadata signals.",
+      "source": "geo-provenance-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.statistics.density",
+      "passed": true,
+      "severity": "info",
+      "output": "Statistics density validated successfully (found 32 numerical claims).",
+      "source": "geo-statistics-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "geo.quotes.authority",
+      "passed": true,
+      "severity": "info",
+      "output": "Authoritative quotation and testimonial references verified.",
+      "source": "geo-quotes-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "security.headers.csp",
+      "passed": false,
+      "severity": "info",
+      "output": "Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.",
+      "source": "security-headers-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    },
+    {
+      "ruleId": "structured.data.schema.valid",
+      "passed": true,
+      "severity": "info",
+      "output": "All JSON-LD structured data blocks are valid.",
+      "source": "structured-data-validator",
+      "evidenceRefs": [
+        "snap_476c6f62",
+        "head_476c6f62"
+      ]
+    }
+  ],
+  "evidenceStore": {
+    "snap_476c6f62": {
+      "id": "snap_476c6f62",
+      "timestamp": "2026-08-06T08:37:29.049Z",
+      "type": "html_snapshot",
+      "data": "<html><head><title>Audit Snap</title></head></html>"
+    },
+    "head_476c6f62": {
+      "id": "head_476c6f62",
+      "timestamp": "2026-08-06T08:37:29.049Z",
+      "type": "headers",
+      "data": {
+        "content-security-policy": "default-src 'self'"
+      }
+    }
+  },
+  "timeline": [
+    {
+      "timestamp": "2026-08-06T08:37:29.049Z",
+      "name": "CrawlStarted",
+      "message": "Verification engine crawl loop initiated."
+    },
+    {
+      "timestamp": "2026-08-06T08:37:29.049Z",
+      "name": "PageParsed",
+      "message": "Model parsed successfully across 1 targets."
+    },
+    {
+      "timestamp": "2026-08-06T08:37:29.049Z",
+      "name": "VerificationFinished",
+      "message": "Verification sweep completes.",
+      "metrics": {
+        "score": 53
+      }
+    }
+  ]
+}

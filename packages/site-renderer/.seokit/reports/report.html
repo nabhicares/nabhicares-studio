@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>SEOKit Auditing Dashboard</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f8fafc; color: #1e293b; padding: 40px; margin: 0; }
+    .card { background-color: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); padding: 32px; margin-bottom: 24px; }
+    h1 { margin-top: 0; color: #0f172a; font-size: 28px; }
+    .score-badge { font-size: 48px; font-weight: 800; color: #f59e0b; }
+    .grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat { padding: 16px; background-color: #f1f5f9; border-radius: 8px; text-align: center; }
+    .stat-val { font-size: 24px; font-weight: bold; }
+    table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+    th, td { text-align: left; padding: 12px; border-bottom: 1px solid #e2e8f0; }
+    th { background-color: #f8fafc; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>SEOKit Run Audit Dashboard (v3.0.0)</h1>
+    <p>Provider: <strong>StaticProvider</strong> | Framework: <strong>Vanilla</strong></p>
+    <div class="grid">
+      <div class="stat">
+        <div>Platform Score</div>
+        <div class="score-badge">53%</div>
+      </div>
+      <div class="stat">
+        <div>Errors</div>
+        <div class="stat-val" style="color: #ef4444">0</div>
+      </div>
+      <div class="stat">
+        <div>Warnings</div>
+        <div class="stat-val" style="color: #f59e0b">0</div>
+      </div>
+      <div class="stat">
+        <div>Pages Checked</div>
+        <div class="stat-val">1</div>
+      </div>
+    </div>
+    <h2>Evidence Details</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Status</th>
+          <th>Rule ID</th>
+          <th>File</th>
+          <th>Description</th>
+          <th>Evidence Refs</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.metadata.exists</code></td>
+            <td>Global</td>
+            <td>Page metadata tags verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.canonical.exists</code></td>
+            <td>Global</td>
+            <td>Missing canonical URL link tag</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.opengraph.valid</code></td>
+            <td>Global</td>
+            <td>Missing Open Graph meta tags: og:image</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.twitter.valid</code></td>
+            <td>Global</td>
+            <td>All essential Twitter Cards meta tags are present.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.schema.valid</code></td>
+            <td>Global</td>
+            <td>Successfully validated 1 JSON-LD blocks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.robots.valid</code></td>
+            <td>Global</td>
+            <td>Missing robots.txt content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.sitemap.valid</code></td>
+            <td>Global</td>
+            <td>Missing sitemap.xml content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.lighthouse.score</code></td>
+            <td>Global</td>
+            <td>{"lighthouse":{"performance":90,"accessibility":95,"bestPractices":95,"seo":95}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.webvitals.lcp</code></td>
+            <td>Global</td>
+            <td>{"webVitals":{"lcp":1.5,"cls":0.02,"inp":100}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.bundle.size</code></td>
+            <td>Global</td>
+            <td>Script tags count (5) is within target limit (8).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.images.optimized</code></td>
+            <td>Global</td>
+            <td>All images are properly sized, lazy-loaded, and use modern formats.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.fonts.optimized</code></td>
+            <td>Global</td>
+            <td>Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.resources.renderblocking</code></td>
+            <td>Global</td>
+            <td>Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.compression.caching</code></td>
+            <td>Global</td>
+            <td>Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.wcag.lang</code></td>
+            <td>Global</td>
+            <td>HTML lang attribute verified: "en".</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.roles</code></td>
+            <td>Global</td>
+            <td>ARIA role configurations verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>accessibility.semantic.structure</code></td>
+            <td>Global</td>
+            <td>Missing semantic structural HTML elements: <header>, <main>, <footer>.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.heading.hierarchy</code></td>
+            <td>Global</td>
+            <td>Heading element flow conforms to strict semantic hierarchy requirements.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.form.labels</code></td>
+            <td>Global</td>
+            <td>All form controls are correctly bound to accessible text labels.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.images.alt</code></td>
+            <td>Global</td>
+            <td>Image elements feature valid alternative text attributes.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.interactive</code></td>
+            <td>Global</td>
+            <td>All custom interactive element ARIA and focus configurations are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.content.structure</code></td>
+            <td>Global</td>
+            <td>Paragraph boundaries and structure meet layout recommendations.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.headings.questions</code></td>
+            <td>Global</td>
+            <td>Answer Engine target: headings should align directly with user query terms.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.faq.schema</code></td>
+            <td>Global</td>
+            <td>FAQ Schema check failed: No FAQPage JSON-LD schemas detected.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.entity.density</code></td>
+            <td>Global</td>
+            <td>Entity density verified successfully (score: 100, ratio: 3.8).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.chunking.suitability</code></td>
+            <td>Global</td>
+            <td>AEO chunking check: 1 of 2 chunks are not suitable as standalone answers.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.extractability.wordcount</code></td>
+            <td>Global</td>
+            <td>AEO target: page word count is only 151 words (threshold: 200 words).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.org.schema</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing valid Organization JSON-LD block.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.author.attribution</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Page is missing explicit author attribution signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.citation.markup</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing outbound citation hyperlinks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.geographic.address</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured geographic location signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.knowledge.sameas</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured sameAs links mapping entities to official KG records.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.provenance.dates</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured date metadata signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.statistics.density</code></td>
+            <td>Global</td>
+            <td>Statistics density validated successfully (found 27 numerical claims).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.quotes.authority</code></td>
+            <td>Global</td>
+            <td>Authoritative quotation and testimonial references verified.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>security.headers.csp</code></td>
+            <td>Global</td>
+            <td>Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>structured.data.schema.valid</code></td>
+            <td>Global</td>
+            <td>All JSON-LD structured data blocks are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.metadata.exists</code></td>
+            <td>Global</td>
+            <td>Page metadata tags verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.canonical.exists</code></td>
+            <td>Global</td>
+            <td>Missing canonical URL link tag</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.opengraph.valid</code></td>
+            <td>Global</td>
+            <td>Missing Open Graph meta tags: og:image</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.twitter.valid</code></td>
+            <td>Global</td>
+            <td>All essential Twitter Cards meta tags are present.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.schema.valid</code></td>
+            <td>Global</td>
+            <td>Successfully validated 1 JSON-LD blocks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.robots.valid</code></td>
+            <td>Global</td>
+            <td>Missing robots.txt content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.sitemap.valid</code></td>
+            <td>Global</td>
+            <td>Missing sitemap.xml content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.lighthouse.score</code></td>
+            <td>Global</td>
+            <td>{"lighthouse":{"performance":90,"accessibility":95,"bestPractices":95,"seo":95}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.webvitals.lcp</code></td>
+            <td>Global</td>
+            <td>{"webVitals":{"lcp":1.5,"cls":0.02,"inp":100}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.bundle.size</code></td>
+            <td>Global</td>
+            <td>Script tags count (5) is within target limit (8).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.images.optimized</code></td>
+            <td>Global</td>
+            <td>All images are properly sized, lazy-loaded, and use modern formats.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.fonts.optimized</code></td>
+            <td>Global</td>
+            <td>Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.resources.renderblocking</code></td>
+            <td>Global</td>
+            <td>Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.compression.caching</code></td>
+            <td>Global</td>
+            <td>Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.wcag.lang</code></td>
+            <td>Global</td>
+            <td>HTML lang attribute verified: "en".</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.roles</code></td>
+            <td>Global</td>
+            <td>ARIA role configurations verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>accessibility.semantic.structure</code></td>
+            <td>Global</td>
+            <td>Missing semantic structural HTML elements: <header>, <main>, <footer>.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.heading.hierarchy</code></td>
+            <td>Global</td>
+            <td>Heading element flow conforms to strict semantic hierarchy requirements.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.form.labels</code></td>
+            <td>Global</td>
+            <td>All form controls are correctly bound to accessible text labels.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.images.alt</code></td>
+            <td>Global</td>
+            <td>Image elements feature valid alternative text attributes.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.interactive</code></td>
+            <td>Global</td>
+            <td>All custom interactive element ARIA and focus configurations are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.content.structure</code></td>
+            <td>Global</td>
+            <td>Paragraph boundaries and structure meet layout recommendations.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.headings.questions</code></td>
+            <td>Global</td>
+            <td>Answer Engine target: headings should align directly with user query terms.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.faq.schema</code></td>
+            <td>Global</td>
+            <td>FAQ Schema check failed: No FAQPage JSON-LD schemas detected.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.entity.density</code></td>
+            <td>Global</td>
+            <td>Entity density verified successfully (score: 100, ratio: 3.8).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.chunking.suitability</code></td>
+            <td>Global</td>
+            <td>AEO chunking check: 1 of 2 chunks are not suitable as standalone answers.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.extractability.wordcount</code></td>
+            <td>Global</td>
+            <td>AEO target: page word count is only 151 words (threshold: 200 words).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.org.schema</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing valid Organization JSON-LD block.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.author.attribution</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Page is missing explicit author attribution signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.citation.markup</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing outbound citation hyperlinks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.geographic.address</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured geographic location signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.knowledge.sameas</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured sameAs links mapping entities to official KG records.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.provenance.dates</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured date metadata signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.statistics.density</code></td>
+            <td>Global</td>
+            <td>Statistics density validated successfully (found 27 numerical claims).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.quotes.authority</code></td>
+            <td>Global</td>
+            <td>Authoritative quotation and testimonial references verified.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>security.headers.csp</code></td>
+            <td>Global</td>
+            <td>Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>structured.data.schema.valid</code></td>
+            <td>Global</td>
+            <td>All JSON-LD structured data blocks are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.metadata.exists</code></td>
+            <td>Global</td>
+            <td>Page metadata tags verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.canonical.exists</code></td>
+            <td>Global</td>
+            <td>Missing canonical URL link tag</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.opengraph.valid</code></td>
+            <td>Global</td>
+            <td>Missing Open Graph meta tags: og:image</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.twitter.valid</code></td>
+            <td>Global</td>
+            <td>All essential Twitter Cards meta tags are present.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.schema.valid</code></td>
+            <td>Global</td>
+            <td>Successfully validated 1 JSON-LD blocks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.robots.valid</code></td>
+            <td>Global</td>
+            <td>Missing robots.txt content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.sitemap.valid</code></td>
+            <td>Global</td>
+            <td>Missing sitemap.xml content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.lighthouse.score</code></td>
+            <td>Global</td>
+            <td>{"lighthouse":{"performance":90,"accessibility":95,"bestPractices":95,"seo":95}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.webvitals.lcp</code></td>
+            <td>Global</td>
+            <td>{"webVitals":{"lcp":1.5,"cls":0.02,"inp":100}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.bundle.size</code></td>
+            <td>Global</td>
+            <td>Script tags count (5) is within target limit (8).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.images.optimized</code></td>
+            <td>Global</td>
+            <td>All images are properly sized, lazy-loaded, and use modern formats.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.fonts.optimized</code></td>
+            <td>Global</td>
+            <td>Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.resources.renderblocking</code></td>
+            <td>Global</td>
+            <td>Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.compression.caching</code></td>
+            <td>Global</td>
+            <td>Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.wcag.lang</code></td>
+            <td>Global</td>
+            <td>HTML lang attribute verified: "en".</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.roles</code></td>
+            <td>Global</td>
+            <td>ARIA role configurations verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.semantic.structure</code></td>
+            <td>Global</td>
+            <td>Page contains valid semantic block structural containers.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.heading.hierarchy</code></td>
+            <td>Global</td>
+            <td>Heading element flow conforms to strict semantic hierarchy requirements.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.form.labels</code></td>
+            <td>Global</td>
+            <td>All form controls are correctly bound to accessible text labels.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.images.alt</code></td>
+            <td>Global</td>
+            <td>Image elements feature valid alternative text attributes.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.interactive</code></td>
+            <td>Global</td>
+            <td>All custom interactive element ARIA and focus configurations are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.content.structure</code></td>
+            <td>Global</td>
+            <td>Paragraph boundaries and structure meet layout recommendations.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.headings.questions</code></td>
+            <td>Global</td>
+            <td>Answer Engine target: headings should align directly with user query terms.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.faq.schema</code></td>
+            <td>Global</td>
+            <td>FAQ Schema check failed: No FAQPage JSON-LD schemas detected.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.entity.density</code></td>
+            <td>Global</td>
+            <td>Entity density verified successfully (score: 100, ratio: 7).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.chunking.suitability</code></td>
+            <td>Global</td>
+            <td>AEO chunking check: 1 of 2 chunks are not suitable as standalone answers.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.extractability.wordcount</code></td>
+            <td>Global</td>
+            <td>AEO target: page word count is only 190 words (threshold: 200 words).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.org.schema</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing valid Organization JSON-LD block.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.author.attribution</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Page is missing explicit author attribution signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.citation.markup</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing outbound citation hyperlinks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.geographic.address</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured geographic location signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.knowledge.sameas</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured sameAs links mapping entities to official KG records.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.provenance.dates</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured date metadata signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.statistics.density</code></td>
+            <td>Global</td>
+            <td>Statistics density validated successfully (found 34 numerical claims).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.quotes.authority</code></td>
+            <td>Global</td>
+            <td>Authoritative quotation and testimonial references verified.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>security.headers.csp</code></td>
+            <td>Global</td>
+            <td>Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>structured.data.schema.valid</code></td>
+            <td>Global</td>
+            <td>All JSON-LD structured data blocks are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.metadata.exists</code></td>
+            <td>Global</td>
+            <td>Page metadata tags verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.canonical.exists</code></td>
+            <td>Global</td>
+            <td>Missing canonical URL link tag</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.opengraph.valid</code></td>
+            <td>Global</td>
+            <td>Missing Open Graph meta tags: og:image</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.twitter.valid</code></td>
+            <td>Global</td>
+            <td>All essential Twitter Cards meta tags are present.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.schema.valid</code></td>
+            <td>Global</td>
+            <td>Successfully validated 1 JSON-LD blocks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.robots.valid</code></td>
+            <td>Global</td>
+            <td>Missing robots.txt content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.sitemap.valid</code></td>
+            <td>Global</td>
+            <td>Missing sitemap.xml content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.lighthouse.score</code></td>
+            <td>Global</td>
+            <td>{"lighthouse":{"performance":90,"accessibility":95,"bestPractices":95,"seo":95}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.webvitals.lcp</code></td>
+            <td>Global</td>
+            <td>{"webVitals":{"lcp":1.5,"cls":0.02,"inp":100}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.bundle.size</code></td>
+            <td>Global</td>
+            <td>Script tags count (5) is within target limit (8).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.images.optimized</code></td>
+            <td>Global</td>
+            <td>All images are properly sized, lazy-loaded, and use modern formats.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.fonts.optimized</code></td>
+            <td>Global</td>
+            <td>Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.resources.renderblocking</code></td>
+            <td>Global</td>
+            <td>Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.compression.caching</code></td>
+            <td>Global</td>
+            <td>Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.wcag.lang</code></td>
+            <td>Global</td>
+            <td>HTML lang attribute verified: "en".</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.roles</code></td>
+            <td>Global</td>
+            <td>ARIA role configurations verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.semantic.structure</code></td>
+            <td>Global</td>
+            <td>Page contains valid semantic block structural containers.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.heading.hierarchy</code></td>
+            <td>Global</td>
+            <td>Heading element flow conforms to strict semantic hierarchy requirements.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.form.labels</code></td>
+            <td>Global</td>
+            <td>All form controls are correctly bound to accessible text labels.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.images.alt</code></td>
+            <td>Global</td>
+            <td>Image elements feature valid alternative text attributes.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.interactive</code></td>
+            <td>Global</td>
+            <td>All custom interactive element ARIA and focus configurations are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.content.structure</code></td>
+            <td>Global</td>
+            <td>Paragraph boundaries and structure meet layout recommendations.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.headings.questions</code></td>
+            <td>Global</td>
+            <td>Answer Engine target: headings should align directly with user query terms.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.faq.schema</code></td>
+            <td>Global</td>
+            <td>FAQ Schema check failed: No FAQPage JSON-LD schemas detected.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.entity.density</code></td>
+            <td>Global</td>
+            <td>Entity density verified successfully (score: 100, ratio: 7.67).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.chunking.suitability</code></td>
+            <td>Global</td>
+            <td>AEO chunking check: 2 of 3 chunks are not suitable as standalone answers.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.extractability.wordcount</code></td>
+            <td>Global</td>
+            <td>AEO target: page word count is only 170 words (threshold: 200 words).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.org.schema</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing valid Organization JSON-LD block.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.author.attribution</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Page is missing explicit author attribution signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.citation.markup</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing outbound citation hyperlinks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.geographic.address</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured geographic location signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.knowledge.sameas</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured sameAs links mapping entities to official KG records.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.provenance.dates</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured date metadata signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.statistics.density</code></td>
+            <td>Global</td>
+            <td>Statistics density validated successfully (found 37 numerical claims).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.quotes.authority</code></td>
+            <td>Global</td>
+            <td>Authoritative quotation and testimonial references verified.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>security.headers.csp</code></td>
+            <td>Global</td>
+            <td>Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>structured.data.schema.valid</code></td>
+            <td>Global</td>
+            <td>All JSON-LD structured data blocks are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.metadata.exists</code></td>
+            <td>Global</td>
+            <td>Page metadata tags verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.canonical.exists</code></td>
+            <td>Global</td>
+            <td>Missing canonical URL link tag</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.opengraph.valid</code></td>
+            <td>Global</td>
+            <td>Missing Open Graph meta tags: og:image</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.twitter.valid</code></td>
+            <td>Global</td>
+            <td>All essential Twitter Cards meta tags are present.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.schema.valid</code></td>
+            <td>Global</td>
+            <td>Successfully validated 1 JSON-LD blocks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.robots.valid</code></td>
+            <td>Global</td>
+            <td>Missing robots.txt content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.sitemap.valid</code></td>
+            <td>Global</td>
+            <td>Missing sitemap.xml content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.lighthouse.score</code></td>
+            <td>Global</td>
+            <td>{"lighthouse":{"performance":90,"accessibility":95,"bestPractices":95,"seo":95}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.webvitals.lcp</code></td>
+            <td>Global</td>
+            <td>{"webVitals":{"lcp":1.5,"cls":0.02,"inp":100}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.bundle.size</code></td>
+            <td>Global</td>
+            <td>Script tags count (5) is within target limit (8).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.images.optimized</code></td>
+            <td>Global</td>
+            <td>All images are properly sized, lazy-loaded, and use modern formats.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.fonts.optimized</code></td>
+            <td>Global</td>
+            <td>Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.resources.renderblocking</code></td>
+            <td>Global</td>
+            <td>Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.compression.caching</code></td>
+            <td>Global</td>
+            <td>Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.wcag.lang</code></td>
+            <td>Global</td>
+            <td>HTML lang attribute verified: "en".</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.roles</code></td>
+            <td>Global</td>
+            <td>ARIA role configurations verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.semantic.structure</code></td>
+            <td>Global</td>
+            <td>Page contains valid semantic block structural containers.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>accessibility.heading.hierarchy</code></td>
+            <td>Global</td>
+            <td>Heading hierarchy issues: Multiple (2) H1 heading tags found.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.form.labels</code></td>
+            <td>Global</td>
+            <td>All form controls are correctly bound to accessible text labels.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.images.alt</code></td>
+            <td>Global</td>
+            <td>Image elements feature valid alternative text attributes.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.interactive</code></td>
+            <td>Global</td>
+            <td>All custom interactive element ARIA and focus configurations are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.content.structure</code></td>
+            <td>Global</td>
+            <td>Paragraph boundaries and structure meet layout recommendations.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.headings.questions</code></td>
+            <td>Global</td>
+            <td>Answer Engine target: headings should align directly with user query terms.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.faq.schema</code></td>
+            <td>Global</td>
+            <td>FAQ Schema check failed: No FAQPage JSON-LD schemas detected.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.entity.density</code></td>
+            <td>Global</td>
+            <td>Entity density verified successfully (score: 100, ratio: 5).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.chunking.suitability</code></td>
+            <td>Global</td>
+            <td>AEO chunking check: 6 of 7 chunks are not suitable as standalone answers.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.extractability.wordcount</code></td>
+            <td>Global</td>
+            <td>Page word count verified (288 words).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.org.schema</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing valid Organization JSON-LD block.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.author.attribution</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Page is missing explicit author attribution signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.citation.markup</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing outbound citation hyperlinks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.geographic.address</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured geographic location signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.knowledge.sameas</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured sameAs links mapping entities to official KG records.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.provenance.dates</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured date metadata signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.statistics.density</code></td>
+            <td>Global</td>
+            <td>Statistics density validated successfully (found 48 numerical claims).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.quotes.authority</code></td>
+            <td>Global</td>
+            <td>Authoritative quotation and testimonial references verified.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>security.headers.csp</code></td>
+            <td>Global</td>
+            <td>Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>structured.data.schema.valid</code></td>
+            <td>Global</td>
+            <td>All JSON-LD structured data blocks are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.metadata.exists</code></td>
+            <td>Global</td>
+            <td>Page metadata tags verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.canonical.exists</code></td>
+            <td>Global</td>
+            <td>Missing canonical URL link tag</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.opengraph.valid</code></td>
+            <td>Global</td>
+            <td>Missing Open Graph meta tags: og:image</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.twitter.valid</code></td>
+            <td>Global</td>
+            <td>All essential Twitter Cards meta tags are present.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>seo.schema.valid</code></td>
+            <td>Global</td>
+            <td>Successfully validated 1 JSON-LD blocks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.robots.valid</code></td>
+            <td>Global</td>
+            <td>Missing robots.txt content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>seo.sitemap.valid</code></td>
+            <td>Global</td>
+            <td>Missing sitemap.xml content</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.lighthouse.score</code></td>
+            <td>Global</td>
+            <td>{"lighthouse":{"performance":90,"accessibility":95,"bestPractices":95,"seo":95}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.webvitals.lcp</code></td>
+            <td>Global</td>
+            <td>{"webVitals":{"lcp":1.5,"cls":0.02,"inp":100}}</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.bundle.size</code></td>
+            <td>Global</td>
+            <td>Script tags count (7) is within target limit (8).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.images.optimized</code></td>
+            <td>Global</td>
+            <td>All images are properly sized, lazy-loaded, and use modern formats.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>performance.fonts.optimized</code></td>
+            <td>Global</td>
+            <td>Web fonts optimization: Consider preloading critical web fonts to avoid layout shifts.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.resources.renderblocking</code></td>
+            <td>Global</td>
+            <td>Render-blocking scripts detected in head: /ashirwad-hospital/_next/static/chunks/polyfills-42372ed130431b0a.js. Use async/defer.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>performance.compression.caching</code></td>
+            <td>Global</td>
+            <td>Caching/compression recommendations: Compression (Gzip/Brotli) not enabled; Caching (Cache-Control headers) not defined</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.wcag.lang</code></td>
+            <td>Global</td>
+            <td>HTML lang attribute verified: "en".</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.roles</code></td>
+            <td>Global</td>
+            <td>ARIA role configurations verified successfully.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>accessibility.semantic.structure</code></td>
+            <td>Global</td>
+            <td>Missing semantic structural HTML elements: <header>, <footer>.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.heading.hierarchy</code></td>
+            <td>Global</td>
+            <td>Heading element flow conforms to strict semantic hierarchy requirements.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.form.labels</code></td>
+            <td>Global</td>
+            <td>All form controls are correctly bound to accessible text labels.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.images.alt</code></td>
+            <td>Global</td>
+            <td>Image elements feature valid alternative text attributes.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>accessibility.aria.interactive</code></td>
+            <td>Global</td>
+            <td>All custom interactive element ARIA and focus configurations are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.content.structure</code></td>
+            <td>Global</td>
+            <td>Paragraph boundaries and structure meet layout recommendations.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.headings.questions</code></td>
+            <td>Global</td>
+            <td>Answer Engine target: headings should align directly with user query terms.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.faq.schema</code></td>
+            <td>Global</td>
+            <td>FAQ Schema check failed: No FAQPage JSON-LD schemas detected.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.entity.density</code></td>
+            <td>Global</td>
+            <td>Entity density verified successfully (score: 70, ratio: 0.96).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>aeo.chunking.suitability</code></td>
+            <td>Global</td>
+            <td>AEO chunking check: 4 of 4 chunks are not suitable as standalone answers.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>aeo.extractability.wordcount</code></td>
+            <td>Global</td>
+            <td>Page word count verified (388 words).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.org.schema</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing valid Organization JSON-LD block.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.author.attribution</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Page is missing explicit author attribution signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.citation.markup</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing outbound citation hyperlinks.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.geographic.address</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured geographic location signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.knowledge.sameas</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured sameAs links mapping entities to official KG records.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>geo.provenance.dates</code></td>
+            <td>Global</td>
+            <td>GEO check failed: Missing structured date metadata signals.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.statistics.density</code></td>
+            <td>Global</td>
+            <td>Statistics density validated successfully (found 32 numerical claims).</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>geo.quotes.authority</code></td>
+            <td>Global</td>
+            <td>Authoritative quotation and testimonial references verified.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #ef4444">✗ FAIL</td>
+            <td><code>security.headers.csp</code></td>
+            <td>Global</td>
+            <td>Missing Content-Security-Policy header. Missing Strict-Transport-Security (HSTS) header. Missing X-Frame-Options clickjacking defense header.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+          <tr>
+            <td style="color: #10b981">✓ PASS</td>
+            <td><code>structured.data.schema.valid</code></td>
+            <td>Global</td>
+            <td>All JSON-LD structured data blocks are valid.</td>
+            <td>snap_476c6f62, head_476c6f62</td>
+          </tr>
+        
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

@@ -8,6 +8,7 @@
  */
 
 import sanitizeHtml from 'sanitize-html';
+import type { FaviconPresetId } from './favicon';
 
 export type FieldType = 'string' | 'text' | 'string[]' | 'object[]';
 
@@ -481,9 +482,39 @@ export const DEFAULT_DESIGN_TOKENS = {
   radii: {
     button: '6px',
   },
+  /** Browser tab icon: hospital initial letter or a simple medical preset. */
+  favicon: 'initial',
+} as const;
+
+export type DesignTokens = {
+  colors: {
+    background: string;
+    foreground: string;
+    accent: string;
+    muted: string;
+    surface: string;
+  };
+  typography: {
+    displayFamily: string;
+    bodyFamily: string;
+    baseSize: string;
+  };
+  spacing: {
+    sectionY: string;
+    contentMax: string;
+  };
+  radii: {
+    button: string;
+  };
+  favicon: FaviconPresetId;
 };
 
-export type DesignTokens = typeof DEFAULT_DESIGN_TOKENS;
+export {
+  FAVICON_PRESETS,
+  buildFaviconSvg,
+  isFaviconPresetId,
+  type FaviconPresetId,
+} from './favicon';
 
 /** Section keys included in the Maps→Gemini hospital bundle. */
 export const HOSPITAL_BUNDLE_SECTION_KEYS = [

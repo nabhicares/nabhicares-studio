@@ -7,7 +7,14 @@ import { connection, PublishJobData } from '@nabhicares/queue';
 import { uploadBuildOutput, promoteToLive, BuildFile } from '@nabhicares/snapshot-store';
 import { PrismaClient } from '@nabhicares/db-builder';
 import type { Prisma } from '@prisma/client';
-import { DEFAULT_DESIGN_TOKENS, migrateSectionContent } from '@nabhicares/section-registry';
+import {
+  DEFAULT_DESIGN_TOKENS,
+  migrateSectionContent,
+  buildFaviconSvg,
+  isFaviconPresetId,
+  type DesignTokens,
+  type FaviconPresetId,
+} from '@nabhicares/section-registry';
 
 const prisma = new PrismaClient({
   datasources: {
@@ -106,7 +113,13 @@ async function resolveHospital(hospitalIdOrSlug: string) {
 
 async function buildStaticSite(hospitalIdOrSlug: string) {
   const hospital = await resolveHospital(hospitalIdOrSlug);
-  const tokens = (hospital.designSystem?.tokens as object) ?? DEFAULT_DESIGN_TOKENS;
+  const tokens = {
+    ...DEFAULT_DESIGN_TOKENS,
+    ...((hospital.designSystem?.tokens as object) ?? {}),
+  } as DesignTokens;
+  const favicon: FaviconPresetId = isFaviconPresetId(tokens.favicon)
+    ? tokens.favicon
+    : 'initial';
 
   const pages = [];
   for (const page of hospital.pages) {
@@ -149,6 +162,7 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
     seoTitle: hospital.seoTitle,
     seoDescription: hospital.seoDescription,
     designTokens: tokens,
+    favicon,
     builtAt: new Date().toISOString(),
     pages,
   };
@@ -156,6 +170,16 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
   const dataDir = join(SITE_RENDERER_ROOT, 'data');
   await mkdir(dataDir, { recursive: true });
   await writeFile(join(dataDir, 'site.json'), JSON.stringify(siteData, null, 2), 'utf8');
+
+  const faviconSvg = buildFaviconSvg({
+    preset: favicon,
+    hospitalName: hospital.name,
+    accent: tokens.colors?.accent,
+  });
+  await writeFile(join(dataDir, 'favicon.svg'), faviconSvg, 'utf8');
+  const publicDir = join(SITE_RENDERER_ROOT, 'public');
+  await mkdir(publicDir, { recursive: true });
+  await writeFile(join(publicDir, 'favicon.svg'), faviconSvg, 'utf8');
 
   console.log(
     `[build] wrote site.json for ${siteData.hospitalSlug} (${siteData.pages.length} pages)`,
