@@ -39,3 +39,7 @@ backups/
 .vercel/
 
 .vercel
+
+# SEOKit local reports
+**/.seokit/
+
