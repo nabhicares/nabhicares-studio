@@ -8,6 +8,30 @@ import { liveSiteUrl, pathStyleLiveUrl, cdnRootDomain } from '@/lib/cdn';
 import { DnsSetupPanel } from './DnsSetupPanel';
 import { GeminiHospitalImport } from './GeminiHospitalImport';
 
+function SettingsGroup({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="flex flex-col gap-md pb-lg border-b border-outline-variant last:border-0 last:pb-0">
+      <div>
+        <h4 className="font-outfit text-[15px] font-semibold text-on-surface tracking-tight">
+          {title}
+        </h4>
+        {description ? (
+          <p className="font-inter text-label-sm text-outline mt-xs">{description}</p>
+        ) : null}
+      </div>
+      {children}
+    </section>
+  );
+}
+
 export function HospitalSettings({
   hospitalId,
   hospitalName,
@@ -75,94 +99,109 @@ export function HospitalSettings({
         </button>
       </div>
       <div className="p-lg flex flex-col gap-lg overflow-y-auto flex-1">
-        <div className="flex flex-col gap-xs">
-          <label className="font-inter text-label-sm text-outline">Display name</label>
-          <input
-            className="field-input"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-        <div className="flex flex-col gap-xs">
-          <label className="font-inter text-label-sm text-outline">Slug (URL)</label>
-          <input
-            className="field-input"
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-          />
-          <p className="font-inter text-label-sm text-outline break-all">
-            {root ? (
-              <>
-                Subdomain:{' '}
-                <a
-                  className="text-primary underline"
-                  href={liveSiteUrl(slug || '…')}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {liveSiteUrl(slug || '…')}
-                </a>
-                <br />
-                Path:{' '}
-                <a
-                  className="text-primary underline"
-                  href={pathStyleLiveUrl(slug || '…')}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {pathStyleLiveUrl(slug || '…')}
-                </a>
-              </>
-            ) : (
-              <>
-                Live:{' '}
-                <a
-                  className="text-primary underline"
-                  href={liveSiteUrl(slug || '…')}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {liveSiteUrl(slug || '…')}
-                </a>
-              </>
-            )}
-          </p>
-        </div>
-        <div className="flex flex-col gap-xs">
-          <label className="font-inter text-label-sm text-outline">Custom domain</label>
-          <input
-            className="field-input"
-            value={customDomain}
-            onChange={(e) => setCustomDomain(e.target.value)}
-            placeholder="www.yourhospital.com"
-          />
-          <p className="font-inter text-label-sm text-outline">
-            Optional. Save here after DNS + Vercel Domains are ready. See DNS setup below.
-          </p>
-        </div>
+        <SettingsGroup title="Identity" description="How this hospital appears in Studio and on the live site.">
+          <div className="flex flex-col gap-xs">
+            <label className="font-inter text-label-sm text-outline">Display name</label>
+            <input
+              className="field-input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div className="flex flex-col gap-xs">
+            <label className="font-inter text-label-sm text-outline">Slug (URL)</label>
+            <input
+              className="field-input"
+              value={slug}
+              onChange={(e) => setSlug(e.target.value)}
+            />
+            <p className="font-inter text-label-sm text-outline break-all">
+              {root ? (
+                <>
+                  Subdomain:{' '}
+                  <a
+                    className="text-primary underline"
+                    href={liveSiteUrl(slug || '…')}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {liveSiteUrl(slug || '…')}
+                  </a>
+                  <br />
+                  Path:{' '}
+                  <a
+                    className="text-primary underline"
+                    href={pathStyleLiveUrl(slug || '…')}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {pathStyleLiveUrl(slug || '…')}
+                  </a>
+                </>
+              ) : (
+                <>
+                  Live:{' '}
+                  <a
+                    className="text-primary underline"
+                    href={liveSiteUrl(slug || '…')}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {liveSiteUrl(slug || '…')}
+                  </a>
+                </>
+              )}
+            </p>
+          </div>
+        </SettingsGroup>
 
-        <GeminiHospitalImport hospitalId={hospitalId} />
+        <SettingsGroup
+          title="Domain & DNS"
+          description="Point a custom hostname at Nabhi after DNS is ready."
+        >
+          <div className="flex flex-col gap-xs">
+            <label className="font-inter text-label-sm text-outline">Custom domain</label>
+            <input
+              className="field-input"
+              value={customDomain}
+              onChange={(e) => setCustomDomain(e.target.value)}
+              placeholder="www.yourhospital.com"
+            />
+            <p className="font-inter text-label-sm text-outline">
+              Optional. Save here after DNS + Vercel Domains are ready.
+            </p>
+          </div>
+          <DnsSetupPanel hospitalSlug={slug} customDomain={customDomain} />
+        </SettingsGroup>
 
-        <DnsSetupPanel hospitalSlug={slug} customDomain={customDomain} />
+        <SettingsGroup
+          title="Content import"
+          description="Refresh copy from a Gemini hospital bundle JSON."
+        >
+          <GeminiHospitalImport hospitalId={hospitalId} />
+        </SettingsGroup>
 
-        <div className="flex flex-col gap-xs">
-          <label className="font-inter text-label-sm text-outline">SEO title</label>
-          <input
-            className="field-input"
-            value={seoTitle}
-            onChange={(e) => setSeoTitle(e.target.value)}
-            placeholder={name || 'Hospital name'}
-          />
-        </div>
-        <div className="flex flex-col gap-xs">
-          <label className="font-inter text-label-sm text-outline">SEO description</label>
-          <textarea
-            className="field-input min-h-[80px]"
-            value={seoDescription}
-            onChange={(e) => setSeoDescription(e.target.value)}
-            placeholder="Short blurb for search results"
-          />
-        </div>
+        <SettingsGroup title="SEO" description="Basic search title and description for this hospital.">
+          <div className="flex flex-col gap-xs">
+            <label className="font-inter text-label-sm text-outline">SEO title</label>
+            <input
+              className="field-input"
+              value={seoTitle}
+              onChange={(e) => setSeoTitle(e.target.value)}
+              placeholder={name || 'Hospital name'}
+            />
+          </div>
+          <div className="flex flex-col gap-xs">
+            <label className="font-inter text-label-sm text-outline">SEO description</label>
+            <textarea
+              className="field-input min-h-[80px]"
+              value={seoDescription}
+              onChange={(e) => setSeoDescription(e.target.value)}
+              placeholder="Short blurb for search results"
+            />
+          </div>
+        </SettingsGroup>
+
         <button
           type="button"
           className="btn-primary w-full"

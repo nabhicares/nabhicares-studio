@@ -9,9 +9,25 @@ import {
 } from '../styles';
 import { normalizeHero } from '../content';
 
+function resolveHref(
+  explicit: string | undefined,
+  fallback: string | undefined,
+): string {
+  if (explicit && explicit.trim()) return explicit.trim();
+  return fallback || '#';
+}
+
 /** Full-bleed image plane + hospital-forward copy */
-export function Layout01({ content }: LayoutProps) {
+export function Layout01({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
+  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact);
+  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services);
+  const onImage = Boolean(c.image);
+  const titleColor = onImage ? 'var(--color-bg)' : 'var(--color-fg)';
+  const bodyColor = onImage
+    ? 'color-mix(in srgb, var(--color-bg) 88%, transparent)'
+    : 'var(--color-muted)';
+
   return (
     <section
       style={{
@@ -61,7 +77,7 @@ export function Layout01({ content }: LayoutProps) {
             fontSize: 'clamp(2.35rem, 6.5vw, 4rem)',
             marginBottom: '1rem',
             maxWidth: '14ch',
-            color: c.image ? '#F7F9F8' : 'var(--color-fg)',
+            color: titleColor,
             textWrap: 'balance' as never,
           }}
         >
@@ -70,9 +86,7 @@ export function Layout01({ content }: LayoutProps) {
         <p
           style={{
             ...bodyStyle,
-            color: c.image
-              ? 'color-mix(in srgb, #F7F9F8 88%, transparent)'
-              : 'var(--color-muted)',
+            color: bodyColor,
             maxWidth: '34rem',
             marginBottom: '1.75rem',
           }}
@@ -82,7 +96,8 @@ export function Layout01({ content }: LayoutProps) {
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
           {c.ctaPrimary ? (
             <a
-              href="#"
+              href={primaryHref}
+              className="nabhi-btn"
               style={{
                 ...buttonPrimaryStyle,
                 boxShadow: '0 10px 28px color-mix(in srgb, var(--color-fg) 18%, transparent)',
@@ -93,12 +108,13 @@ export function Layout01({ content }: LayoutProps) {
           ) : null}
           {c.ctaSecondary ? (
             <a
-              href="#"
+              href={secondaryHref}
+              className="nabhi-btn"
               style={{
                 ...buttonGhostStyle,
-                color: c.image ? '#F7F9F8' : 'var(--color-fg)',
-                borderColor: c.image
-                  ? 'color-mix(in srgb, #F7F9F8 45%, transparent)'
+                color: titleColor,
+                borderColor: onImage
+                  ? 'color-mix(in srgb, var(--color-bg) 45%, transparent)'
                   : undefined,
               }}
             >

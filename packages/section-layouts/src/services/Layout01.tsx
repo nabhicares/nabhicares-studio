@@ -20,6 +20,11 @@ export function Layout01({ content }: LayoutProps) {
         <p style={kickerStyle}>Services</p>
         <h2 style={titleStyle}>{c.title}</h2>
         {c.body ? <p style={bodyStyle}>{c.body}</p> : null}
+        {items.length === 0 ? (
+          <p className="nabhi-empty" style={mutedStyle}>
+            Services will appear here once added in Studio.
+          </p>
+        ) : (
         <div
           style={{
             display: 'grid',
@@ -74,6 +79,7 @@ export function Layout01({ content }: LayoutProps) {
             </article>
           ))}
         </div>
+        )}
       </div>
     </section>
   );

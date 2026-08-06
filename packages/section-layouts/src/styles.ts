@@ -45,7 +45,7 @@ export const buttonPrimaryStyle: CSSProperties = {
   alignItems: 'center',
   justifyContent: 'center',
   background: 'var(--color-accent)',
-  color: '#F7F9F8',
+  color: 'var(--color-bg)',
   border: 'none',
   borderRadius: 'var(--radius-button)',
   padding: '0.8rem 1.4rem',
@@ -55,7 +55,7 @@ export const buttonPrimaryStyle: CSSProperties = {
   cursor: 'pointer',
   textDecoration: 'none',
   letterSpacing: '0.01em',
-  transition: 'transform 180ms ease, filter 180ms ease',
+  transition: 'transform 180ms ease, filter 180ms ease, background 180ms ease',
 };
 
 export const buttonGhostStyle: CSSProperties = {

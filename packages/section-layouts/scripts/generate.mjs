@@ -233,46 +233,38 @@ export function normalizeAbout(raw: Record<string, unknown>): AboutContent {
 }
 
 export function normalizeDoctors(raw: Record<string, unknown>): DoctorsContent {
-  const doctors = arr<Record<string, unknown>>(raw.doctors).map((d) => ({
-    name: str(d.name, 'Doctor'),
-    specialty: str(d.specialty, 'General medicine'),
-    bio: str(d.bio) || undefined,
-    image: str(d.image) || undefined,
-  }));
+  const doctors = arr<Record<string, unknown>>(raw.doctors)
+    .map((d) => ({
+      name: str(d.name),
+      specialty: str(d.specialty),
+      bio: str(d.bio) || undefined,
+      image: str(d.image) || undefined,
+    }))
+    .filter((d) => d.name.trim());
   return {
     title: str(raw.title, 'Our doctors'),
     body: str(raw.body) || undefined,
-    doctors: doctors.length
-      ? doctors
-      : [
-          { name: 'Dr. Asha Patel', specialty: 'Internal medicine' },
-          { name: 'Dr. James Okonkwo', specialty: 'Cardiology' },
-          { name: 'Dr. Mei Chen', specialty: 'Pediatrics' },
-        ],
+    doctors,
   };
 }
 
 export function normalizeServices(raw: Record<string, unknown>): ServicesContent {
   const rawItems = arr<unknown>(raw.items);
-  const items: ServiceItem[] = rawItems.map((item) => {
-    if (typeof item === 'string') return { title: item };
-    const o = (item ?? {}) as Record<string, unknown>;
-    return {
-      title: str(o.title, 'Service'),
-      description: str(o.description) || undefined,
-      icon: str(o.icon) || undefined,
-    };
-  });
+  const items: ServiceItem[] = rawItems
+    .map((item) => {
+      if (typeof item === 'string') return { title: item };
+      const o = (item ?? {}) as Record<string, unknown>;
+      return {
+        title: str(o.title),
+        description: str(o.description) || undefined,
+        icon: str(o.icon) || undefined,
+      };
+    })
+    .filter((item) => item.title.trim());
   return {
     title: str(raw.title, 'Our services'),
     body: str(raw.body) || undefined,
-    items: items.length
-      ? items
-      : [
-          { title: 'Emergency care', description: '24/7 trauma and urgent care.' },
-          { title: 'Diagnostics', description: 'Imaging and lab services.' },
-          { title: 'Outpatient clinics', description: 'Specialist consultations.' },
-        ],
+    items,
   };
 }
 
@@ -290,47 +282,37 @@ export function normalizeGallery(raw: Record<string, unknown>): GalleryContent {
   return {
     title: str(raw.title, 'Gallery'),
     body: str(raw.body) || undefined,
-    images: images.length
-      ? images
-      : [{ src: '' }, { src: '' }, { src: '' }, { src: '' }],
+    images,
   };
 }
 
 export function normalizeFaq(raw: Record<string, unknown>): FaqContent {
-  const items = arr<Record<string, unknown>>(raw.items).map((i) => ({
-    question: str(i.question, 'Question'),
-    answer: str(i.answer, 'Answer coming soon.'),
-  }));
+  const items = arr<Record<string, unknown>>(raw.items)
+    .map((i) => ({
+      question: str(i.question),
+      answer: str(i.answer),
+    }))
+    .filter((i) => i.question.trim());
   return {
     title: str(raw.title, 'Frequently asked questions'),
     body: str(raw.body) || undefined,
-    items: items.length
-      ? items
-      : [
-          { question: 'Do I need an appointment?', answer: 'Walk-ins are welcome; appointments reduce wait time.' },
-          { question: 'What insurance do you accept?', answer: 'We work with most major plans — call to confirm yours.' },
-          { question: 'Where can I park?', answer: 'Visitor parking is available in Lot B next to the main entrance.' },
-        ],
+    items,
   };
 }
 
 export function normalizeTestimonials(raw: Record<string, unknown>): TestimonialsContent {
-  const items = arr<Record<string, unknown>>(raw.items).map((i) => ({
-    quote: str(i.quote, 'Excellent care from start to finish.'),
-    author: str(i.author, 'Patient'),
-    role: str(i.role) || undefined,
-    image: str(i.image) || undefined,
-  }));
+  const items = arr<Record<string, unknown>>(raw.items)
+    .map((i) => ({
+      quote: str(i.quote),
+      author: str(i.author),
+      role: str(i.role) || undefined,
+      image: str(i.image) || undefined,
+    }))
+    .filter((i) => i.quote.trim());
   return {
     title: str(raw.title, 'Patient stories'),
     body: str(raw.body) || undefined,
-    items: items.length
-      ? items
-      : [
-          { quote: 'The team made a stressful visit feel calm and clear.', author: 'R. Mehta', role: 'Outpatient' },
-          { quote: 'Doctors explained every step and followed up after discharge.', author: 'S. Alvarez', role: 'Surgery' },
-          { quote: 'Clean facilities and kind staff — we felt looked after.', author: 'K. Singh', role: 'Maternity' },
-        ],
+    items,
   };
 }
 `);

@@ -123,6 +123,10 @@ export async function POST(req: Request) {
                   content: {
                     title: `Welcome to ${name}`,
                     body: 'Compassionate care close to home. Edit this copy in Studio.',
+                    ctaPrimary: 'Contact us',
+                    ctaPrimaryHref: 'contact/',
+                    ctaSecondary: 'Our services',
+                    ctaSecondaryHref: '#services',
                   },
                 },
                 {
@@ -150,16 +154,29 @@ export async function POST(req: Request) {
                 {
                   order: 3,
                   enabled: true,
+                  templateId: await templateId('doctors'),
+                  content: {
+                    title: 'Our care team',
+                    body: 'Meet the clinicians who look after patients every day.',
+                    doctors: [],
+                  },
+                },
+                {
+                  order: 4,
+                  enabled: true,
                   templateId: await templateId('contact'),
                   content: {
-                    title: 'Visit us',
-                    body: `Find ${name} on the map or call the front desk.`,
+                    title: 'Plan your visit',
+                    body: `Phone, hours, and directions for ${name} — full details on our contact page.`,
+                    variant: 'teaser',
                     phone: '',
                     email: '',
                     address: '',
-                    hours: 'Mon–Sat 8:00–20:00',
+                    hours: '',
                     mapUrl: '',
                     ctaPrimary: 'Get directions',
+                    ctaSecondary: 'Contact details',
+                    ctaSecondaryHref: 'contact/',
                   },
                 },
               ],
@@ -177,7 +194,8 @@ export async function POST(req: Request) {
                   templateId: await templateId('doctors'),
                   content: {
                     title: 'Our doctors',
-                    doctors: [{ name: 'Dr. Example', specialty: 'General Medicine' }],
+                    body: 'Add your care team in Studio — we never invent clinical names.',
+                    doctors: [],
                   },
                 },
               ],
@@ -196,6 +214,7 @@ export async function POST(req: Request) {
                   content: {
                     title: 'Visit us',
                     body: `Reach ${name} by phone or visit our campus.`,
+                    variant: 'full',
                     phone: '',
                     email: '',
                     address: '',

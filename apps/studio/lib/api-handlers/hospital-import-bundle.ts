@@ -64,18 +64,31 @@ export async function POST(
   const updatedSectionIds: string[] = [];
   const createdSectionKeys: string[] = [];
 
+  const preferredPageSlug = (key: string): string | null => {
+    if (key === 'doctors') return 'doctors';
+    if (key === 'contact' || key === 'faq') return 'contact';
+    return null;
+  };
+
+  function findSectionTarget(key: string) {
+    const all = pages.flatMap((p) => p.sections.map((s) => ({ page: p, section: s })));
+    const preferred = preferredPageSlug(key);
+    if (preferred) {
+      const onPage = all.find(
+        ({ page, section }) => section.template.key === key && page.slug === preferred,
+      );
+      if (onPage) return onPage;
+    }
+    return (
+      all.find(({ section }) => section.template.key === key && section.enabled) ??
+      all.find(({ section }) => section.template.key === key)
+    );
+  }
+
   for (const [key, content] of Object.entries(parsed.sections)) {
     if (!getSectionType(key)) continue;
 
-    let target = pages
-      .flatMap((p) => p.sections.map((s) => ({ page: p, section: s })))
-      .find(({ section }) => section.template.key === key && section.enabled);
-
-    if (!target && key === 'doctors') {
-      target = pages
-        .flatMap((p) => p.sections.map((s) => ({ page: p, section: s })))
-        .find(({ section }) => section.template.key === 'doctors');
-    }
+    const target = findSectionTarget(key);
 
     if (target) {
       await prisma.section.update({
@@ -86,6 +99,41 @@ export async function POST(
         },
       });
       updatedSectionIds.push(target.section.id);
+
+      // Keep home contact as a teaser pointing at /contact when both exist.
+      if (key === 'contact') {
+        const homeContact = pages
+          .flatMap((p) => p.sections.map((s) => ({ page: p, section: s })))
+          .find(
+            ({ page, section }) =>
+              section.template.key === 'contact' &&
+              page.slug === 'home' &&
+              section.id !== target.section.id,
+          );
+        if (homeContact) {
+          const full = content as Record<string, unknown>;
+          const teaser = {
+            ...full,
+            variant: 'teaser',
+            title: typeof full.title === 'string' && full.title ? full.title : 'Plan your visit',
+            body:
+              'Phone, hours, and directions — see our contact page for the full details.',
+            ctaSecondary:
+              typeof full.ctaSecondary === 'string' && full.ctaSecondary
+                ? full.ctaSecondary
+                : 'Contact details',
+            ctaSecondaryHref: 'contact/',
+          };
+          await prisma.section.update({
+            where: { id: homeContact.section.id },
+            data: {
+              content: teaser as object,
+              contentSchemaVersion: CONTENT_SCHEMA_VERSION,
+            },
+          });
+          updatedSectionIds.push(homeContact.section.id);
+        }
+      }
       continue;
     }
 

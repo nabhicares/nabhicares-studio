@@ -1,10 +1,19 @@
 import type { ReactElement } from 'react';
 
+export type SiteLinks = {
+  home?: string;
+  contact?: string;
+  doctors?: string;
+  services?: string;
+};
+
 export type HeroContent = {
   title: string;
   body: string;
   ctaPrimary?: string;
   ctaSecondary?: string;
+  ctaPrimaryHref?: string;
+  ctaSecondaryHref?: string;
   image?: string;
 };
 
@@ -88,6 +97,10 @@ export type ContactContent = {
   hours?: string;
   mapUrl?: string;
   ctaPrimary?: string;
+  /** Teaser on home; full detail lives on /contact */
+  variant?: 'full' | 'teaser';
+  ctaSecondary?: string;
+  ctaSecondaryHref?: string;
 };
 
 export type SectionContent =
@@ -100,6 +113,9 @@ export type SectionContent =
   | TestimonialsContent
   | ContactContent;
 
-export type LayoutProps = { content: Record<string, unknown> };
+export type LayoutProps = {
+  content: Record<string, unknown>;
+  siteLinks?: SiteLinks;
+};
 
 export type LayoutComponent = (props: LayoutProps) => ReactElement;

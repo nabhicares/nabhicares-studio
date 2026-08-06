@@ -1,6 +1,7 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { loadSiteData, tokensToCssVars } from '@/lib/site-data';
 import { DEFAULT_DESIGN_TOKENS } from '@nabhicares/section-registry';
+import '../styles/nabhi-site.css';
 
 export function generateMetadata() {
   const site = loadSiteData();

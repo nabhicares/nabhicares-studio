@@ -20,6 +20,7 @@ import { DraftPreview } from './DraftPreview';
 import { HospitalSettings } from './HospitalSettings';
 import { ContentJsonImport } from './ContentJsonImport';
 import { SectionRowMenu } from './SectionRowMenu';
+import { PublishChecklist } from './PublishChecklist';
 import type { DesignTokens } from '@nabhicares/section-registry';
 
 type LayoutTemplate = { id: string; key: string; version: number };
@@ -189,6 +190,7 @@ export function StudioEditor({
   seoTitle = '',
   seoDescription = '',
   customDomain = '',
+  isLive = false,
   migrationWarnings = [],
   pages: initialPages,
 }: {
@@ -198,6 +200,7 @@ export function StudioEditor({
   seoTitle?: string;
   seoDescription?: string;
   customDomain?: string;
+  isLive?: boolean;
   migrationWarnings?: string[];
   pages: Page[];
 }) {
@@ -514,8 +517,14 @@ export function StudioEditor({
               <span className="truncate text-on-surface-variant">{hospitalName}</span>
               <span className="material-symbols-outlined text-[16px]">chevron_right</span>
               <span className="text-brand-ink font-semibold">{activePage?.slug ?? '—'}</span>
-              <span className="ml-sm rounded-md bg-surface-container px-sm py-xs font-inter text-label-sm text-outline font-medium">
-                Draft
+              <span
+                className={`ml-sm rounded-md px-sm py-xs font-inter text-label-sm font-medium ${
+                  isLive
+                    ? 'bg-primary-container text-on-primary-container'
+                    : 'bg-surface-container text-outline'
+                }`}
+              >
+                {isLive ? 'Live' : 'Draft'}
               </span>
             </div>
           </div>
@@ -874,6 +883,14 @@ export function StudioEditor({
             </div>
           ) : (
             <>
+              <PublishChecklist
+                pages={pages}
+                onJump={(slug) => {
+                  setPageSlug(slug);
+                  setTab('sections');
+                  setShowSettings(false);
+                }}
+              />
               <div className="sm:hidden w-full px-md pt-sm shrink-0 flex justify-center">
                 <ViewportToggle value={previewViewport} onChange={setPreviewViewport} />
               </div>
@@ -1024,19 +1041,30 @@ export function StudioEditor({
                     Layout variant
                   </h3>
                   <p className="font-inter text-label-sm text-outline mt-xs">
-                    Same content · different structure
+                    Layout 01 is the product design system. Other variants are experimental.
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-sm">
                   {Array.from({ length: LAYOUT_COUNT }, (_, i) => i + 1).map((version) => {
                     const tpl = layoutOptions.find((t) => t.version === version) ?? null;
                     const active = selected.template.version === version;
+                    const recommended = version === 1;
+                    const isContact = selected.template.key === 'contact';
+                    const softDeprecated = !recommended && (isContact || version > 1);
                     return (
                       <button
                         key={version}
                         type="button"
-                        disabled={!tpl || saving}
-                        title={tpl ? `Layout ${String(version).padStart(2, '0')}` : 'Not seeded'}
+                        disabled={!tpl || saving || (isContact && version > 1)}
+                        title={
+                          isContact && version > 1
+                            ? 'Contact only ships Layout 01'
+                            : tpl
+                              ? recommended
+                                ? 'Layout 01 · recommended'
+                                : `Layout ${String(version).padStart(2, '0')} · experimental`
+                              : 'Not seeded'
+                        }
                         onClick={() => {
                           if (!tpl) return;
                           void patchSection(selected.id, { templateId: tpl.id });
@@ -1044,9 +1072,16 @@ export function StudioEditor({
                         className={`relative aspect-[4/3] rounded-lg overflow-hidden transition-colors text-on-surface-variant disabled:opacity-40 border ${
                           active
                             ? 'border-primary bg-primary-container/40 text-primary ring-1 ring-primary'
-                            : 'border-outline-variant bg-surface-container-low hover:bg-surface-container'
+                            : softDeprecated
+                              ? 'border-outline-variant/60 bg-surface-container-low/50 opacity-70 hover:opacity-100'
+                              : 'border-outline-variant bg-surface-container-low hover:bg-surface-container'
                         }`}
                       >
+                        {recommended ? (
+                          <span className="absolute top-1 left-1.5 z-10 font-inter text-[9px] font-bold uppercase tracking-wide text-primary bg-primary-container/80 px-1 rounded">
+                            Rec
+                          </span>
+                        ) : null}
                         <div className="absolute inset-1.5 text-inherit">
                           <LayoutWireframe
                             sectionType={selected.template.key}

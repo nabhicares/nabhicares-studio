@@ -213,23 +213,28 @@ export function DraftCanvas({
             style={{ fontFamily: tokens.typography.bodyFamily, color: tokens.colors.muted }}
           >
             {navPages.length > 0
-              ? navPages.map((p) => (
-                  <span
-                    key={p.id}
-                    style={
-                      p.slug === page?.slug
-                        ? { color: tokens.colors.accent, fontWeight: 700 }
-                        : undefined
-                    }
-                  >
-                    {p.slug}
-                  </span>
-                ))
+              ? navPages.map((p) => {
+                  const label =
+                    p.slug === 'home'
+                      ? 'Home'
+                      : p.slug.charAt(0).toUpperCase() + p.slug.slice(1);
+                  return (
+                    <span
+                      key={p.id}
+                      style={
+                        p.slug === page?.slug
+                          ? { color: tokens.colors.accent, fontWeight: 700 }
+                          : undefined
+                      }
+                    >
+                      {label}
+                    </span>
+                  );
+                })
               : (
                 <>
-                  <span>Services</span>
+                  <span>Home</span>
                   <span>Doctors</span>
-                  <span>About</span>
                   <span style={{ color: tokens.colors.accent, fontWeight: 700 }}>Contact</span>
                 </>
               )}
@@ -238,6 +243,10 @@ export function DraftCanvas({
       </nav>
 
       <div style={tokensToStyle(tokens)} className="w-full">
+        <style>{`
+          .nabhi-btn:hover { filter: brightness(1.06); transform: translateY(-1px); }
+          .nabhi-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 3px; }
+        `}</style>
         <p className="font-inter text-label-sm text-outline uppercase tracking-widest px-xl pt-lg mb-0 opacity-70">
           Draft · {page?.slug ?? '—'} · {viewport}
         </p>
@@ -249,6 +258,12 @@ export function DraftCanvas({
             const label = getSectionType(section.template.key)?.label ?? section.template.key;
             const selected = section.id === selectedSectionId;
             const Layout = resolveLayout(section.template.key, section.template.version);
+            const siteLinks = {
+              home: '#',
+              contact: '#',
+              doctors: '#',
+              services: '#services',
+            };
             return (
               <button
                 key={section.id}
@@ -263,7 +278,9 @@ export function DraftCanvas({
                     {label} · L{String(section.template.version).padStart(2, '0')}
                   </div>
                 ) : null}
-                <Layout content={section.content ?? {}} />
+                <div id={section.template.key === 'services' ? 'services' : undefined}>
+                  <Layout content={section.content ?? {}} siteLinks={siteLinks} />
+                </div>
               </button>
             );
           })

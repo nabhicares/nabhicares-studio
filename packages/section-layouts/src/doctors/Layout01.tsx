@@ -1,6 +1,7 @@
 import type { LayoutProps } from '../types';
 import {
   bodyStyle,
+  buttonGhostStyle,
   imageTreatmentStyle,
   kickerStyle,
   mutedStyle,
@@ -12,8 +13,9 @@ import {
 import { normalizeDoctors } from '../content';
 
 /** Portrait grid — quiet surfaces, no heavy cards */
-export function Layout01({ content }: LayoutProps) {
+export function Layout01({ content, siteLinks }: LayoutProps) {
   const c = normalizeDoctors(content);
+  const doctors = c.doctors ?? [];
   return (
     <section
       style={{
@@ -25,56 +27,86 @@ export function Layout01({ content }: LayoutProps) {
         <p style={kickerStyle}>Care team</p>
         <h2 style={titleStyle}>{c.title}</h2>
         {c.body ? <p style={bodyStyle}>{c.body}</p> : null}
-        <div
-          style={{
-            display: 'grid',
-            gap: 'clamp(1.5rem, 3vw, 2.25rem)',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-            marginTop: '0.5rem',
-          }}
-        >
-          {(c.doctors ?? []).map((d) => (
-            <article key={d.name}>
-              <div style={{ ...imageTreatmentStyle, aspectRatio: '3 / 4', marginBottom: '1rem' }}>
-                {d.image ? (
-                  <img
-                    src={d.image}
-                    alt=""
-                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
-                  />
-                ) : (
-                  <div style={{ width: '100%', height: '100%', background: placeholderGradient }} />
-                )}
-              </div>
-              <h3
-                style={{
-                  margin: '0 0 0.25rem',
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.15rem',
-                  letterSpacing: '-0.02em',
-                }}
+        {doctors.length === 0 ? (
+          <div style={{ marginTop: '0.75rem' }}>
+            <p className="nabhi-empty" style={mutedStyle}>
+              Team profiles coming soon. Add doctors in Studio when ready.
+            </p>
+            {siteLinks?.doctors ? (
+              <a
+                href={siteLinks.doctors}
+                className="nabhi-btn"
+                style={{ ...buttonGhostStyle, marginTop: '1rem' }}
               >
-                {d.name}
-              </h3>
-              <p
-                style={{
-                  ...mutedStyle,
-                  margin: 0,
-                  fontSize: '0.9rem',
-                  color: 'var(--color-accent)',
-                  fontWeight: 600,
-                }}
-              >
-                {d.specialty}
-              </p>
-              {d.bio ? (
-                <p style={{ ...mutedStyle, margin: '0.55rem 0 0', fontSize: '0.92rem', lineHeight: 1.55 }}>
-                  {d.bio}
-                </p>
-              ) : null}
-            </article>
-          ))}
-        </div>
+                Doctors page
+              </a>
+            ) : null}
+          </div>
+        ) : (
+          <div
+            style={{
+              display: 'grid',
+              gap: 'clamp(1.5rem, 3vw, 2.25rem)',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              marginTop: '0.5rem',
+            }}
+          >
+            {doctors.map((d) => (
+              <article key={d.name}>
+                <div style={{ ...imageTreatmentStyle, aspectRatio: '3 / 4', marginBottom: '1rem' }}>
+                  {d.image ? (
+                    <img
+                      src={d.image}
+                      alt=""
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+                    />
+                  ) : (
+                    <div
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        background: placeholderGradient,
+                        display: 'flex',
+                        alignItems: 'flex-end',
+                        padding: '0.85rem',
+                      }}
+                    >
+                      <span style={{ ...mutedStyle, fontSize: '0.8rem' }}>Photo coming soon</span>
+                    </div>
+                  )}
+                </div>
+                <h3
+                  style={{
+                    margin: '0 0 0.25rem',
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '1.15rem',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  {d.name}
+                </h3>
+                {d.specialty ? (
+                  <p
+                    style={{
+                      ...mutedStyle,
+                      margin: 0,
+                      fontSize: '0.9rem',
+                      color: 'var(--color-accent)',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {d.specialty}
+                  </p>
+                ) : null}
+                {d.bio ? (
+                  <p style={{ ...mutedStyle, margin: '0.55rem 0 0', fontSize: '0.92rem', lineHeight: 1.55 }}>
+                    {d.bio}
+                  </p>
+                ) : null}
+              </article>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

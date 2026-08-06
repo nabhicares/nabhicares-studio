@@ -24,20 +24,26 @@ export default async function HospitalPage({ params }: { params: { slug: string 
 
   const migrationWarnings = await ensureHospitalSectionsMigrated(hospital.id);
 
-  const full = await prisma.hospital.findUnique({
-    where: { id: hospital.id },
-    include: {
-      pages: {
-        orderBy: [{ sortOrder: 'asc' }, { slug: 'asc' }],
-        include: {
-          sections: {
-            orderBy: { order: 'asc' },
-            include: { template: true },
+  const [full, livePublish] = await Promise.all([
+    prisma.hospital.findUnique({
+      where: { id: hospital.id },
+      include: {
+        pages: {
+          orderBy: [{ sortOrder: 'asc' }, { slug: 'asc' }],
+          include: {
+            sections: {
+              orderBy: { order: 'asc' },
+              include: { template: true },
+            },
           },
         },
       },
-    },
-  });
+    }),
+    prisma.publish.findFirst({
+      where: { hospitalId: hospital.id, isLive: true },
+      select: { id: true },
+    }),
+  ]);
   if (!full) notFound();
 
   const warningList = Object.entries(migrationWarnings).flatMap(([id, w]) =>
@@ -52,6 +58,7 @@ export default async function HospitalPage({ params }: { params: { slug: string 
       seoTitle={full.seoTitle ?? ''}
       seoDescription={full.seoDescription ?? ''}
       customDomain={full.customDomain ?? ''}
+      isLive={Boolean(livePublish)}
       migrationWarnings={warningList}
       pages={full.pages.map((p) => ({
         id: p.id,

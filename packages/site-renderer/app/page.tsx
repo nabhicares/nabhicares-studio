@@ -1,4 +1,5 @@
 import { PageView } from '@/components/PageView';
+import { extractContactSummary } from '@/lib/site-chrome';
 import { getPage, homeSlug, loadSiteData } from '@/lib/site-data';
 
 export default function HomePage() {
@@ -14,5 +15,12 @@ export default function HomePage() {
     );
   }
 
-  return <PageView hospitalName={site.hospitalName} page={page} />;
+  return (
+    <PageView
+      hospitalName={site.hospitalName}
+      page={page}
+      pages={site.pages}
+      contact={extractContactSummary(site.pages)}
+    />
+  );
 }

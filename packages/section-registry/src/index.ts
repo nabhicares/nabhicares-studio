@@ -47,7 +47,9 @@ export const SECTION_REGISTRY: SectionTypeDef[] = [
       { name: 'title', label: 'Headline', type: 'string' },
       { name: 'body', label: 'Supporting text', type: 'text' },
       { name: 'ctaPrimary', label: 'Primary CTA', type: 'string' },
+      { name: 'ctaPrimaryHref', label: 'Primary CTA link', type: 'string' },
       { name: 'ctaSecondary', label: 'Secondary CTA', type: 'string' },
+      { name: 'ctaSecondaryHref', label: 'Secondary CTA link', type: 'string' },
       { name: 'image', label: 'Image URL', type: 'string' },
     ],
   },
@@ -179,12 +181,15 @@ export const SECTION_REGISTRY: SectionTypeDef[] = [
     fields: [
       { name: 'title', label: 'Title', type: 'string' },
       { name: 'body', label: 'Intro', type: 'text' },
+      { name: 'variant', label: 'Variant (full | teaser)', type: 'string' },
       { name: 'phone', label: 'Phone', type: 'string' },
       { name: 'email', label: 'Email', type: 'string' },
       { name: 'address', label: 'Address', type: 'text' },
       { name: 'hours', label: 'Hours', type: 'text' },
       { name: 'mapUrl', label: 'Google Maps URL', type: 'string' },
       { name: 'ctaPrimary', label: 'Primary CTA', type: 'string' },
+      { name: 'ctaSecondary', label: 'Secondary CTA', type: 'string' },
+      { name: 'ctaSecondaryHref', label: 'Secondary CTA link', type: 'string' },
     ],
   },
 ];
@@ -227,7 +232,9 @@ export function exampleContentForSection(key: string): Record<string, unknown> {
         title: 'Care close to home',
         body: 'Compassionate, modern care for every patient.',
         ctaPrimary: 'Book appointment',
+        ctaPrimaryHref: 'contact/',
         ctaSecondary: 'Our services',
+        ctaSecondaryHref: '#services',
         image: 'https://example.com/hero.jpg',
       };
     case 'about':
@@ -285,6 +292,7 @@ export function exampleContentForSection(key: string): Record<string, unknown> {
       return {
         title: 'Visit us',
         body: 'We are here when you need us.',
+        variant: 'full',
         phone: '+91 98765 43210',
         email: 'care@example-hospital.com',
         address: '123 Care Road, Your City, State 560001',

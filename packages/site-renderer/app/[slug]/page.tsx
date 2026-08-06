@@ -1,4 +1,5 @@
 import { PageView } from '@/components/PageView';
+import { extractContactSummary } from '@/lib/site-chrome';
 import { getPage, homeSlug, loadSiteData } from '@/lib/site-data';
 import { notFound } from 'next/navigation';
 
@@ -15,5 +16,12 @@ export default function SlugPage({ params }: { params: { slug: string } }) {
   const site = loadSiteData();
   const page = getPage(site, params.slug);
   if (!page) notFound();
-  return <PageView hospitalName={site.hospitalName} page={page} />;
+  return (
+    <PageView
+      hospitalName={site.hospitalName}
+      page={page}
+      pages={site.pages}
+      contact={extractContactSummary(site.pages)}
+    />
+  );
 }
