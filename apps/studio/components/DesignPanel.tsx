@@ -18,6 +18,33 @@ const SWATCHES: { key: keyof DesignTokens['colors']; label: string; fallback: st
   { key: 'surface', label: 'Surface', fallback: '#E4E8E5' },
 ];
 
+const DISPLAY_FONT_OPTIONS = [
+  'Sora',
+  'Poppins',
+  'Outfit',
+  'Merriweather',
+  'Playfair Display',
+  'Montserrat',
+] as const;
+
+const BODY_FONT_OPTIONS = [
+  'Source Sans 3',
+  'Inter',
+  'Lato',
+  'Roboto',
+  'Open Sans',
+  'Nunito',
+] as const;
+
+const CUSTOM_FONT_VALUE = '__custom__';
+
+function normalizeFontLabel(value: string) {
+  return value
+    .split(',')[0]
+    ?.trim()
+    .replace(/^['"]|['"]$/g, '');
+}
+
 function normalizeTokens(raw: DesignTokens): DesignTokens {
   return {
     ...DEFAULT_DESIGN_TOKENS,
@@ -77,6 +104,10 @@ export function DesignPanel({
   }
 
   const radiusPx = parseInt(String(tokens.radii.button).replace('px', ''), 10) || 12;
+  const displayFontLabel = normalizeFontLabel(tokens.typography.displayFamily);
+  const bodyFontLabel = normalizeFontLabel(tokens.typography.bodyFamily);
+  const displayFontKnown = DISPLAY_FONT_OPTIONS.includes(displayFontLabel as (typeof DISPLAY_FONT_OPTIONS)[number]);
+  const bodyFontKnown = BODY_FONT_OPTIONS.includes(bodyFontLabel as (typeof BODY_FONT_OPTIONS)[number]);
 
   return (
     <div className="p-lg space-y-xl overflow-y-auto flex-1">
@@ -128,29 +159,73 @@ export function DesignPanel({
         </label>
         <div className="space-y-xs">
           <label className="font-inter text-label-sm text-on-surface">Headlines</label>
-          <input
+          <select
             className="field-input"
-            value={tokens.typography.displayFamily}
-            onChange={(e) =>
+            value={displayFontKnown ? displayFontLabel : CUSTOM_FONT_VALUE}
+            onChange={(e) => {
+              const next = e.target.value;
+              if (next === CUSTOM_FONT_VALUE) return;
               update({
                 ...tokens,
-                typography: { ...tokens.typography, displayFamily: e.target.value },
-              })
-            }
-          />
+                typography: { ...tokens.typography, displayFamily: next },
+              });
+            }}
+          >
+            {DISPLAY_FONT_OPTIONS.map((font) => (
+              <option key={font} value={font}>
+                {font}
+              </option>
+            ))}
+            <option value={CUSTOM_FONT_VALUE}>Custom…</option>
+          </select>
+          {!displayFontKnown ? (
+            <input
+              className="field-input"
+              value={tokens.typography.displayFamily}
+              onChange={(e) =>
+                update({
+                  ...tokens,
+                  typography: { ...tokens.typography, displayFamily: e.target.value },
+                })
+              }
+              placeholder="Custom headline font"
+            />
+          ) : null}
         </div>
         <div className="space-y-xs">
           <label className="font-inter text-label-sm text-on-surface">Body Text</label>
-          <input
+          <select
             className="field-input"
-            value={tokens.typography.bodyFamily}
-            onChange={(e) =>
+            value={bodyFontKnown ? bodyFontLabel : CUSTOM_FONT_VALUE}
+            onChange={(e) => {
+              const next = e.target.value;
+              if (next === CUSTOM_FONT_VALUE) return;
               update({
                 ...tokens,
-                typography: { ...tokens.typography, bodyFamily: e.target.value },
-              })
-            }
-          />
+                typography: { ...tokens.typography, bodyFamily: next },
+              });
+            }}
+          >
+            {BODY_FONT_OPTIONS.map((font) => (
+              <option key={font} value={font}>
+                {font}
+              </option>
+            ))}
+            <option value={CUSTOM_FONT_VALUE}>Custom…</option>
+          </select>
+          {!bodyFontKnown ? (
+            <input
+              className="field-input"
+              value={tokens.typography.bodyFamily}
+              onChange={(e) =>
+                update({
+                  ...tokens,
+                  typography: { ...tokens.typography, bodyFamily: e.target.value },
+                })
+              }
+              placeholder="Custom body font"
+            />
+          ) : null}
         </div>
       </div>
 
