@@ -316,9 +316,8 @@ export type SanitizeStringResult =
   | { ok: false; error: string };
 
 /**
- * Reject HTML markup and dangerous URL schemes in content strings.
- * Uses sanitize-html (empty allowlist) — reject if anything would be stripped,
- * rather than a hand-rolled tag blocklist.
+ * Strip HTML markup from content strings; reject dangerous URL schemes.
+ * Gemini sometimes wraps titles in &lt;b&gt; etc. — strip instead of blocking import.
  */
 export function sanitizeContentString(
   value: string,
@@ -329,15 +328,11 @@ export function sanitizeContentString(
     allowedAttributes: {},
     disallowedTagsMode: 'discard',
   });
-  // Reject rather than silently strip so authors fix content intentionally.
-  if (stripped !== value) {
-    return { ok: false, error: `"${fieldPath}" must not contain HTML tags` };
-  }
-  const trimmed = value.trim();
+  const trimmed = stripped.trim();
   if (/^(?:javascript|vbscript|data\s*:\s*text\/html)/i.test(trimmed)) {
     return { ok: false, error: `"${fieldPath}" has a disallowed URL scheme` };
   }
-  return { ok: true, value };
+  return { ok: true, value: stripped };
 }
 
 /**
@@ -635,11 +630,12 @@ Return ONLY valid JSON (no markdown fences, no commentary) matching this exact s
   }
 }
 
-Rules:
-- No HTML tags in any string.
+Rules (strict):
+- PLAIN TEXT ONLY in every string. Never use HTML or Markdown: no <b>, <br>, <p>, <span>, <div>, &lt;, &gt;, or any other tags. Write "Emergency Care" not "<b>Emergency Care</b>".
 - Prefer empty testimonials.items [] unless the listing clearly has public reviews you can paraphrase carefully.
 - Leave image fields as "" (operator will add URLs in Studio).
 - Include contact.phone, contact.address, contact.hours, contact.mapUrl from Maps when available.
+- Return raw JSON only — no \`\`\`json fences, no commentary before or after.
 
 Hospital / listing context:
 `;

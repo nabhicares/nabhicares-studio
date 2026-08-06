@@ -11,9 +11,10 @@ import {
 } from './index';
 
 describe('sanitizeContentString', () => {
-  it('rejects HTML tags', () => {
-    const r = sanitizeContentString('<script>x</script>', 'body');
-    assert.equal(r.ok, false);
+  it('strips HTML tags and keeps text', () => {
+    const r = sanitizeContentString('<b>Emergency</b> care', 'body');
+    assert.equal(r.ok, true);
+    if (r.ok) assert.equal(r.value, 'Emergency care');
   });
 
   it('rejects javascript: URLs', () => {
@@ -43,9 +44,10 @@ describe('validateSectionContent', () => {
     assert.equal(r.ok, false);
   });
 
-  it('rejects HTML in fields', () => {
+  it('strips HTML in fields on import', () => {
     const r = validateSectionContent('hero', { title: '<b>x</b>' });
-    assert.equal(r.ok, false);
+    assert.equal(r.ok, true);
+    if (r.ok) assert.equal(r.content.title, 'x');
   });
 
   it('strict import rejects unknown fields', () => {
