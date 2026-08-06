@@ -6,7 +6,10 @@ export const connection = new IORedis(
   { maxRetriesPerRequest: null },
 );
 
-export const publishQueue = new Queue('publish', { connection });
+/** Bump when stale remote workers must be cut off from new Studio jobs. */
+export const PUBLISH_QUEUE_NAME = 'publish-v2';
+
+export const publishQueue = new Queue(PUBLISH_QUEUE_NAME, { connection });
 
 export interface PublishJobData {
   hospitalId: string;

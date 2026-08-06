@@ -163,12 +163,29 @@ export async function assertVersionComplete(hospitalKey: string, publishId: stri
 }
 
 /**
+ * Refuse LIVE for pre-SiteChrome "wireframe" builds (missing nabhi-site-header).
+ * Runs on the object already in MinIO so a stale worker can't promote junk
+ * if it shares this package version.
+ */
+export async function assertModernSiteChrome(hospitalKey: string, publishId: string) {
+  const key = `${versionPrefix(hospitalKey, publishId)}index.html`;
+  const res = await s3.send(new GetObjectCommand({ Bucket: BUCKET, Key: key }));
+  const html = res.Body ? await res.Body.transformToString() : '';
+  if (!html.includes('nabhi-site-header')) {
+    throw new IncompleteSnapshotError(
+      `Refusing LIVE for ${hospitalKey}/${publishId}: index.html missing nabhi-site-header (wireframe/old renderer)`,
+    );
+  }
+}
+
+/**
  * Atomic promote: flip a single LIVE pointer object to this publishId.
  * CDN reads LIVE then serves versions/{id}/… — no mid-copy current/ tree.
  * After flip, purge Cloudflare edge cache when CLOUDFLARE_* env is set.
  */
 export async function promoteToLive(hospitalKey: string, publishId: string) {
   await assertVersionComplete(hospitalKey, publishId);
+  await assertModernSiteChrome(hospitalKey, publishId);
 
   await s3.send(
     new PutObjectCommand({

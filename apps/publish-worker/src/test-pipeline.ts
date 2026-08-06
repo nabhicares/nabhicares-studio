@@ -1,10 +1,10 @@
 import { QueueEvents } from 'bullmq';
-import { publishQueue, connection } from '@nabhicares/queue';
+import { publishQueue, connection, PUBLISH_QUEUE_NAME } from '@nabhicares/queue';
 import { promoteToLive, readLivePublishId } from '@nabhicares/snapshot-store';
 import { PrismaClient } from '@nabhicares/db-builder';
 import { randomUUID } from 'crypto';
 
-const queueEvents = new QueueEvents('publish', { connection });
+const queueEvents = new QueueEvents(PUBLISH_QUEUE_NAME, { connection });
 const prisma = new PrismaClient({
   datasources: { db: { url: process.env.BUILDER_DATABASE_URL } },
 });

@@ -3,7 +3,7 @@ import { spawn } from 'child_process';
 import { createServer } from 'http';
 import { readdir, readFile, writeFile, mkdir, stat, rm } from 'fs/promises';
 import { join, relative, extname } from 'path';
-import { connection, PublishJobData } from '@nabhicares/queue';
+import { connection, PublishJobData, PUBLISH_QUEUE_NAME } from '@nabhicares/queue';
 import { uploadBuildOutput, promoteToLive, BuildFile } from '@nabhicares/snapshot-store';
 import { PrismaClient } from '@nabhicares/db-builder';
 import type { Prisma } from '@prisma/client';
@@ -199,17 +199,17 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
     throw new Error(`Next.js export produced no out/ directory at ${outDir}`);
   }
 
-  // Guard against stale/old worker images that still emit the pre-SiteChrome
-  // "wireframe" header. Never upload those builds to LIVE.
-  const indexHtml = await readFile(join(outDir, 'index.html'), 'utf8');
+  const files = await collectFiles(outDir);
+  // Gate on in-memory buffers (not a second disk read) so OneDrive/sync races
+  // can't swap wireframe HTML between check and upload.
+  const indexFile = files.find((f) => f.path === 'index.html');
+  const indexHtml = indexFile ? String(indexFile.body) : '';
   if (!indexHtml.includes('nabhi-site-header')) {
     throw new Error(
       `Build rejected: out/index.html missing nabhi-site-header (wireframe/old renderer). ` +
         `SITE_RENDERER_ROOT=${SITE_RENDERER_ROOT}`,
     );
   }
-
-  const files = await collectFiles(outDir);
   const base = `/${hospital.slug}`;
   const sitemapUrls = [
     ...hospital.pages.map((p) => {
@@ -233,7 +233,7 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
 }
 
 const worker = new Worker<PublishJobData>(
-  'publish',
+  PUBLISH_QUEUE_NAME,
   async (job: Job<PublishJobData>) => {
     const { hospitalId, publishId } = job.data;
 
@@ -254,7 +254,8 @@ const worker = new Worker<PublishJobData>(
       console.log(`[publish ${publishId}] uploading under ${cdnKey}`);
       await uploadBuildOutput(cdnKey, publishId, files);
 
-      console.log(`[publish ${publishId}] promoting to live`);
+      // promoteToLive also re-reads MinIO index.html and refuses wireframe builds.
+      console.log(`[publish ${publishId}] promoting to live (chrome gate)`);
       await promoteToLive(cdnKey, publishId);
 
       await prisma.$transaction([
@@ -297,7 +298,7 @@ worker.on('stalled', (jobId) => {
   console.warn(`Publish job ${jobId} stalled — will retry`);
 });
 
-console.log('Publish worker listening for jobs...');
+console.log(`Publish worker listening on queue "${PUBLISH_QUEUE_NAME}"...`);
 console.log(`[worker] site-renderer root: ${SITE_RENDERER_ROOT}`);
 console.log(`[worker] pid=${process.pid} cwd=${process.cwd()}`);
 console.log(
