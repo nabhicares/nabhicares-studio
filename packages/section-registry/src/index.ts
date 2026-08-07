@@ -549,7 +549,45 @@ export const DEFAULT_DESIGN_TOKENS = {
   },
   /** Browser tab icon: hospital initial letter or a simple medical preset. */
   favicon: 'initial',
+  systemPages: {
+    notFound: {
+      layoutVersion: 1,
+      title: 'Page not found',
+      body: 'This link may be outdated, or the page hasn’t been published yet. Head home or reach the hospital team from the contact page.',
+      primaryCta: 'Back to home',
+      secondaryCta: 'Contact',
+    },
+    privacy: {
+      layoutVersion: 1,
+      title: 'Privacy notice',
+      intro: '',
+      formsNote: '',
+      rightsNote: '',
+    },
+  },
 } as const;
+
+export type NotFoundPageConfig = {
+  layoutVersion: number;
+  title: string;
+  body: string;
+  primaryCta: string;
+  secondaryCta: string;
+};
+
+export type PrivacyPageConfig = {
+  layoutVersion: number;
+  title: string;
+  /** Empty = use built-in hospital-named intro */
+  intro: string;
+  formsNote: string;
+  rightsNote: string;
+};
+
+export type SystemPagesConfig = {
+  notFound: NotFoundPageConfig;
+  privacy: PrivacyPageConfig;
+};
 
 export type DesignTokens = {
   colors: {
@@ -572,7 +610,26 @@ export type DesignTokens = {
     button: string;
   };
   favicon: FaviconPresetId;
+  systemPages: SystemPagesConfig;
 };
+
+export function normalizeSystemPages(
+  raw?: Partial<SystemPagesConfig> | null,
+): SystemPagesConfig {
+  const base = DEFAULT_DESIGN_TOKENS.systemPages;
+  return {
+    notFound: {
+      ...base.notFound,
+      ...(raw?.notFound ?? {}),
+      layoutVersion: Math.min(3, Math.max(1, Number(raw?.notFound?.layoutVersion) || 1)),
+    },
+    privacy: {
+      ...base.privacy,
+      ...(raw?.privacy ?? {}),
+      layoutVersion: Math.min(3, Math.max(1, Number(raw?.privacy?.layoutVersion) || 1)),
+    },
+  };
+}
 
 export {
   FAVICON_PRESETS,

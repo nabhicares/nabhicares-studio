@@ -3,12 +3,13 @@
 import { apiFetch } from '@/lib/api-client';
 
 import { useEffect, useMemo, useState } from 'react';
-import { DEFAULT_DESIGN_TOKENS, type DesignTokens } from '@nabhicares/section-registry';
+import { DEFAULT_DESIGN_TOKENS, normalizeSystemPages, type DesignTokens } from '@nabhicares/section-registry';
 import {
   FAVICON_PRESETS,
   isFaviconPresetId,
   type FaviconPresetId,
 } from '@nabhicares/section-registry';
+import { LayoutWireframe } from './LayoutWireframe';
 
 type ColorPalette = DesignTokens['colors'];
 type FontPair = Pick<DesignTokens['typography'], 'displayFamily' | 'bodyFamily'>;
@@ -203,6 +204,7 @@ function normalizeTokens(raw: DesignTokens): DesignTokens {
     spacing: { ...DEFAULT_DESIGN_TOKENS.spacing, ...raw.spacing },
     radii: { ...DEFAULT_DESIGN_TOKENS.radii, ...raw.radii },
     favicon: isFaviconPresetId(raw.favicon) ? raw.favicon : DEFAULT_DESIGN_TOKENS.favicon,
+    systemPages: normalizeSystemPages(raw.systemPages),
   };
 }
 
@@ -632,6 +634,171 @@ export function DesignPanel({
               </button>
             );
           })}
+        </div>
+      </div>
+
+      <div className="h-px bg-outline-variant" />
+
+      <div className="space-y-lg">
+        <SectionLabel hint="Edit copy and layout for /privacy and the 404 page. Publish to go live.">
+          System pages
+        </SectionLabel>
+
+        <div className="space-y-sm">
+          <p className="font-inter text-label-md font-semibold text-on-surface">404 page</p>
+          <div className="grid grid-cols-3 gap-xs">
+            {[1, 2, 3].map((version) => {
+              const active = tokens.systemPages.notFound.layoutVersion === version;
+              return (
+                <button
+                  key={`nf-${version}`}
+                  type="button"
+                  title={`404 layout ${String(version).padStart(2, '0')}`}
+                  onClick={() =>
+                    update({
+                      ...tokens,
+                      systemPages: {
+                        ...tokens.systemPages,
+                        notFound: { ...tokens.systemPages.notFound, layoutVersion: version },
+                      },
+                    })
+                  }
+                  className={`relative aspect-[4/3] rounded-lg overflow-hidden border ${
+                    active
+                      ? 'border-primary ring-1 ring-primary bg-primary-container/40'
+                      : 'border-outline-variant bg-surface-container-low'
+                  }`}
+                >
+                  <div className="absolute inset-1.5 text-on-surface-variant">
+                    <LayoutWireframe sectionType="notFound" version={version} />
+                  </div>
+                  <span className="absolute bottom-1 right-1.5 font-inter text-[10px] font-bold opacity-70">
+                    {String(version).padStart(2, '0')}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          {(
+            [
+              ['title', 'Title'],
+              ['body', 'Body'],
+              ['primaryCta', 'Primary button'],
+              ['secondaryCta', 'Secondary button'],
+            ] as const
+          ).map(([key, label]) => (
+            <div key={key} className="flex flex-col gap-xs">
+              <label className="font-inter text-label-sm text-outline">{label}</label>
+              {key === 'body' ? (
+                <textarea
+                  className="field-input resize-none"
+                  rows={3}
+                  value={tokens.systemPages.notFound[key]}
+                  onChange={(e) =>
+                    update({
+                      ...tokens,
+                      systemPages: {
+                        ...tokens.systemPages,
+                        notFound: { ...tokens.systemPages.notFound, [key]: e.target.value },
+                      },
+                    })
+                  }
+                />
+              ) : (
+                <input
+                  className="field-input"
+                  value={tokens.systemPages.notFound[key]}
+                  onChange={(e) =>
+                    update({
+                      ...tokens,
+                      systemPages: {
+                        ...tokens.systemPages,
+                        notFound: { ...tokens.systemPages.notFound, [key]: e.target.value },
+                      },
+                    })
+                  }
+                />
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="space-y-sm">
+          <p className="font-inter text-label-md font-semibold text-on-surface">Privacy page</p>
+          <div className="grid grid-cols-3 gap-xs">
+            {[1, 2, 3].map((version) => {
+              const active = tokens.systemPages.privacy.layoutVersion === version;
+              return (
+                <button
+                  key={`pr-${version}`}
+                  type="button"
+                  title={`Privacy layout ${String(version).padStart(2, '0')}`}
+                  onClick={() =>
+                    update({
+                      ...tokens,
+                      systemPages: {
+                        ...tokens.systemPages,
+                        privacy: { ...tokens.systemPages.privacy, layoutVersion: version },
+                      },
+                    })
+                  }
+                  className={`relative aspect-[4/3] rounded-lg overflow-hidden border ${
+                    active
+                      ? 'border-primary ring-1 ring-primary bg-primary-container/40'
+                      : 'border-outline-variant bg-surface-container-low'
+                  }`}
+                >
+                  <div className="absolute inset-1.5 text-on-surface-variant">
+                    <LayoutWireframe sectionType="privacy" version={version} />
+                  </div>
+                  <span className="absolute bottom-1 right-1.5 font-inter text-[10px] font-bold opacity-70">
+                    {String(version).padStart(2, '0')}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex flex-col gap-xs">
+            <label className="font-inter text-label-sm text-outline">Title</label>
+            <input
+              className="field-input"
+              value={tokens.systemPages.privacy.title}
+              onChange={(e) =>
+                update({
+                  ...tokens,
+                  systemPages: {
+                    ...tokens.systemPages,
+                    privacy: { ...tokens.systemPages.privacy, title: e.target.value },
+                  },
+                })
+              }
+            />
+          </div>
+          {(
+            [
+              ['intro', 'Intro (blank = default DPDP intro)'],
+              ['formsNote', 'Forms & contact note (optional override)'],
+              ['rightsNote', 'Your rights note (optional override)'],
+            ] as const
+          ).map(([key, label]) => (
+            <div key={key} className="flex flex-col gap-xs">
+              <label className="font-inter text-label-sm text-outline">{label}</label>
+              <textarea
+                className="field-input resize-none"
+                rows={3}
+                value={tokens.systemPages.privacy[key]}
+                onChange={(e) =>
+                  update({
+                    ...tokens,
+                    systemPages: {
+                      ...tokens.systemPages,
+                      privacy: { ...tokens.systemPages.privacy, [key]: e.target.value },
+                    },
+                  })
+                }
+              />
+            </div>
+          ))}
         </div>
       </div>
 

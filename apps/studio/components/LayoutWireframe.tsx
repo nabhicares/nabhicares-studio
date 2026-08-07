@@ -1094,6 +1094,80 @@ function renderSketch(type: string, v: number) {
       </>
     );
   }
+  if (type === 'notFound' && v === 1) {
+    return (
+      <>
+          <rect x="14" y="4" width="20" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <rect x="16" y="8" width="16" height="6" rx="1" className="fill-current" style={{opacity:0.45}} />
+          <rect x="12" y="17" width="24" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="14" y="21" width="20" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="15" y="26" width="8" height="2.5" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="25" y="26" width="8" height="2.5" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+      </>
+    );
+  }
+  if (type === 'notFound' && v === 2) {
+    return (
+      <>
+          <rect x="3" y="4" width="20" height="28" rx="1.5" className="fill-current" style={{opacity:0.12}} />
+          <rect x="6" y="10" width="14" height="5" rx="1" className="fill-current" style={{opacity:0.4}} />
+          <rect x="6" y="18" width="14" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="26" y="10" width="18" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="26" y="15" width="16" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="26" y="22" width="8" height="2.5" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="36" y="22" width="8" height="2.5" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+      </>
+    );
+  }
+  if (type === 'notFound' && v === 3) {
+    return (
+      <>
+          <rect x="3" y="3" width="42" height="10" rx="1.5" className="fill-current opacity-18" /><path d="M3 13 L45 3" stroke="currentColor" strokeWidth="0.4" opacity="0.12" /><path d="M3 3 L45 13" stroke="currentColor" strokeWidth="0.4" opacity="0.12" />
+          <rect x="12" y="16" width="24" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="14" y="21" width="20" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="15" y="27" width="8" height="2.5" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="25" y="27" width="8" height="2.5" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+      </>
+    );
+  }
+  if (type === 'privacy' && v === 1) {
+    return (
+      <>
+          <rect x="10" y="3" width="28" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="8" y="8" width="32" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="8" y="12" width="32" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+          <rect x="8" y="18" width="18" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="8" y="22" width="32" height="1" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+          <rect x="8" y="27" width="18" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="8" y="31" width="28" height="1" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+      </>
+    );
+  }
+  if (type === 'privacy' && v === 2) {
+    return (
+      <>
+          <rect x="3" y="3" width="16" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="3" y="8" width="18" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="3" y="14" width="2" height="16" rx="1" className="fill-current" style={{opacity:0.45}} />
+          <rect x="8" y="14" width="14" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="8" y="18" width="16" height="1" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+          <rect x="8" y="24" width="14" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="26" y="8" width="19" height="24" rx="1.5" className="fill-current" style={{opacity:0.12}} />
+      </>
+    );
+  }
+  if (type === 'privacy' && v === 3) {
+    return (
+      <>
+          <rect x="3" y="3" width="42" height="8" rx="1.5" className="fill-current" style={{opacity:0.14}} />
+          <rect x="6" y="5" width="20" height="1.8" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="3" y="14" width="20" height="18" rx="1.5" className="fill-current" style={{opacity:0.1}} />
+          <rect x="6" y="17" width="14" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="25" y="14" width="20" height="18" rx="1.5" className="fill-current" style={{opacity:0.1}} />
+          <rect x="28" y="17" width="14" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+      </>
+    );
+  }
 
   return (
     <>

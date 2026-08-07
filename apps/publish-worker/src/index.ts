@@ -113,10 +113,14 @@ async function resolveHospital(hospitalIdOrSlug: string) {
 
 async function buildStaticSite(hospitalIdOrSlug: string) {
   const hospital = await resolveHospital(hospitalIdOrSlug);
-  const tokens = {
+  const rawTokens = {
     ...DEFAULT_DESIGN_TOKENS,
     ...((hospital.designSystem?.tokens as object) ?? {}),
   } as DesignTokens;
+  const tokens: DesignTokens = {
+    ...rawTokens,
+    systemPages: normalizeSystemPages(rawTokens.systemPages),
+  };
   const favicon: FaviconPresetId = isFaviconPresetId(tokens.favicon)
     ? tokens.favicon
     : 'initial';
