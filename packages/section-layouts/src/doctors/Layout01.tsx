@@ -46,12 +46,14 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
             style={{
               display: 'grid',
               gap: 'clamp(1.5rem, 3vw, 2.25rem)',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+              // auto-fill + fixed max — auto-fit + 1fr makes a lone doctor image full-bleed huge
+              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 260px))',
+              justifyContent: doctors.length === 1 ? 'center' : 'start',
               marginTop: '0.5rem',
             }}
           >
             {doctors.map((d) => (
-              <article key={d.name}>
+              <article key={d.name} style={{ maxWidth: 260, width: '100%' }}>
                 <div style={{ ...imageTreatmentStyle, aspectRatio: '3 / 4', marginBottom: '1rem' }}>
                   {d.image ? (
                     <img
