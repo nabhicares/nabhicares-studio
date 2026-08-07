@@ -12,6 +12,7 @@ import type {
   ServicesContent,
   TestimonialsContent,
 } from './types';
+import { sanitizeMapUrl } from './links';
 
 function str(v: unknown, fallback = ''): string {
   return typeof v === 'string' ? v : fallback;
@@ -150,7 +151,7 @@ export function normalizeContact(raw: Record<string, unknown>): ContactContent {
     email: str(raw.email) || undefined,
     address: str(raw.address) || undefined,
     hours: str(raw.hours) || undefined,
-    mapUrl: str(raw.mapUrl) || undefined,
+    mapUrl: sanitizeMapUrl(str(raw.mapUrl)) || undefined,
     ctaPrimary: str(raw.ctaPrimary) || undefined,
     variant,
     ctaSecondary: str(raw.ctaSecondary) || undefined,
@@ -162,7 +163,7 @@ export function normalizeMap(raw: Record<string, unknown>): MapContent {
   return {
     title: str(raw.title, 'Find us'),
     body: str(raw.body) || undefined,
-    mapUrl: str(raw.mapUrl) || undefined,
+    mapUrl: sanitizeMapUrl(str(raw.mapUrl)) || undefined,
     address: str(raw.address) || undefined,
   };
 }

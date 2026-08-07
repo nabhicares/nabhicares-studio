@@ -15,8 +15,8 @@ import { resolveHref } from './bits';
 /** Eyebrow + image with CTA strip */
 export function Layout08({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
-  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact);
-  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services);
+  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact, siteLinks);
+  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services, siteLinks);
 
   return (
     <section

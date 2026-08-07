@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactElement } from 'react';
+import { sanitizeMapUrl } from './links';
 
 /** Resolve a Material Symbols name from explicit icon or service title keywords. */
 export function resolveServiceIcon(title: string, icon?: string): string {
@@ -86,7 +87,7 @@ export function IconBadge({
 
 /** Convert Maps share/search URLs into an embeddable iframe src when possible. */
 export function toMapEmbedSrc(mapUrl?: string, address?: string): string | null {
-  const url = (mapUrl ?? '').trim();
+  const url = sanitizeMapUrl(mapUrl) ?? (mapUrl ?? '').trim();
   const addr = (address ?? '').trim();
 
   if (url.includes('/maps/embed') || url.includes('output=embed')) return url;

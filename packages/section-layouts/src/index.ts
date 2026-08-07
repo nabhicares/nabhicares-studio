@@ -22,3 +22,4 @@ export {
   titleStyle,
   bodyStyle,
 } from './styles';
+export { resolveHref, sanitizeMapUrl, telHref } from './links';

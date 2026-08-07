@@ -6,14 +6,15 @@ import {
   mutedStyle,
 } from '../styles';
 import { contactRowIcon, IconBadge, toMapEmbedSrc } from '../icons';
+import { resolveHref, sanitizeMapUrl, telHref } from '../links';
 import { elevatedCardStyle } from '../polish';
 
 export type ContactRow = { label: string; value: string; href?: string };
 
 export function contactRows(c: ContactContent, isTeaser: boolean): ContactRow[] {
-  const telHref = c.phone ? `tel:${c.phone.replace(/[^\d+]/g, '')}` : undefined;
+  const phoneHref = c.phone ? telHref(c.phone) : undefined;
   return [
-    c.phone ? { label: 'Phone', value: c.phone, href: telHref } : null,
+    c.phone ? { label: 'Phone', value: c.phone, href: phoneHref } : null,
     !isTeaser && c.email
       ? { label: 'Email', value: c.email, href: `mailto:${c.email}` }
       : null,
@@ -23,11 +24,15 @@ export function contactRows(c: ContactContent, isTeaser: boolean): ContactRow[] 
 }
 
 export function contactDetailHref(c: ContactContent, siteLinks?: SiteLinks): string {
-  return c.ctaSecondaryHref || siteLinks?.contact || 'contact/';
+  return resolveHref(c.ctaSecondaryHref, siteLinks?.contact || 'contact/', siteLinks);
 }
 
 export function contactTelHref(c: ContactContent): string | undefined {
-  return c.phone ? `tel:${c.phone.replace(/[^\d+]/g, '')}` : undefined;
+  return c.phone ? telHref(c.phone) : undefined;
+}
+
+export function contactMapHref(c: ContactContent): string | undefined {
+  return sanitizeMapUrl(c.mapUrl);
 }
 
 export function ContactCtas({
@@ -39,16 +44,17 @@ export function ContactCtas({
   siteLinks?: SiteLinks;
   isTeaser: boolean;
 }): ReactElement | null {
+  const mapHref = contactMapHref(c);
   const embedSrc = toMapEmbedSrc(c.mapUrl, c.address);
   const detailHref = contactDetailHref(c, siteLinks);
-  const telHref = contactTelHref(c);
+  const phoneHref = contactTelHref(c);
   const buttons: ReactNode[] = [];
 
-  if (c.ctaPrimary && (c.mapUrl || embedSrc)) {
+  if (c.ctaPrimary && (mapHref || embedSrc)) {
     buttons.push(
       <a
         key="dir"
-        href={c.mapUrl || '#'}
+        href={mapHref || '#'}
         className="nabhi-btn"
         style={buttonPrimaryStyle}
         target="_blank"
@@ -65,9 +71,9 @@ export function ContactCtas({
       </a>,
     );
   }
-  if (telHref) {
+  if (phoneHref) {
     buttons.push(
-      <a key="call" href={telHref} className="nabhi-btn" style={buttonGhostStyle}>
+      <a key="call" href={phoneHref} className="nabhi-btn" style={buttonGhostStyle}>
         Call now
       </a>,
     );
@@ -136,6 +142,7 @@ export function ContactMapPanel({
   minHeight?: number;
 }): ReactElement {
   const embedSrc = toMapEmbedSrc(c.mapUrl, c.address);
+  const mapHref = contactMapHref(c);
   return (
     <div
       style={{
@@ -165,13 +172,13 @@ export function ContactMapPanel({
             location_on
           </span>
           <p style={{ margin: 0, textAlign: 'center' }}>
-            {c.mapUrl || c.address
+            {mapHref || c.address
               ? 'Map preview unavailable — use Get directions.'
               : 'Add a Maps link or address in Studio to show the map.'}
           </p>
-          {c.mapUrl ? (
+          {mapHref ? (
             <a
-              href={c.mapUrl}
+              href={mapHref}
               target="_blank"
               rel="noreferrer"
               className="nabhi-btn"

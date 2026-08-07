@@ -1,5 +1,5 @@
 import type { NavPage, SiteContactSummary } from '@/lib/site-chrome';
-import { hrefForPage, telHref } from '@/lib/site-chrome';
+import { hrefForPage, sanitizeMapUrl, telHref } from '@/lib/site-chrome';
 
 export function SiteHeader({
   hospitalName,
@@ -20,12 +20,12 @@ export function SiteHeader({
     <div className="nabhi-chrome-top">
       {phone ? (
         <div className="nabhi-emergency-bar">
-          <span className="nabhi-emergency-left">
+          <a href={telHref(phone)} className="nabhi-emergency-left">
             <span className="material-symbols-outlined" aria-hidden>
               emergency
             </span>
             Emergency: {phone}
-          </span>
+          </a>
           <a href={telHref(phone)} className="nabhi-emergency-right">
             <span className="material-symbols-outlined" aria-hidden>
               call
@@ -130,7 +130,12 @@ export function SiteFooter({
             </a>
           ) : null}
           {contact.mapUrl ? (
-            <a href={contact.mapUrl} className="nabhi-footer-link" target="_blank" rel="noreferrer">
+            <a
+              href={sanitizeMapUrl(contact.mapUrl) || contact.mapUrl}
+              className="nabhi-footer-link"
+              target="_blank"
+              rel="noreferrer"
+            >
               Directions
             </a>
           ) : null}

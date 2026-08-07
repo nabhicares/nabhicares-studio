@@ -14,8 +14,8 @@ import { resolveHref } from './bits';
 /** Stacked editorial — copy then wide image band */
 export function Layout04({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
-  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact);
-  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services);
+  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact, siteLinks);
+  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services, siteLinks);
 
   return (
     <section style={sectionBaseStyle}>

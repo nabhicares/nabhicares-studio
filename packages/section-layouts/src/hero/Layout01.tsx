@@ -8,20 +8,13 @@ import {
   titleStyle,
 } from '../styles';
 import { normalizeHero } from '../content';
-
-function resolveHref(
-  explicit: string | undefined,
-  fallback: string | undefined,
-): string {
-  if (explicit && explicit.trim()) return explicit.trim();
-  return fallback || '#';
-}
+import { resolveHref } from './bits';
 
 /** Full-bleed image plane + hospital-forward copy */
 export function Layout01({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
-  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact);
-  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services);
+  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact, siteLinks);
+  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services, siteLinks);
   const onImage = Boolean(c.image);
   const titleColor = onImage ? 'var(--color-bg)' : 'var(--color-fg)';
   const bodyColor = onImage

@@ -11,16 +11,22 @@ import {
 } from '../styles';
 import { normalizeContact } from '../content';
 import { contactRowIcon, IconBadge, toMapEmbedSrc } from '../icons';
+import {
+  contactDetailHref,
+  contactMapHref,
+  contactTelHref,
+} from './bits';
 
 /** Contact — address, phone, hours, map CTA (full or home teaser) */
 export function Layout01({ content, siteLinks }: LayoutProps) {
   const c = normalizeContact(content);
   const isTeaser = c.variant === 'teaser';
-  const detailHref = c.ctaSecondaryHref || siteLinks?.contact || 'contact/';
-  const telHref = c.phone ? `tel:${c.phone.replace(/[^\d+]/g, '')}` : undefined;
+  const detailHref = contactDetailHref(c, siteLinks);
+  const phoneHref = contactTelHref(c);
+  const mapHref = contactMapHref(c);
   const embedSrc = toMapEmbedSrc(c.mapUrl, c.address);
   const rows = [
-    c.phone ? { label: 'Phone', value: c.phone, href: telHref } : null,
+    c.phone ? { label: 'Phone', value: c.phone, href: phoneHref } : null,
     !isTeaser && c.email
       ? { label: 'Email', value: c.email, href: `mailto:${c.email}` }
       : null,
@@ -28,7 +34,7 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
     !isTeaser && c.hours ? { label: 'Hours', value: c.hours, href: undefined } : null,
   ].filter(Boolean) as { label: string; value: string; href?: string }[];
 
-  const hasDetails = rows.length > 0 || Boolean(c.mapUrl) || Boolean(embedSrc);
+  const hasDetails = rows.length > 0 || Boolean(mapHref) || Boolean(embedSrc);
 
   return (
     <section style={sectionBaseStyle}>
@@ -46,9 +52,9 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
           <h2 style={{ ...titleStyle, fontSize: 'clamp(1.85rem, 3.2vw, 2.6rem)' }}>{c.title}</h2>
           {c.body ? <p style={bodyStyle}>{c.body}</p> : null}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.25rem' }}>
-            {c.ctaPrimary && (c.mapUrl || embedSrc) ? (
+            {c.ctaPrimary && (mapHref || embedSrc) ? (
               <a
-                href={c.mapUrl || '#'}
+                href={mapHref || '#'}
                 className="nabhi-btn"
                 style={buttonPrimaryStyle}
                 target="_blank"
@@ -62,8 +68,8 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
                 {c.ctaSecondary || 'Contact details'}
               </a>
             )}
-            {telHref ? (
-              <a href={telHref} className="nabhi-btn" style={buttonGhostStyle}>
+            {phoneHref ? (
+              <a href={phoneHref} className="nabhi-btn" style={buttonGhostStyle}>
                 Call now
               </a>
             ) : null}
@@ -162,13 +168,13 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
                   location_on
                 </span>
                 <p style={{ margin: 0, textAlign: 'center' }}>
-                  {c.mapUrl || c.address
+                  {mapHref || c.address
                     ? 'Map preview unavailable — use Get directions.'
                     : 'Add a Maps link or address in Studio to show the map.'}
                 </p>
-                {c.mapUrl ? (
+                {mapHref ? (
                   <a
-                    href={c.mapUrl}
+                    href={mapHref}
                     target="_blank"
                     rel="noreferrer"
                     className="nabhi-btn"

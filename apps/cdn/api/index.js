@@ -251,6 +251,28 @@ module.exports = async function handler(req, res) {
 
     const upstream = await fetchMinio(objectKey);
     if (!upstream.ok) {
+      const looksLikePage =
+        !/\.[a-zA-Z0-9]+$/.test(objectPath) ||
+        objectPath.endsWith('.html') ||
+        objectPath.endsWith('/');
+      if (liveId && looksLikePage) {
+        const notFoundKey = `${slug}/versions/${liveId}/404.html`;
+        const nf = await fetchMinio(notFoundKey);
+        if (nf.ok) {
+          let buf = Buffer.from(await nf.arrayBuffer());
+          if (hostMode) {
+            buf = Buffer.from(rewriteHtmlForHost(buf.toString('utf8'), slug), 'utf8');
+          }
+          res.statusCode = 404;
+          res.setHeader('Content-Type', 'text/html; charset=utf-8');
+          res.setHeader('Cache-Control', 'public, max-age=60');
+          res.setHeader('X-Nabhi-Object-Key', notFoundKey);
+          res.setHeader('X-Nabhi-Live-Id', liveId);
+          if (hostMode) res.setHeader('X-Nabhi-Tenant', slug);
+          res.end(buf);
+          return;
+        }
+      }
       res.statusCode = upstream.status;
       res.setHeader('Content-Type', 'text/plain');
       res.setHeader('X-Nabhi-Object-Key', objectKey);

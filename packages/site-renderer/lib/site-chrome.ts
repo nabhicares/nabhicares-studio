@@ -64,7 +64,10 @@ export function extractContactSummary(pages: SitePage[]): SiteContactSummary {
         email: typeof c.email === 'string' && c.email.trim() ? c.email.trim() : undefined,
         address: typeof c.address === 'string' && c.address.trim() ? c.address.trim() : undefined,
         hours: typeof c.hours === 'string' && c.hours.trim() ? c.hours.trim() : undefined,
-        mapUrl: typeof c.mapUrl === 'string' && c.mapUrl.trim() ? c.mapUrl.trim() : undefined,
+        mapUrl:
+          typeof c.mapUrl === 'string' && c.mapUrl.trim()
+            ? sanitizeMapUrl(c.mapUrl.trim()) ?? c.mapUrl.trim()
+            : undefined,
       };
       const nextScore =
         (next.phone ? 4 : 0) +
@@ -83,5 +86,47 @@ export function extractContactSummary(pages: SitePage[]): SiteContactSummary {
 }
 
 export function telHref(phone: string): string {
-  return `tel:${phone.replace(/[^\d+]/g, '')}`;
+  let digits = phone.replace(/[^\d+]/g, '');
+  if (!digits) return 'tel:';
+  if (digits.startsWith('+')) return `tel:${digits}`;
+  if (digits.startsWith('0') && digits.length >= 10) {
+    digits = `+91${digits.slice(1)}`;
+  } else if (/^[6-9]\d{9}$/.test(digits)) {
+    digits = `+91${digits}`;
+  } else if (/^91[6-9]\d{9}$/.test(digits)) {
+    digits = `+${digits}`;
+  }
+  return `tel:${digits}`;
+}
+
+export function sanitizeMapUrl(raw?: string): string | undefined {
+  if (!raw?.trim()) return undefined;
+  let s = raw.trim();
+  for (let i = 0; i < 4 && /&amp;/i.test(s); i += 1) {
+    s = s.replace(/&amp;/gi, '&');
+  }
+  const mdExact = s.match(/^\[([^\]]*)\]\(([^)]+)\)\s*$/);
+  if (mdExact) {
+    s = (mdExact[2] || mdExact[1]).trim();
+    for (let i = 0; i < 4 && /&amp;/i.test(s); i += 1) {
+      s = s.replace(/&amp;/gi, '&');
+    }
+  } else {
+    const mdLoose = s.match(/\[(https?:\/\/[^\]]+)\]\((https?:\/\/[^)]+)\)/i);
+    if (mdLoose) s = mdLoose[2].trim();
+  }
+  try {
+    const u = new URL(s);
+    if (u.protocol === 'http:' || u.protocol === 'https:') return u.href;
+  } catch {
+    const m = s.match(/https?:\/\/[^\s\]\)"']+/i);
+    if (m) {
+      try {
+        return new URL(m[0].replace(/&amp;/gi, '&')).href;
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+  return undefined;
 }
