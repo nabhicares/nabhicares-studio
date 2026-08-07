@@ -697,6 +697,7 @@ export type HospitalBundleHospital = {
   seoDescription?: string;
   ogImage?: string;
   ogCardStyle?: string;
+  seoIndex?: boolean;
 };
 
 export type HospitalBundleImportResult =
@@ -735,7 +736,7 @@ export function importHospitalBundleJson(raw: string): HospitalBundleImportResul
   }
 
   const hospital: HospitalBundleHospital = {};
-  for (const k of ['name', 'slug', 'seoTitle', 'seoDescription', 'ogImage', 'ogCardStyle'] as const) {
+  for (const k of ['name', 'slug', 'seoTitle', 'seoDescription', 'ogImage', 'ogCardStyle', 'seoIndex'] as const) {
     if (typeof hospitalRaw[k] === 'string' && (hospitalRaw[k] as string).trim()) {
       hospital[k] = (hospitalRaw[k] as string).trim();
     }

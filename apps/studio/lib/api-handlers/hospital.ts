@@ -73,6 +73,7 @@ export async function PATCH(
     seoDescription?: string | null;
     ogImage?: string | null;
     ogCardStyle?: string | null;
+    seoIndex?: boolean;
     customDomain?: string | null;
   } = {};
 
@@ -111,6 +112,9 @@ export async function PATCH(
     }
     data.ogCardStyle = style;
   }
+  if (typeof body.seoIndex === 'boolean') {
+    data.seoIndex = body.seoIndex;
+  }
   if (body.customDomain !== undefined) {
     try {
       if (body.customDomain === null || body.customDomain === '') {
@@ -138,6 +142,7 @@ export async function PATCH(
     data.seoDescription === undefined &&
     data.ogImage === undefined &&
     data.ogCardStyle === undefined &&
+    data.seoIndex === undefined &&
     data.customDomain === undefined
   ) {
     return badRequest('name, slug, SEO, social, or customDomain required');

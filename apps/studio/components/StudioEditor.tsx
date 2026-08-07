@@ -212,6 +212,7 @@ export function StudioEditor({
   seoDescription = '',
   ogImage = '',
   ogCardStyle = 'hero',
+  seoIndex = true,
   customDomain = '',
   isLive = false,
   migrationWarnings = [],
@@ -224,6 +225,7 @@ export function StudioEditor({
   seoDescription?: string;
   ogImage?: string;
   ogCardStyle?: string;
+  seoIndex?: boolean;
   customDomain?: string;
   isLive?: boolean;
   migrationWarnings?: string[];
@@ -903,6 +905,7 @@ export function StudioEditor({
                 seoDescription={seoDescription}
                 ogImage={ogImage}
                 ogCardStyle={ogCardStyle}
+                seoIndex={seoIndex}
                 accent={designTokens?.colors?.accent}
                 pages={pages}
               />

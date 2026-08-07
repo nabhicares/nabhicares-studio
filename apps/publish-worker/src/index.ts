@@ -482,6 +482,7 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
   files.length = 0;
   files.push(...withoutBrokenOg);
   const origin = publicOrigin.replace(/\/$/, '');
+  const allowIndex = hospital.seoIndex !== false;
   const sitemapUrls = [
     ...hospital.pages.map((p) => {
       const path = p.slug === 'home' ? `/` : `/${p.slug}/`;
@@ -489,9 +490,12 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
     }),
     `  <url><loc>${origin}/privacy/</loc></url>`,
   ].join('\n');
+  const robotsBody = allowIndex
+    ? `User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`
+    : `User-agent: *\nDisallow: /\n`;
   files.push({
     path: 'robots.txt',
-    body: `User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`,
+    body: robotsBody,
     contentType: 'text/plain; charset=utf-8',
   });
   files.push({
@@ -499,7 +503,9 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
     body: `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${sitemapUrls}\n</urlset>\n`,
     contentType: 'application/xml; charset=utf-8',
   });
-  console.log(`[build] collected ${files.length} files from out/ (+ robots/sitemap)`);
+  console.log(
+    `[build] collected ${files.length} files from out/ (+ robots/sitemap) index=${allowIndex}`,
+  );
   return { cdnKey: hospital.slug, hospitalDbId: hospital.id, files };
 }
 

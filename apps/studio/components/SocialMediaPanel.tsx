@@ -54,6 +54,7 @@ export function SocialMediaPanel({
   seoDescription: initialSeoDescription = '',
   ogImage: initialOgImage = '',
   ogCardStyle: initialStyle = 'hero',
+  seoIndex: initialSeoIndex = true,
   accent = '#1F7A6C',
   pages,
 }: {
@@ -64,6 +65,7 @@ export function SocialMediaPanel({
   seoDescription?: string;
   ogImage?: string;
   ogCardStyle?: string;
+  seoIndex?: boolean;
   accent?: string;
   pages: Array<{ sections: Array<{ template: { key: string }; content: Record<string, unknown> }> }>;
 }) {
@@ -73,6 +75,7 @@ export function SocialMediaPanel({
   const [ogCardStyle, setOgCardStyle] = useState<OgCardStyle>(
     initialStyle === 'brand' || initialStyle === 'custom' ? initialStyle : 'hero',
   );
+  const [seoIndex, setSeoIndex] = useState(initialSeoIndex !== false);
   const [chrome, setChrome] = useState<PreviewChrome>('whatsapp');
   const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
@@ -82,9 +85,13 @@ export function SocialMediaPanel({
   const previewDesc =
     seoDescription.trim() ||
     `${hospitalName || 'Hospital'} — care you can trust`;
-  const siteHost = hospitalSlug
-    ? liveSiteUrl(hospitalSlug).replace(/^https?:\/\//, '').replace(/\/$/, '')
-    : 'site';
+  const origin = hospitalSlug ? liveSiteUrl(hospitalSlug).replace(/\/$/, '') : '';
+  const siteHost = origin.replace(/^https?:\/\//, '');
+  const sitemapUrl = origin ? `${origin}/sitemap.xml` : '';
+  const robotsUrl = origin ? `${origin}/robots.txt` : '';
+  const robotsPreview = seoIndex
+    ? `User-agent: *\nAllow: /\nSitemap: ${sitemapUrl || 'https://…/sitemap.xml'}\n`
+    : `User-agent: *\nDisallow: /\n`;
 
   const previewImage = useMemo(() => {
     if (ogCardStyle === 'custom' && ogImage.trim()) return ogImage.trim();
@@ -104,6 +111,7 @@ export function SocialMediaPanel({
         seoDescription,
         ogImage: ogCardStyle === 'custom' ? ogImage : '',
         ogCardStyle,
+        seoIndex,
       }),
     });
     const data = await res.json();
@@ -121,7 +129,8 @@ export function SocialMediaPanel({
           : 'hero',
       );
     }
-    setStatus('Saved — publish so WhatsApp / Meta refresh the card');
+    if (typeof data.seoIndex === 'boolean') setSeoIndex(data.seoIndex);
+    setStatus('Saved — publish to update live cards, robots.txt, and sitemap');
   }
 
   return (
@@ -250,6 +259,65 @@ export function SocialMediaPanel({
           brandMode={ogCardStyle === 'brand' && !previewImage}
           hospitalName={hospitalName}
         />
+      </section>
+
+      <section className="flex flex-col gap-md">
+        <div>
+          <h3 className="font-outfit text-[15px] font-semibold text-on-surface">
+            Search &amp; crawl
+          </h3>
+          <p className="font-inter text-label-sm text-outline mt-xs">
+            robots.txt and sitemap.xml are written on publish (absolute https URLs for Google).
+          </p>
+        </div>
+
+        <label className="flex items-start gap-sm cursor-pointer rounded-lg border border-outline-variant p-md">
+          <input
+            type="checkbox"
+            className="mt-1"
+            checked={seoIndex}
+            onChange={(e) => setSeoIndex(e.target.checked)}
+          />
+          <span>
+            <span className="font-outfit text-[14px] font-semibold text-on-surface block">
+              Allow search engines
+            </span>
+            <span className="font-inter text-label-sm text-outline">
+              Off writes <code className="text-on-surface">Disallow: /</code> so Google won&apos;t index
+              the site.
+            </span>
+          </span>
+        </label>
+
+        <div className="rounded-lg border border-outline-variant overflow-hidden bg-surface-container-lowest">
+          <div className="flex items-center justify-between gap-sm px-sm py-xs border-b border-outline-variant">
+            <p className="font-inter text-[10px] uppercase tracking-wider text-outline">
+              robots.txt preview
+            </p>
+            {robotsUrl ? (
+              <a
+                href={robotsUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="font-inter text-label-sm text-primary"
+              >
+                Open live
+              </a>
+            ) : null}
+          </div>
+          <pre className="p-md font-mono text-[12px] text-on-surface whitespace-pre-wrap m-0 overflow-x-auto">
+            {robotsPreview}
+          </pre>
+        </div>
+
+        {sitemapUrl ? (
+          <p className="font-inter text-label-sm text-outline">
+            Sitemap:{' '}
+            <a href={sitemapUrl} target="_blank" rel="noreferrer" className="text-primary break-all">
+              {sitemapUrl}
+            </a>
+          </p>
+        ) : null}
       </section>
 
       <div className="flex flex-col gap-sm sm:flex-row sm:items-center">

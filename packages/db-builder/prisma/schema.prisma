@@ -28,6 +28,8 @@ model Hospital {
   ogImage        String?
   /// Share card image source: hero | brand | custom
   ogCardStyle    String?  @default("hero")
+  /// When false, published robots.txt uses Disallow: /
+  seoIndex       Boolean  @default(true)
   createdAt   DateTime @default(now())
 
   pages               Page[]
