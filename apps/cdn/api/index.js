@@ -58,8 +58,131 @@ function normalizeSitePath(rest) {
   return p.replace(/^\/+/, '');
 }
 
+/** Missing routes that should get the themed hospital 404 page (not asset 404s). */
+function looksLikeMissingPage(objectPath) {
+  if (!objectPath) return true;
+  if (objectPath.startsWith('_next/')) return false;
+  if (objectPath.startsWith('assets/')) return false;
+  if (objectPath.endsWith('.html') || objectPath.endsWith('/')) return true;
+  return !/\.[a-zA-Z0-9]+$/.test(objectPath);
+}
+
+function humanizeSlug(slug) {
+  return String(slug || 'Hospital')
+    .split('-')
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+/** Last-resort themed 404 when a publish has no 404.html yet. */
+function inlineNotFoundHtml(slug, hostMode) {
+  const name = humanizeSlug(slug);
+  const home = hostMode ? '/' : `/${slug}/`;
+  const contact = hostMode ? '/contact/' : `/${slug}/contact/`;
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex"/>
+<title>Page not found — ${name}</title>
+<style>
+  :root {
+    --bg: #f3f1ec; --fg: #0f1c1a; --accent: #1f7a6c; --muted: #5c6b67;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; font-family: "Segoe UI", system-ui, sans-serif;
+    background:
+      radial-gradient(120% 80% at 10% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 55%),
+      var(--bg);
+    color: var(--fg);
+  }
+  main {
+    min-height: 70vh; display: flex; align-items: center; justify-content: center;
+    padding: clamp(2rem, 6vw, 4rem) clamp(1.25rem, 4vw, 2rem);
+  }
+  .inner { width: min(100%, 34rem); }
+  .kicker {
+    margin: 0 0 0.75rem; font-size: 0.78rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent);
+  }
+  .code {
+    margin: 0; font-size: clamp(4.5rem, 14vw, 7rem); font-weight: 700;
+    line-height: 0.9; letter-spacing: -0.06em;
+    color: color-mix(in srgb, var(--accent) 55%, var(--fg));
+  }
+  h1 { margin: 0.85rem 0 0.65rem; font-size: clamp(1.75rem, 4vw, 2.35rem); letter-spacing: -0.03em; }
+  p { margin: 0 0 1.75rem; font-size: 1.05rem; line-height: 1.65; color: var(--muted); max-width: 32rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+  a.btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 0.8rem 1.35rem; border-radius: 6px; font-weight: 600;
+    font-size: 0.95rem; text-decoration: none;
+  }
+  a.primary { background: var(--accent); color: var(--bg); }
+  a.secondary {
+    background: transparent; color: var(--fg);
+    border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="inner">
+    <p class="kicker">${name}</p>
+    <p class="code" aria-hidden="true">404</p>
+    <h1>Page not found</h1>
+    <p>This link may be outdated, or the page hasn’t been published yet. Head home or reach the hospital team from the contact page.</p>
+    <div class="actions">
+      <a class="btn primary" href="${home}">Back to home</a>
+      <a class="btn secondary" href="${contact}">Contact</a>
+    </div>
+  </div>
+</main>
+</body>
+</html>`;
+}
+
 async function fetchMinio(key) {
   return fetch(`${MINIO}/${BUCKET}/${key}`);
+}
+
+async function serveHospitalNotFound(res, { slug, liveId, hostMode }) {
+  const candidates = liveId
+    ? [
+        `${slug}/versions/${liveId}/404.html`,
+        `${slug}/versions/${liveId}/404/index.html`,
+      ]
+    : [`${slug}/current/404.html`, `${slug}/current/404/index.html`];
+
+  for (const notFoundKey of candidates) {
+    const nf = await fetchMinio(notFoundKey);
+    if (!nf.ok) continue;
+    let buf = Buffer.from(await nf.arrayBuffer());
+    if (hostMode) {
+      buf = Buffer.from(rewriteHtmlForHost(buf.toString('utf8'), slug), 'utf8');
+    }
+    res.statusCode = 404;
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.setHeader('Cache-Control', 'public, max-age=60');
+    res.setHeader('X-Nabhi-Object-Key', notFoundKey);
+    if (liveId) res.setHeader('X-Nabhi-Live-Id', liveId);
+    if (hostMode) res.setHeader('X-Nabhi-Tenant', slug);
+    res.end(buf);
+    return true;
+  }
+
+  const html = inlineNotFoundHtml(slug, hostMode);
+  res.statusCode = 404;
+  res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  res.setHeader('Cache-Control', 'public, max-age=60');
+  res.setHeader('X-Nabhi-Object-Key', 'inline-404');
+  if (liveId) res.setHeader('X-Nabhi-Live-Id', liveId);
+  if (hostMode) res.setHeader('X-Nabhi-Tenant', slug);
+  res.end(html);
+  return true;
 }
 
 function partsFromReq(req) {
@@ -251,27 +374,9 @@ module.exports = async function handler(req, res) {
 
     const upstream = await fetchMinio(objectKey);
     if (!upstream.ok) {
-      const looksLikePage =
-        !/\.[a-zA-Z0-9]+$/.test(objectPath) ||
-        objectPath.endsWith('.html') ||
-        objectPath.endsWith('/');
-      if (liveId && looksLikePage) {
-        const notFoundKey = `${slug}/versions/${liveId}/404.html`;
-        const nf = await fetchMinio(notFoundKey);
-        if (nf.ok) {
-          let buf = Buffer.from(await nf.arrayBuffer());
-          if (hostMode) {
-            buf = Buffer.from(rewriteHtmlForHost(buf.toString('utf8'), slug), 'utf8');
-          }
-          res.statusCode = 404;
-          res.setHeader('Content-Type', 'text/html; charset=utf-8');
-          res.setHeader('Cache-Control', 'public, max-age=60');
-          res.setHeader('X-Nabhi-Object-Key', notFoundKey);
-          res.setHeader('X-Nabhi-Live-Id', liveId);
-          if (hostMode) res.setHeader('X-Nabhi-Tenant', slug);
-          res.end(buf);
-          return;
-        }
+      if (looksLikeMissingPage(objectPath)) {
+        await serveHospitalNotFound(res, { slug, liveId, hostMode });
+        return;
       }
       res.statusCode = upstream.status;
       res.setHeader('Content-Type', 'text/plain');

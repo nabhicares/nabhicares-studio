@@ -220,6 +220,21 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
         `SITE_RENDERER_ROOT=${SITE_RENDERER_ROOT}`,
     );
   }
+  const notFoundFile = files.find((f) => f.path === '404.html' || f.path === '404/index.html');
+  if (!notFoundFile) {
+    throw new Error(
+      `Build rejected: out/404.html missing (themed not-found page required for CDN). ` +
+        `SITE_RENDERER_ROOT=${SITE_RENDERER_ROOT}`,
+    );
+  }
+  // CDN always looks for 404.html at the version root.
+  if (!files.some((f) => f.path === '404.html')) {
+    files.push({
+      path: '404.html',
+      body: notFoundFile.body,
+      contentType: 'text/html; charset=utf-8',
+    });
+  }
   const base = `/${hospital.slug}`;
   const sitemapUrls = [
     ...hospital.pages.map((p) => {

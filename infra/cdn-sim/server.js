@@ -52,6 +52,45 @@ function normalizeSitePath(rest) {
   return p.replace(/^\/+/, '');
 }
 
+function looksLikeMissingPage(objectPath) {
+  if (!objectPath) return true;
+  if (objectPath.startsWith('_next/')) return false;
+  if (objectPath.startsWith('assets/')) return false;
+  if (objectPath.endsWith('.html') || objectPath.endsWith('/')) return true;
+  return !/\.[a-zA-Z0-9]+$/.test(objectPath);
+}
+
+function humanizeSlug(slug) {
+  return String(slug || 'Hospital')
+    .split('-')
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(' ');
+}
+
+function inlineNotFoundHtml(slug) {
+  const name = humanizeSlug(slug);
+  return `<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="robots" content="noindex"/><title>Page not found — ${name}</title>
+<style>
+body{margin:0;min-height:100vh;font-family:system-ui,sans-serif;background:#f3f1ec;color:#0f1c1a}
+main{min-height:70vh;display:flex;align-items:center;justify-content:center;padding:2rem 1.25rem}
+.inner{max-width:34rem}.kicker{color:#1f7a6c;font-size:.78rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.code{margin:0;font-size:4.5rem;font-weight:700;line-height:.9;color:#1f7a6c}
+h1{margin:.85rem 0 .65rem}p{color:#5c6b67;line-height:1.65}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1.5rem}
+a{display:inline-flex;padding:.8rem 1.35rem;border-radius:6px;font-weight:600;text-decoration:none}
+a.primary{background:#1f7a6c;color:#f3f1ec}a.secondary{border:1px solid #c5ccc9;color:#0f1c1a}
+</style></head><body><main><div class="inner">
+<p class="kicker">${name}</p><p class="code" aria-hidden="true">404</p>
+<h1>Page not found</h1>
+<p>This link may be outdated, or the page hasn’t been published yet.</p>
+<div class="actions"><a class="primary" href="/${slug}/">Back to home</a>
+<a class="secondary" href="/${slug}/contact/">Contact</a></div>
+</div></main></body></html>`;
+}
+
 const server = http.createServer(async (req, res) => {
   try {
     const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
@@ -103,8 +142,39 @@ const server = http.createServer(async (req, res) => {
 
     const upstream = await fetchMinio(objectKey);
     if (!upstream.ok) {
+      if (looksLikeMissingPage(objectPath)) {
+        const publishIdMatch = objectKey.match(/\/versions\/([^/]+)\//);
+        const publishId = publishIdMatch ? publishIdMatch[1] : '';
+        const candidates = publishId
+          ? [
+              `${slug}/versions/${publishId}/404.html`,
+              `${slug}/versions/${publishId}/404/index.html`,
+            ]
+          : [`${slug}/current/404.html`, `${slug}/current/404/index.html`];
+        for (const nfKey of candidates) {
+          const nf = await fetchMinio(nfKey);
+          if (!nf.ok) continue;
+          const buf = Buffer.from(await nf.arrayBuffer());
+          res.writeHead(404, {
+            'Content-Type': 'text/html; charset=utf-8',
+            'Cache-Control': 'public, max-age=60',
+            'X-Served-By': 'nabhicares-cdn-sim',
+            'X-Nabhi-Object-Key': nfKey,
+          });
+          res.end(buf);
+          return;
+        }
+        res.writeHead(404, {
+          'Content-Type': 'text/html; charset=utf-8',
+          'Cache-Control': 'public, max-age=60',
+          'X-Served-By': 'nabhicares-cdn-sim',
+          'X-Nabhi-Object-Key': 'inline-404',
+        });
+        res.end(inlineNotFoundHtml(slug));
+        return;
+      }
       res.writeHead(upstream.status);
-      res.end('Not found');
+      res.end(`Not found (${objectKey})`);
       return;
     }
     const buf = Buffer.from(await upstream.arrayBuffer());
