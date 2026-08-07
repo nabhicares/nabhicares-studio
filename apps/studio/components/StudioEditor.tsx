@@ -1047,7 +1047,7 @@ export function StudioEditor({
                     Layout variant
                   </h3>
                   <p className="font-inter text-label-sm text-outline mt-xs">
-                    Layout 01 is the product design system. Other variants are experimental.
+                    Layout 01 is the default. Other variants change the section arrangement.
                   </p>
                 </div>
                 <div className="grid grid-cols-2 gap-sm">
@@ -1057,9 +1057,7 @@ export function StudioEditor({
                     const recommended = version === 1;
                     const key = selected.template.key;
                     const l01Only = key === 'contact' || key === 'map' || key === 'appointments';
-                    const heroAlt = key === 'hero' && version === 2;
                     const blocked = l01Only && version > 1;
-                    const softDeprecated = !recommended && !heroAlt && (l01Only || version > 1);
                     return (
                       <button
                         key={version}
@@ -1068,13 +1066,11 @@ export function StudioEditor({
                         title={
                           blocked
                             ? `${getSectionType(key)?.label ?? key} only ships Layout 01`
-                            : heroAlt
-                              ? 'Layout 02 · centered overlay'
-                              : tpl
-                                ? recommended
-                                  ? 'Layout 01 · recommended'
-                                  : `Layout ${String(version).padStart(2, '0')} · experimental`
-                                : 'Not seeded'
+                            : tpl
+                              ? recommended
+                                ? 'Layout 01 · default'
+                                : `Layout ${String(version).padStart(2, '0')}`
+                              : 'Not seeded'
                         }
                         onClick={() => {
                           if (!tpl) return;
@@ -1083,9 +1079,7 @@ export function StudioEditor({
                         className={`relative aspect-[4/3] rounded-lg overflow-hidden transition-colors text-on-surface-variant disabled:opacity-40 border ${
                           active
                             ? 'border-primary bg-primary-container/40 text-primary ring-1 ring-primary'
-                            : softDeprecated
-                              ? 'border-outline-variant/60 bg-surface-container-low/50 opacity-70 hover:opacity-100'
-                              : 'border-outline-variant bg-surface-container-low hover:bg-surface-container'
+                            : 'border-outline-variant bg-surface-container-low hover:bg-surface-container'
                         }`}
                       >
                         {recommended ? (
