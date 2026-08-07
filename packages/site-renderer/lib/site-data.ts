@@ -78,6 +78,6 @@ export function resolveOgImageUrl(site: SiteDataWithDesign): string | undefined 
     return site.ogImage.trim();
   }
   const origin = resolvePublicOrigin(site).replace(/\/$/, '');
-  // next/og static file from app/opengraph-image.tsx — also copied to og.png on publish
-  return `${origin}/og.png`;
+  // Worker uploads branded og.svg; prefer custom/hero https when set (better for WhatsApp).
+  return `${origin}/og.svg`;
 }

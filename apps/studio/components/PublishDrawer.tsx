@@ -285,7 +285,7 @@ export function PublishDrawer({
                 </div>
                 {p.reviewNote ? (
                   <p className="font-inter text-body-sm text-on-surface border-t border-outline-variant pt-sm">
-                    <span className="text-outline">Note: </span>
+                    <span className="text-outline">Review note: </span>
                     {p.reviewNote}
                   </p>
                 ) : (
@@ -293,6 +293,12 @@ export function PublishDrawer({
                     No review note stored for this version.
                   </p>
                 )}
+                {p.status === 'FAILED' ? (
+                  <p className="font-inter text-label-sm text-on-surface border-t border-outline-variant pt-sm">
+                    <span className="font-semibold">Build failed</span> on the publish worker.
+                    Check worker logs, then publish again.
+                  </p>
+                ) : null}
               </div>
             ))}
             {publishes.length === 0 ? (

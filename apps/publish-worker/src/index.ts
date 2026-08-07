@@ -47,6 +47,46 @@ const CONTENT_TYPES: Record<string, string> = {
   '.map': 'application/json',
 };
 
+function escapeXml(value: string): string {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
+}
+
+/** Branded share-card SVG (1200×630) — no @vercel/og (that breaks static export). */
+function buildOgSvg(opts: {
+  hospitalName: string;
+  title: string;
+  description: string;
+  accent: string;
+  background: string;
+  foreground: string;
+  muted: string;
+}): string {
+  const name = escapeXml(opts.hospitalName.slice(0, 60));
+  const title = escapeXml(opts.title.slice(0, 80));
+  const desc = escapeXml(opts.description.slice(0, 140));
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="${escapeXml(opts.accent)}" stop-opacity="0.22"/>
+      <stop offset="55%" stop-color="${escapeXml(opts.background)}" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="${escapeXml(opts.background)}"/>
+  <rect width="1200" height="630" fill="url(#g)"/>
+  <text x="72" y="100" fill="${escapeXml(opts.accent)}" font-family="Segoe UI, Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="2">${name}</text>
+  <text x="72" y="260" fill="${escapeXml(opts.foreground)}" font-family="Segoe UI, Arial, sans-serif" font-size="52" font-weight="700">${title}</text>
+  <text x="72" y="330" fill="${escapeXml(opts.muted)}" font-family="Segoe UI, Arial, sans-serif" font-size="26">${desc}</text>
+  <rect x="72" y="520" width="160" height="48" rx="24" fill="${escapeXml(opts.accent)}"/>
+  <text x="152" y="552" text-anchor="middle" fill="${escapeXml(opts.background)}" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="700">Visit site</text>
+</svg>`;
+}
+
 async function collectFiles(dir: string, base = dir): Promise<BuildFile[]> {
   const entries = await readdir(dir, { withFileTypes: true });
   const files: BuildFile[] = [];
@@ -187,8 +227,8 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
     }
   }
   if (!resolvedOgImage) {
-    // Generated opengraph-image.png is copied to og.png after build (stable public path).
-    resolvedOgImage = `${publicOrigin.replace(/\/$/, '')}/og.png`;
+    // Worker writes public/og.svg — WhatsApp prefers jpg/png, so prefer hero/custom when set.
+    resolvedOgImage = `${publicOrigin.replace(/\/$/, '')}/og.svg`;
   }
 
   const siteData = {
@@ -220,6 +260,22 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
   const publicDir = join(SITE_RENDERER_ROOT, 'public');
   await mkdir(publicDir, { recursive: true });
   await writeFile(join(publicDir, 'favicon.svg'), faviconSvg, 'utf8');
+
+  const ogTitle = (hospital.seoTitle?.trim() || hospital.name).slice(0, 80);
+  const ogDescription = (
+    hospital.seoDescription?.trim() || `${hospital.name} — care you can trust`
+  ).slice(0, 140);
+  const ogSvg = buildOgSvg({
+    hospitalName: hospital.name,
+    title: ogTitle,
+    description: ogDescription,
+    accent: tokens.colors?.accent || '#1F7A6C',
+    background: tokens.colors?.background || '#F3F1EC',
+    foreground: tokens.colors?.foreground || '#0F1C1A',
+    muted: tokens.colors?.muted || '#5C6B67',
+  });
+  await writeFile(join(publicDir, 'og.svg'), ogSvg, 'utf8');
+  await writeFile(join(dataDir, 'og.svg'), ogSvg, 'utf8');
 
   console.log(
     `[build] wrote site.json for ${siteData.hospitalSlug} (${siteData.pages.length} pages)`,
@@ -273,21 +329,20 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
     });
   }
 
-  // Stable share-card path: /og.png (WhatsApp/Meta prefer png). Prefer Next opengraph-image output.
-  const ogGenerated =
-    files.find((f) => f.path === 'opengraph-image.png' || f.path === 'opengraph-image.jpg') ||
-    files.find((f) => /(^|\/)opengraph-image[\w.-]*\.(png|jpg|jpeg)$/i.test(f.path));
-  if (ogGenerated && !files.some((f) => f.path === 'og.png')) {
+  // Share card asset (SVG). Custom https ogImage / hero photo still preferred in metadata.
+  if (!files.some((f) => f.path === 'og.svg')) {
     files.push({
-      path: 'og.png',
-      body: ogGenerated.body,
-      contentType: 'image/png',
+      path: 'og.svg',
+      body: ogSvg,
+      contentType: 'image/svg+xml',
     });
-  } else if (!files.some((f) => f.path === 'og.png') && !files.some((f) => f.path === 'opengraph-image.png')) {
-    console.warn(
-      '[build] warning: no opengraph-image.png in out/ — social cards may use hero/custom ogImage only',
-    );
   }
+  // Remove any broken Next opengraph-image artifacts if present from older trees.
+  const withoutBrokenOg = files.filter(
+    (f) => !/(^|\/)opengraph-image/i.test(f.path),
+  );
+  files.length = 0;
+  files.push(...withoutBrokenOg);
   const base = `/${hospital.slug}`;
   const sitemapUrls = [
     ...hospital.pages.map((p) => {

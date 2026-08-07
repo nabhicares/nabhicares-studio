@@ -69,7 +69,7 @@ export function HospitalSettings({
     `${name || 'Hospital'} — hospital website published with Nabhi Studio`;
   const previewImage =
     ogImage.trim() ||
-    (slug ? `${liveSiteUrl(slug).replace(/\/$/, '')}/og.png` : '');
+    (slug ? `${liveSiteUrl(slug).replace(/\/$/, '')}/og.svg` : '');
 
   async function save() {
     setSaving(true);
