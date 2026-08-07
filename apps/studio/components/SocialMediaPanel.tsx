@@ -264,12 +264,50 @@ export function SocialMediaPanel({
       <section className="flex flex-col gap-md">
         <div>
           <h3 className="font-outfit text-[15px] font-semibold text-on-surface">
-            Search &amp; crawl
+            Search &amp; Google
           </h3>
           <p className="font-inter text-label-sm text-outline mt-xs">
-            robots.txt and sitemap.xml are written on publish (absolute https URLs for Google).
+            robots.txt and sitemap.xml are written on publish. Nabhi submits the parent domain in
+            Search Console — you do not need a separate property per hospital.
           </p>
         </div>
+
+        <ul className="rounded-lg border border-outline-variant bg-surface-container-lowest p-md flex flex-col gap-sm m-0 list-none">
+          <li className="flex gap-sm items-start font-inter text-label-sm text-on-surface">
+            <span className="material-symbols-outlined text-[18px] text-primary shrink-0">check_circle</span>
+            <span>
+              Sitemap URL (after publish):{' '}
+              {sitemapUrl ? (
+                <a href={sitemapUrl} target="_blank" rel="noreferrer" className="text-primary break-all">
+                  {sitemapUrl}
+                </a>
+              ) : (
+                <span className="text-outline">available after first publish</span>
+              )}
+            </span>
+          </li>
+          <li className="flex gap-sm items-start font-inter text-label-sm text-on-surface">
+            <span className="material-symbols-outlined text-[18px] text-primary shrink-0">check_circle</span>
+            <span>
+              Indexing is covered via the <strong>nabhilabs.info</strong> Search Console domain
+              property (Nabhi ops) — not a per-hospital console login.
+            </span>
+          </li>
+          <li className="flex gap-sm items-start font-inter text-label-sm text-on-surface">
+            <span className="material-symbols-outlined text-[18px] text-primary shrink-0">check_circle</span>
+            <span>
+              Fill share title/description with the real hospital name + city so Google can match
+              local searches.
+            </span>
+          </li>
+          <li className="flex gap-sm items-start font-inter text-label-sm text-outline">
+            <span className="material-symbols-outlined text-[18px] shrink-0">info</span>
+            <span>
+              Tip: a Google Business Profile for this hospital usually matters more than Search
+              Console for “hospital name” searches.
+            </span>
+          </li>
+        </ul>
 
         <label className="flex items-start gap-sm cursor-pointer rounded-lg border border-outline-variant p-md">
           <input
@@ -309,15 +347,6 @@ export function SocialMediaPanel({
             {robotsPreview}
           </pre>
         </div>
-
-        {sitemapUrl ? (
-          <p className="font-inter text-label-sm text-outline">
-            Sitemap:{' '}
-            <a href={sitemapUrl} target="_blank" rel="noreferrer" className="text-primary break-all">
-              {sitemapUrl}
-            </a>
-          </p>
-        ) : null}
       </section>
 
       <div className="flex flex-col gap-sm sm:flex-row sm:items-center">

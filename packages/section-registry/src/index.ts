@@ -736,10 +736,15 @@ export function importHospitalBundleJson(raw: string): HospitalBundleImportResul
   }
 
   const hospital: HospitalBundleHospital = {};
-  for (const k of ['name', 'slug', 'seoTitle', 'seoDescription', 'ogImage', 'ogCardStyle', 'seoIndex'] as const) {
+  for (const k of ['name', 'slug', 'seoTitle', 'seoDescription', 'ogImage', 'ogCardStyle'] as const) {
     if (typeof hospitalRaw[k] === 'string' && (hospitalRaw[k] as string).trim()) {
       hospital[k] = (hospitalRaw[k] as string).trim();
     }
+  }
+  if (typeof hospitalRaw.seoIndex === 'boolean') {
+    hospital.seoIndex = hospitalRaw.seoIndex;
+  } else if (hospitalRaw.seoIndex === 'true' || hospitalRaw.seoIndex === 'false') {
+    hospital.seoIndex = hospitalRaw.seoIndex === 'true';
   }
 
   const sections: Record<string, Record<string, unknown>> = {};
