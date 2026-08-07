@@ -1,6 +1,12 @@
 import type { NavPage, SiteContactSummary } from '@/lib/site-chrome';
 import { hrefForPage, sanitizeMapUrl, telHref } from '@/lib/site-chrome';
-import { toDirectionsUrl } from '@nabhicares/section-layouts';
+import {
+  resolveFooterLayout,
+  toDirectionsUrl,
+  type FooterProps,
+} from '@nabhicares/section-layouts';
+import { loadSiteData } from '@/lib/site-data';
+import { normalizeSystemPages } from '@nabhicares/section-registry';
 
 export function SiteHeader({
   hospitalName,
@@ -87,79 +93,56 @@ export function SiteFooter({
   currentSlug,
   pages,
   contact,
+  layoutVersion,
 }: {
   hospitalName: string;
   currentSlug: string;
   pages: NavPage[];
   contact: SiteContactSummary;
+  /** Layout version — prefer page Footer section; else design token / 1 */
+  layoutVersion?: number;
 }) {
   const isHome = currentSlug === 'home' || currentSlug === '';
   const year = new Date().getFullYear();
-  return (
-    <footer className="nabhi-site-footer">
-      <div className="nabhi-footer-inner">
-        <div className="nabhi-footer-brand">
-          <div className="nabhi-footer-name">{hospitalName}</div>
-          {contact.address ? <p className="nabhi-footer-meta">{contact.address}</p> : null}
-          {contact.hours ? (
-            <p className="nabhi-footer-meta" style={{ whiteSpace: 'pre-line' }}>
-              {contact.hours}
-            </p>
-          ) : null}
-        </div>
-        <div className="nabhi-footer-col">
-          <div className="nabhi-footer-label">Explore</div>
-          {pages.map((p) => (
-            <a key={p.slug} href={hrefForPage(currentSlug, p.slug)} className="nabhi-footer-link">
-              {p.label}
-            </a>
-          ))}
-          <a href={isHome ? 'privacy/' : '../privacy/'} className="nabhi-footer-link">
-            Privacy
-          </a>
-        </div>
-        <div className="nabhi-footer-col">
-          <div className="nabhi-footer-label">Visit</div>
-          {contact.phone ? (
-            <a href={telHref(contact.phone)} className="nabhi-footer-link">
-              Emergency: {contact.phone}
-            </a>
-          ) : null}
-          {contact.email ? (
-            <a href={`mailto:${contact.email}`} className="nabhi-footer-link">
-              {contact.email}
-            </a>
-          ) : null}
-          {contact.mapUrl || contact.address ? (
-            <a
-              href={
-                toDirectionsUrl(contact.mapUrl, contact.address) ||
-                sanitizeMapUrl(contact.mapUrl) ||
-                '#'
-              }
-              className="nabhi-footer-link"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Directions
-            </a>
-          ) : null}
-          {!contact.phone && !contact.email && !contact.mapUrl && !contact.address ? (
-            <span className="nabhi-footer-meta">Add contact details in Studio</span>
-          ) : null}
-        </div>
-      </div>
-      <div className="nabhi-footer-bottom">
-        <span>
-          © {year} {hospitalName}. All rights reserved.
-        </span>
-        <span className="nabhi-footer-credit">
-          Website by{' '}
-          <a href="https://www.nabhilabs.com" target="_blank" rel="noreferrer">
-            Nabhi Labs
-          </a>
-        </span>
-      </div>
-    </footer>
-  );
+  let version = layoutVersion;
+  if (version == null) {
+    try {
+      const site = loadSiteData();
+      for (const page of site.pages ?? []) {
+        const footer = page.sections?.find((s: { type?: string }) => s.type === 'footer');
+        if (footer) {
+          version = Number((footer as { layoutVersion?: number }).layoutVersion) || 1;
+          break;
+        }
+      }
+      if (version == null) {
+        version = normalizeSystemPages(site.designTokens?.systemPages).footer.layoutVersion;
+      }
+    } catch {
+      version = 1;
+    }
+  }
+  const FooterLayout = resolveFooterLayout(version);
+  const props: FooterProps = {
+    hospitalName,
+    year,
+    privacyHref: isHome ? 'privacy/' : '../privacy/',
+    pages: pages.map((p) => ({
+      slug: p.slug,
+      label: p.label,
+      href: hrefForPage(currentSlug, p.slug),
+    })),
+    contact: {
+      phone: contact.phone,
+      phoneHref: contact.phone ? telHref(contact.phone) : undefined,
+      email: contact.email,
+      address: contact.address,
+      hours: contact.hours,
+      directionsHref:
+        toDirectionsUrl(contact.mapUrl, contact.address) ||
+        sanitizeMapUrl(contact.mapUrl) ||
+        undefined,
+    },
+  };
+  return <FooterLayout {...props} />;
 }

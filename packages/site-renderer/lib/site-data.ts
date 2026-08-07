@@ -78,6 +78,6 @@ export function resolveOgImageUrl(site: SiteDataWithDesign): string | undefined 
     return site.ogImage.trim();
   }
   const origin = resolvePublicOrigin(site).replace(/\/$/, '');
-  // Worker uploads branded og.svg; prefer custom/hero https when set (better for WhatsApp).
-  return `${origin}/og.svg`;
+  // Worker uploads branded og.png; prefer custom/hero https when set (better for WhatsApp).
+  return `${origin}/og.png`;
 }

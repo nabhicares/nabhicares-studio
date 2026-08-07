@@ -2,6 +2,7 @@ import { Worker, Job } from 'bullmq';
 import { spawn } from 'child_process';
 import { createServer } from 'http';
 import { readdir, readFile, writeFile, mkdir, stat, rm } from 'fs/promises';
+import { deflateSync } from 'zlib';
 import { join, relative, extname } from 'path';
 import { connection, PublishJobData, PUBLISH_QUEUE_NAME } from '@nabhicares/queue';
 import { uploadBuildOutput, promoteToLive, BuildFile } from '@nabhicares/snapshot-store';
@@ -54,6 +55,147 @@ function escapeXml(value: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&apos;');
+}
+
+/** WhatsApp/Meta need raster https images — SVG share cards are ignored. */
+function shareImageScore(url: string): number {
+  const path = url.split('?')[0].toLowerCase();
+  if (path.endsWith('.svg')) return -1;
+  if (path.endsWith('.jpg') || path.endsWith('.jpeg')) return 3;
+  if (path.endsWith('.png')) return 2;
+  if (path.endsWith('.webp')) return 1;
+  if (path.endsWith('.gif')) return 0;
+  return -1;
+}
+
+/**
+ * Turn Studio/CDN media URLs into a live-site absolute URL WhatsApp can fetch.
+ * Rewrites `https://cdn…/{slug}/assets/x.jpg` → `https://{slug}.…/assets/x.jpg`.
+ */
+function toLiveShareImageUrl(
+  raw: string,
+  publicOrigin: string,
+  slug: string,
+): string | null {
+  const value = raw.trim();
+  if (!value || shareImageScore(value) < 0) return null;
+  const origin = publicOrigin.replace(/\/$/, '');
+
+  let pathname = value;
+  if (/^https?:\/\//i.test(value)) {
+    try {
+      pathname = new URL(value).pathname;
+    } catch {
+      return shareImageScore(value) >= 0 && value.startsWith('https://') ? value : null;
+    }
+  }
+
+  const asset = pathname.match(
+    new RegExp(`^(?:/${slug.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})?/assets/([^/]+)$`, 'i'),
+  );
+  if (asset) {
+    return `${origin}/assets/${asset[1]}`;
+  }
+
+  if (value.startsWith('/') && shareImageScore(value) >= 0) {
+    return `${origin}${value}`;
+  }
+
+  if (/^https:\/\//i.test(value)) return value;
+  return null;
+}
+
+function pickResolvedOgImage(
+  hospitalOgImage: string | null | undefined,
+  ogCardStyle: string | null | undefined,
+  pages: Array<{ sections: Array<{ type: string; content?: Record<string, unknown> | null }> }>,
+  publicOrigin: string,
+  slug: string,
+): string {
+  const style = (ogCardStyle || 'hero').toLowerCase();
+  const origin = publicOrigin.replace(/\/$/, '');
+
+  if (style === 'brand') {
+    return `${origin}/og.png`;
+  }
+
+  if (style === 'custom') {
+    const custom =
+      typeof hospitalOgImage === 'string'
+        ? toLiveShareImageUrl(hospitalOgImage, publicOrigin, slug)
+        : null;
+    return custom || `${origin}/og.png`;
+  }
+
+  // hero (default): prefer hospital hero photo, else branded fallback
+  const candidates: string[] = [];
+  for (const page of pages) {
+    for (const section of page.sections) {
+      if (section.type !== 'hero') continue;
+      const img = section.content?.image;
+      if (typeof img !== 'string') continue;
+      const live = toLiveShareImageUrl(img, publicOrigin, slug);
+      if (live) candidates.push(live);
+    }
+  }
+  candidates.sort((a, b) => shareImageScore(b) - shareImageScore(a));
+  return candidates[0] || `${origin}/og.png`;
+}
+
+/** Minimal solid-color PNG (1200×630) — no sharp/@vercel/og. */
+function buildOgPng(accentHex: string): Buffer {
+  const width = 1200;
+  const height = 630;
+  const hex = accentHex.replace('#', '').trim();
+  const n = parseInt(hex.length === 3 ? [...hex].map((c) => c + c).join('') : hex.slice(0, 6), 16);
+  const r = Number.isFinite(n) ? (n >> 16) & 255 : 31;
+  const g = Number.isFinite(n) ? (n >> 8) & 255 : 122;
+  const b = Number.isFinite(n) ? n & 255 : 108;
+
+  const row = Buffer.alloc(1 + width * 3);
+  for (let x = 0; x < width; x++) {
+    const i = 1 + x * 3;
+    row[i] = r;
+    row[i + 1] = g;
+    row[i + 2] = b;
+  }
+  const raw = Buffer.alloc(row.length * height);
+  for (let y = 0; y < height; y++) row.copy(raw, y * row.length);
+  const compressed = deflateSync(raw, { level: 9 });
+
+  const crcTable = (() => {
+    const table = new Uint32Array(256);
+    for (let i = 0; i < 256; i++) {
+      let c = i;
+      for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+      table[i] = c >>> 0;
+    }
+    return table;
+  })();
+  const crc32 = (buf: Buffer) => {
+    let c = 0xffffffff;
+    for (let i = 0; i < buf.length; i++) c = crcTable[(c ^ buf[i]) & 255] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  };
+  const chunk = (type: string, data: Buffer) => {
+    const typeBuf = Buffer.from(type, 'ascii');
+    const len = Buffer.alloc(4);
+    len.writeUInt32BE(data.length, 0);
+    const crcBuf = Buffer.alloc(4);
+    crcBuf.writeUInt32BE(crc32(Buffer.concat([typeBuf, data])), 0);
+    return Buffer.concat([len, typeBuf, data, crcBuf]);
+  };
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(width, 0);
+  ihdr.writeUInt32BE(height, 4);
+  ihdr[8] = 8; // bit depth
+  ihdr[9] = 2; // RGB
+  return Buffer.concat([
+    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    chunk('IHDR', ihdr),
+    chunk('IDAT', compressed),
+    chunk('IEND', Buffer.alloc(0)),
+  ]);
 }
 
 /** Branded share-card SVG (1200×630) — no @vercel/og (that breaks static export). */
@@ -209,27 +351,13 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
       ? `https://${hospital.slug}.${rootDomain}/`
       : `https://${hospital.slug}.localhost/`;
 
-  let resolvedOgImage =
-    typeof hospital.ogImage === 'string' && /^https:\/\//i.test(hospital.ogImage.trim())
-      ? hospital.ogImage.trim()
-      : '';
-  if (!resolvedOgImage) {
-    for (const page of pages) {
-      for (const section of page.sections) {
-        if (section.type !== 'hero') continue;
-        const img = section.content?.image;
-        if (typeof img === 'string' && /^https:\/\//i.test(img.trim())) {
-          resolvedOgImage = img.trim();
-          break;
-        }
-      }
-      if (resolvedOgImage) break;
-    }
-  }
-  if (!resolvedOgImage) {
-    // Worker writes public/og.svg — WhatsApp prefers jpg/png, so prefer hero/custom when set.
-    resolvedOgImage = `${publicOrigin.replace(/\/$/, '')}/og.svg`;
-  }
+  const resolvedOgImage = pickResolvedOgImage(
+    hospital.ogImage,
+    hospital.ogCardStyle,
+    pages,
+    publicOrigin,
+    hospital.slug,
+  );
 
   const siteData = {
     hospitalId: hospital.id,
@@ -276,9 +404,12 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
   });
   await writeFile(join(publicDir, 'og.svg'), ogSvg, 'utf8');
   await writeFile(join(dataDir, 'og.svg'), ogSvg, 'utf8');
+  const ogPng = buildOgPng(tokens.colors?.accent || '#1F7A6C');
+  await writeFile(join(publicDir, 'og.png'), ogPng);
+  await writeFile(join(dataDir, 'og.png'), ogPng);
 
   console.log(
-    `[build] wrote site.json for ${siteData.hospitalSlug} (${siteData.pages.length} pages)`,
+    `[build] wrote site.json for ${siteData.hospitalSlug} (${siteData.pages.length} pages) og=${resolvedOgImage}`,
   );
 
   await rm(join(SITE_RENDERER_ROOT, '.next'), { recursive: true, force: true });
@@ -329,12 +460,19 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
     });
   }
 
-  // Share card asset (SVG). Custom https ogImage / hero photo still preferred in metadata.
+  // Share card assets. Meta/WhatsApp use og.png (or hero/custom https); SVG is optional.
   if (!files.some((f) => f.path === 'og.svg')) {
     files.push({
       path: 'og.svg',
       body: ogSvg,
       contentType: 'image/svg+xml',
+    });
+  }
+  if (!files.some((f) => f.path === 'og.png')) {
+    files.push({
+      path: 'og.png',
+      body: ogPng,
+      contentType: 'image/png',
     });
   }
   // Remove any broken Next opengraph-image artifacts if present from older trees.

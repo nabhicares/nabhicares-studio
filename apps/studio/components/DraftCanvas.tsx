@@ -3,11 +3,14 @@
 import { apiFetch } from '@/lib/api-client';
 
 import { useEffect, useState, type CSSProperties } from 'react';
-import { resolveLayout, telHref, toDirectionsUrl } from '@nabhicares/section-layouts';
-import { DEFAULT_DESIGN_TOKENS, getSectionType, type DesignTokens } from '@nabhicares/section-registry';
+import { resolveLayout, resolveFooterLayout, telHref, toDirectionsUrl, NotFoundView, PrivacyView } from '@nabhicares/section-layouts';
+import { DEFAULT_DESIGN_TOKENS, getSectionType, normalizeSystemPages, type DesignTokens } from '@nabhicares/section-registry';
 import type { Page } from './StudioEditor';
 
 export type PreviewViewport = 'mobile' | 'tablet' | 'desktop';
+
+/** What the Design canvas shows while editing system pages. */
+export type SystemPreviewMode = 'page' | 'notFound' | 'privacy';
 
 export const PREVIEW_VIEWPORTS: {
   id: PreviewViewport;
@@ -131,6 +134,7 @@ export function DraftCanvas({
   selectedSectionId,
   viewport = 'desktop',
   designTokens,
+  systemPreview = 'page',
   onSelectSection,
 }: {
   hospitalId: string;
@@ -142,6 +146,8 @@ export function DraftCanvas({
   viewport?: PreviewViewport;
   /** When provided, overrides fetched tokens (live Style edits). */
   designTokens?: DesignTokens;
+  /** Design → System pages: show 404 / privacy / footer in the canvas. */
+  systemPreview?: SystemPreviewMode;
   onSelectSection?: (id: string) => void;
 }) {
   const [fetchedTokens, setFetchedTokens] = useState<DesignTokens>(DEFAULT_DESIGN_TOKENS);
@@ -150,13 +156,28 @@ export function DraftCanvas({
   const navPages = (pages ?? []).filter((p) => p.slug);
   const frame = frameFor(viewport);
   const compactNav = viewport === 'mobile';
+  const systemPages = normalizeSystemPages(tokens.systemPages);
+  const previewPath =
+    systemPreview === 'notFound'
+      ? '404'
+      : systemPreview === 'privacy'
+        ? 'privacy'
+        : (page?.slug ?? 'home');
+  const hideChrome = systemPreview === 'notFound';
+  const showPrivacy = systemPreview === 'privacy';
+  const showNotFound = systemPreview === 'notFound';
+  const activeNavSlug = showPrivacy ? 'privacy' : page?.slug;
 
   useEffect(() => {
     if (designTokens) return;
     void (async () => {
       const res = await apiFetch(`/api/hospitals/${hospitalId}/design`);
       const data = await res.json();
-      if (data.tokens) setFetchedTokens(data.tokens as DesignTokens);
+      if (data.tokens) setFetchedTokens({
+        ...DEFAULT_DESIGN_TOKENS,
+        ...(data.tokens as DesignTokens),
+        systemPages: normalizeSystemPages((data.tokens as DesignTokens).systemPages),
+      });
     })();
   }, [hospitalId, designTokens]);
 
@@ -200,7 +221,7 @@ export function DraftCanvas({
           </div>
           <div className="bg-white px-md py-xs rounded text-[10px] text-outline flex-grow mx-xl flex items-center gap-xs">
             <span className="material-symbols-outlined text-[12px]">lock</span>
-            {hospitalSlug}.nabhi.studio/{page?.slug ?? 'home'}
+            {hospitalSlug}.nabhi.studio/{previewPath}
           </div>
         </div>
       ) : viewport === 'mobile' ? (
@@ -210,6 +231,8 @@ export function DraftCanvas({
       ) : null}
 
       <div style={tokensToStyle(tokens)}>
+        {!hideChrome ? (
+          <>
         <div
           className="flex items-center justify-between gap-sm px-lg py-sm text-label-sm font-semibold border-b"
           style={{
@@ -265,7 +288,7 @@ export function DraftCanvas({
                       <span
                         key={p.id}
                         style={
-                          p.slug === page?.slug
+                          p.slug === activeNavSlug
                             ? {
                                 color: tokens.colors.accent,
                                 fontWeight: 700,
@@ -286,6 +309,18 @@ export function DraftCanvas({
                     <span>Contact</span>
                   </>
                 )}
+              {showPrivacy ? (
+                <span
+                  style={{
+                    color: tokens.colors.accent,
+                    fontWeight: 700,
+                    borderBottom: `2px solid ${tokens.colors.accent}`,
+                    paddingBottom: 2,
+                  }}
+                >
+                  Privacy
+                </span>
+              ) : null}
               <span
                 className="rounded px-md py-xs font-semibold"
                 style={{ background: tokens.colors.accent, color: tokens.colors.background }}
@@ -295,6 +330,8 @@ export function DraftCanvas({
             </div>
           )}
         </nav>
+          </>
+        ) : null}
       </div>
 
       <div
@@ -331,24 +368,194 @@ export function DraftCanvas({
             color: var(--color-muted);
             font-size: 0.88rem;
           }
+          .nabhi-site-footer {
+            padding: 2rem 1.25rem 1.75rem;
+            font-size: 0.9rem;
+            color: var(--color-muted);
+            border-top: 1px solid color-mix(in srgb, var(--color-fg) 10%, transparent);
+            background: color-mix(in srgb, var(--color-surface) 70%, var(--color-bg));
+          }
+          .nabhi-footer-inner {
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+          }
+          .nabhi-footer-bottom {
+            margin-top: 1.25rem;
+            padding-top: 1rem;
+            border-top: 1px solid color-mix(in srgb, var(--color-fg) 10%, transparent);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem 1.25rem;
+            justify-content: space-between;
+            font-size: 0.84rem;
+          }
+          .nabhi-footer-name {
+            font-family: var(--font-display);
+            font-weight: 700;
+            color: var(--color-fg);
+            font-size: 1.05rem;
+          }
+          .nabhi-footer-label {
+            font-size: 0.72rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 0.45rem;
+            color: var(--color-fg);
+          }
+          .nabhi-footer-link, .nabhi-footer-credit a {
+            color: var(--color-muted);
+            text-decoration: none;
+            display: block;
+            margin-top: 0.35rem;
+          }
+          .nabhi-footer-credit a { color: var(--color-accent); display: inline; }
+          .nabhi-footer-meta { margin: 0.35rem 0 0; line-height: 1.45; }
+          .nabhi-footer-cta {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            margin-top: 0.75rem; padding: 0.65rem 1rem; border-radius: var(--radius-button);
+            background: var(--color-accent); color: var(--color-bg); text-decoration: none; font-weight: 600;
+          }
+          .nabhi-footer-cta-ghost {
+            display: inline-flex; align-items: center; margin-top: 0.75rem; padding: 0.65rem 1rem;
+            border-radius: var(--radius-button); border: 1px solid color-mix(in srgb, var(--color-fg) 22%, transparent);
+            color: var(--color-fg); text-decoration: none; font-weight: 600;
+          }
+          .nabhi-footer-nav-row, .nabhi-footer-contact-row, .nabhi-footer-heroish-cta {
+            display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center;
+          }
+          .nabhi-footer-l02 .nabhi-footer-centered { justify-items: center; text-align: center; grid-template-columns: 1fr; }
+          .nabhi-footer-l02 .nabhi-footer-nav-row, .nabhi-footer-l02 .nabhi-footer-contact-row { justify-content: center; }
+          .nabhi-footer-l03 { background: color-mix(in srgb, var(--color-accent) 14%, var(--color-bg)); }
+          .nabhi-footer-l04 .nabhi-footer-split { grid-template-columns: 1.1fr 1fr; }
+          .nabhi-footer-split-right { display: grid; gap: 1rem; grid-template-columns: 1fr 1fr; }
+          .nabhi-footer-l06 .nabhi-footer-slim { grid-template-columns: auto 1fr auto; align-items: center; }
+          .nabhi-footer-callout {
+            margin: 0 0 1.25rem; padding: 1rem; display: flex; flex-wrap: wrap; gap: 0.75rem;
+            justify-content: space-between; align-items: center;
+            border-radius: calc(var(--radius-button) + 4px);
+            background: color-mix(in srgb, var(--color-accent) 16%, var(--color-surface));
+          }
+          .nabhi-footer-callout .nabhi-footer-cta { margin-top: 0; }
+          .nabhi-footer-heroish-top { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
+          .nabhi-footer-card {
+            padding: 1rem; border-radius: calc(var(--radius-button) + 4px);
+            border: 1px solid color-mix(in srgb, var(--color-fg) 12%, transparent);
+            background: color-mix(in srgb, var(--color-surface) 75%, var(--color-bg));
+          }
+          .nabhi-footer-l10 .nabhi-footer-minimal { grid-template-columns: auto 1fr; align-items: center; }
+          .nabhi-not-found-inner { width: min(100%, 34rem); text-align: left; }
+          .nabhi-not-found-kicker {
+            margin: 0 0 0.75rem; font-size: 0.78rem; font-weight: 700;
+            letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-accent);
+          }
+          .nabhi-not-found-code {
+            margin: 0; font-family: var(--font-display);
+            font-size: clamp(4.5rem, 14vw, 7rem); font-weight: 700; line-height: 0.9;
+            letter-spacing: -0.06em; color: color-mix(in srgb, var(--color-accent) 55%, var(--color-fg));
+          }
+          .nabhi-not-found-title {
+            margin: 0.85rem 0 0.65rem; font-family: var(--font-display);
+            font-size: clamp(1.75rem, 4vw, 2.35rem); font-weight: 700;
+            letter-spacing: -0.03em; color: var(--color-fg);
+          }
+          .nabhi-not-found-body {
+            margin: 0 0 1.75rem; font-size: 1.05rem; line-height: 1.65;
+            color: var(--color-muted); max-width: 32rem;
+          }
+          .nabhi-not-found-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; }
+          .nabhi-not-found-primary {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--color-accent); color: var(--color-bg); border: none;
+            border-radius: var(--radius-button); padding: 0.8rem 1.35rem;
+            font-size: 0.95rem; font-weight: 600; text-decoration: none;
+          }
+          .nabhi-not-found-secondary {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: transparent; color: var(--color-fg);
+            border: 1px solid color-mix(in srgb, var(--color-fg) 22%, transparent);
+            border-radius: var(--radius-button); padding: 0.8rem 1.35rem;
+            font-size: 0.95rem; font-weight: 600; text-decoration: none;
+          }
+          .nabhi-not-found-split {
+            display: grid; grid-template-columns: minmax(140px, 0.4fr) minmax(220px, 0.6fr);
+            width: min(100%, 52rem); min-height: 22rem;
+            border-radius: calc(var(--radius-button) + 8px); overflow: hidden;
+            border: 1px solid color-mix(in srgb, var(--color-fg) 12%, transparent);
+          }
+          .nabhi-not-found-split-accent {
+            display: flex; align-items: center; justify-content: center;
+            background: color-mix(in srgb, var(--color-accent) 18%, var(--color-surface));
+            padding: 1.5rem;
+          }
+          .nabhi-not-found-split .nabhi-not-found-inner {
+            padding: clamp(1.5rem, 4vw, 2.5rem); display: flex; flex-direction: column; justify-content: center;
+          }
+          .nabhi-not-found-banner {
+            height: clamp(7rem, 18vw, 10rem);
+            background: linear-gradient(120deg, color-mix(in srgb, var(--color-accent) 35%, var(--color-surface)), var(--color-surface));
+          }
         `}</style>
         <p className="font-inter text-label-sm text-outline uppercase tracking-widest px-xl pt-lg mb-0 opacity-70">
-          Draft · {page?.slug ?? '—'} · {viewport}
+          Draft ·{' '}
+          {showNotFound ? '404' : showPrivacy ? 'privacy' : (page?.slug ?? '—')} · {viewport}
         </p>
 
-        {sections.length === 0 ? (
+        {showNotFound ? (
+          <NotFoundView
+            hospitalName={hospitalName}
+            title={systemPages.notFound.title}
+            body={systemPages.notFound.body}
+            primaryCta={systemPages.notFound.primaryCta}
+            secondaryCta={systemPages.notFound.secondaryCta}
+            homeHref="#"
+            contactHref="#"
+            layoutVersion={systemPages.notFound.layoutVersion}
+          />
+        ) : showPrivacy ? (
+          <PrivacyView
+            hospitalName={hospitalName}
+            title={systemPages.privacy.title}
+            intro={systemPages.privacy.intro}
+            formsNote={systemPages.privacy.formsNote}
+            rightsNote={systemPages.privacy.rightsNote}
+            homeHref="#"
+            contactPhone={(() => {
+              for (const s of sections) {
+                if (s.template.key !== 'contact') continue;
+                const c = s.content ?? {};
+                if (typeof c.phone === 'string' && c.phone.trim()) return c.phone.trim();
+              }
+              return undefined;
+            })()}
+            contactEmail={(() => {
+              for (const s of sections) {
+                if (s.template.key !== 'contact') continue;
+                const c = s.content ?? {};
+                if (typeof c.email === 'string' && c.email.trim()) return c.email.trim();
+              }
+              return undefined;
+            })()}
+            layoutVersion={systemPages.privacy.layoutVersion}
+          />
+        ) : sections.length === 0 ? (
           <p className="text-on-surface-variant text-body-md p-xl">No sections on this page.</p>
         ) : (
           (() => {
             let phone = '';
             let mapUrl = '';
             let address = '';
+            let hours = '';
+            let email = '';
             for (const s of sections) {
               if (s.template.key !== 'contact') continue;
               const c = s.content ?? {};
               if (!phone && typeof c.phone === 'string') phone = c.phone.trim();
               if (!mapUrl && typeof c.mapUrl === 'string') mapUrl = c.mapUrl.trim();
               if (!address && typeof c.address === 'string') address = c.address.trim();
+              if (!hours && typeof c.hours === 'string') hours = c.hours.trim();
+              if (!email && typeof c.email === 'string') email = c.email.trim();
             }
             const draftLinks = {
               home: '#',
@@ -359,12 +566,33 @@ export function DraftCanvas({
               tel: phone ? telHref(phone) : undefined,
               directions: toDirectionsUrl(mapUrl || undefined, address || undefined),
             };
-            return sections.map((section, index) => {
+            const navForFooter = (navPages.length ? navPages : [{ id: 'home', slug: 'home' }]).map(
+              (p) => ({
+                slug: p.slug,
+                label:
+                  p.slug === 'home'
+                    ? 'Home'
+                    : p.slug.charAt(0).toUpperCase() + p.slug.slice(1),
+                href: '#',
+              }),
+            );
+            const contactSummary = {
+              phone: phone || undefined,
+              email: email || undefined,
+              address: address || undefined,
+              hours: hours || undefined,
+              mapUrl: mapUrl || undefined,
+            };
+            const hasFooterSection = sections.some((s) => s.template.key === 'footer');
+            return (
+              <>
+                {sections.map((section, index) => {
             const label = getSectionType(section.template.key)?.label ?? section.template.key;
             const selected = section.id === selectedSectionId;
             const Layout = resolveLayout(section.template.key, section.template.version);
             const siteLinks = draftLinks;
             const isHero = section.template.key === 'hero';
+            const isFooter = section.template.key === 'footer';
             const emphasize =
               section.template.key === 'services' ||
               section.template.key === 'testimonials' ||
@@ -396,7 +624,7 @@ export function DraftCanvas({
                     : index % 2 === 0
                       ? tokens.colors.background
                       : `color-mix(in srgb, ${tokens.colors.surface} 55%, ${tokens.colors.background})`,
-                  borderTop: isHero
+                  borderTop: isHero || isFooter
                     ? undefined
                     : '1px solid color-mix(in srgb, var(--color-fg) 8%, transparent)',
                 }}
@@ -420,6 +648,9 @@ export function DraftCanvas({
                     content={section.content ?? {}}
                     siteLinks={siteLinks}
                     hospitalSlug={hospitalSlug}
+                    hospitalName={hospitalName}
+                    navPages={navForFooter}
+                    contactSummary={contactSummary}
                     studioApiUrl={
                       typeof process !== 'undefined'
                         ? process.env.NEXT_PUBLIC_STUDIO_API_URL
@@ -429,32 +660,75 @@ export function DraftCanvas({
                 </div>
               </div>
             );
-          });
+          })}
+                {!hasFooterSection && !hideChrome ? (
+                  (() => {
+                    const FooterLayout = resolveFooterLayout(1);
+                    return (
+                      <FooterLayout
+                        hospitalName={hospitalName}
+                        year={new Date().getFullYear()}
+                        privacyHref="#"
+                        pages={navForFooter}
+                        contact={{
+                          phone: phone || undefined,
+                          phoneHref: phone ? telHref(phone) : undefined,
+                          email: email || undefined,
+                          address: address || undefined,
+                          hours: hours || undefined,
+                          directionsHref: toDirectionsUrl(mapUrl || undefined, address || undefined),
+                        }}
+                      />
+                    );
+                  })()
+                ) : null}
+              </>
+            );
           })()
         )}
-        <div
-          className="px-xl py-lg border-t text-label-sm"
-          style={{
-            borderColor: 'color-mix(in srgb, var(--color-fg) 10%, transparent)',
-            color: tokens.colors.muted,
-            background: `color-mix(in srgb, ${tokens.colors.surface} 70%, ${tokens.colors.background})`,
-          }}
-        >
-          <div className="flex flex-wrap justify-between gap-sm">
-            <span>© {hospitalName}</span>
-            <span>
-              Website by{' '}
-              <a
-                href="https://www.nabhilabs.com"
-                target="_blank"
-                rel="noreferrer"
-                style={{ color: tokens.colors.accent, fontWeight: 600, textDecoration: 'none' }}
-              >
-                Nabhi Labs
-              </a>
-            </span>
-          </div>
-        </div>
+        {showPrivacy && !hideChrome ? (
+          (() => {
+            const footerSec = sections.find((s) => s.template.key === 'footer');
+            const FooterLayout = resolveFooterLayout(footerSec?.template.version ?? 1);
+            let phone = '';
+            let mapUrl = '';
+            let address = '';
+            let hours = '';
+            let email = '';
+            for (const s of sections) {
+              if (s.template.key !== 'contact') continue;
+              const c = s.content ?? {};
+              if (!phone && typeof c.phone === 'string') phone = c.phone.trim();
+              if (!mapUrl && typeof c.mapUrl === 'string') mapUrl = c.mapUrl.trim();
+              if (!address && typeof c.address === 'string') address = c.address.trim();
+              if (!hours && typeof c.hours === 'string') hours = c.hours.trim();
+              if (!email && typeof c.email === 'string') email = c.email.trim();
+            }
+            return (
+              <FooterLayout
+                hospitalName={hospitalName}
+                year={new Date().getFullYear()}
+                privacyHref="#"
+                pages={(navPages.length ? navPages : [{ id: 'home', slug: 'home' }]).map((p) => ({
+                  slug: p.slug,
+                  label:
+                    p.slug === 'home'
+                      ? 'Home'
+                      : p.slug.charAt(0).toUpperCase() + p.slug.slice(1),
+                  href: '#',
+                }))}
+                contact={{
+                  phone: phone || undefined,
+                  phoneHref: phone ? telHref(phone) : undefined,
+                  email: email || undefined,
+                  address: address || undefined,
+                  hours: hours || undefined,
+                  directionsHref: toDirectionsUrl(mapUrl || undefined, address || undefined),
+                }}
+              />
+            );
+          })()
+        ) : null}
       </div>
     </div>
   );

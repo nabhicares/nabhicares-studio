@@ -146,6 +146,16 @@ export type LayoutProps = {
   hospitalSlug?: string;
   /** Studio origin for live forms, e.g. https://studio.example.com */
   studioApiUrl?: string;
+  /** Site chrome context — used by footer (and similar) section layouts */
+  hospitalName?: string;
+  navPages?: { slug: string; label: string; href: string }[];
+  contactSummary?: {
+    phone?: string;
+    email?: string;
+    address?: string;
+    hours?: string;
+    mapUrl?: string;
+  };
 };
 
 export type LayoutComponent = (props: LayoutProps) => ReactElement;

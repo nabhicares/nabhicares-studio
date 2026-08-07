@@ -64,6 +64,15 @@ function defaultContent(key: string): Record<string, unknown> {
         successMessage: 'Thank you — we will contact you shortly to confirm.',
         submitLabel: 'Request appointment',
       };
+    case 'footer':
+      return {
+        tagline: '',
+        phone: '',
+        email: '',
+        address: '',
+        hours: '',
+        mapUrl: '',
+      };
     default:
       return { title: getSectionType(key)?.label ?? 'Section' };
   }

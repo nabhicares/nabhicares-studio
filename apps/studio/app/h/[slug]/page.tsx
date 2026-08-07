@@ -58,6 +58,7 @@ export default async function HospitalPage({ params }: { params: { slug: string 
       seoTitle={full.seoTitle ?? ''}
       seoDescription={full.seoDescription ?? ''}
       ogImage={full.ogImage ?? ''}
+      ogCardStyle={full.ogCardStyle ?? 'hero'}
       customDomain={full.customDomain ?? ''}
       isLive={Boolean(livePublish)}
       migrationWarnings={warningList}

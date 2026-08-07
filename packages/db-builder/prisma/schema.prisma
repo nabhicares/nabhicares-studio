@@ -26,6 +26,8 @@ model Hospital {
   seoDescription String?
   /// Absolute https URL for WhatsApp / Meta / Twitter share cards (optional override).
   ogImage        String?
+  /// Share card image source: hero | brand | custom
+  ogCardStyle    String?  @default("hero")
   createdAt   DateTime @default(now())
 
   pages               Page[]

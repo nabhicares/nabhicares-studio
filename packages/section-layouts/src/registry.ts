@@ -10,6 +10,7 @@ import { layouts as testimonials } from './testimonials';
 import { layouts as contact } from './contact';
 import { layouts as map } from './map';
 import { layouts as appointments } from './appointments';
+import { layouts as footer } from './footer';
 
 const REGISTRY: Record<string, Record<number, LayoutComponent>> = {
   hero,
@@ -22,6 +23,7 @@ const REGISTRY: Record<string, Record<number, LayoutComponent>> = {
   contact,
   map,
   appointments,
+  footer,
 };
 
 function Fallback({ content }: { content: Record<string, unknown> }) {

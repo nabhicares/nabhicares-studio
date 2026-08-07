@@ -1168,6 +1168,128 @@ function renderSketch(type: string, v: number) {
       </>
     );
   }
+  if (type === 'footer' && v === 1) {
+    return (
+      <>
+          <rect x="3" y="6" width="12" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="3" y="11" width="12" height="1" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="18" y="6" width="10" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="18" y="10" width="8" height="1" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+          <rect x="32" y="6" width="12" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="32" y="10" width="10" height="1" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+          <line x1="3" y1="28" x2="45" y2="28" stroke="currentColor" strokeWidth="0.5" opacity="0.2" />
+      </>
+    );
+  }
+  if (type === 'footer' && v === 2) {
+    return (
+      <>
+          <rect x="14" y="4" width="20" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="10" y="10" width="8" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.4}} />
+          <rect x="20" y="10" width="8" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.4}} />
+          <rect x="30" y="10" width="8" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.4}} />
+          <rect x="16" y="18" width="16" height="2.5" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <line x1="8" y1="28" x2="40" y2="28" stroke="currentColor" strokeWidth="0.5" opacity="0.2" />
+      </>
+    );
+  }
+  if (type === 'footer' && v === 3) {
+    return (
+      <>
+          <rect x="2" y="4" width="44" height="24" rx="1.5" className="fill-current" style={{opacity:0.14}} />
+          <rect x="5" y="8" width="12" height="1.8" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="20" y="8" width="10" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.4}} />
+          <rect x="33" y="8" width="10" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.4}} />
+      </>
+    );
+  }
+  if (type === 'footer' && v === 4) {
+    return (
+      <>
+          <rect x="3" y="6" width="16" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="3" y="11" width="14" height="1" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="3" y="18" width="10" height="2.5" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="24" y="6" width="9" height="1.4" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="24" y="10" width="8" height="1" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+          <rect x="36" y="6" width="9" height="1.4" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="36" y="10" width="8" height="1" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+      </>
+    );
+  }
+  if (type === 'footer' && v === 5) {
+    return (
+      <>
+          <rect x="3" y="8" width="9" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="14" y="8" width="8" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.4}} />
+          <rect x="24" y="8" width="8" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.4}} />
+          <rect x="34" y="8" width="10" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.4}} />
+          <rect x="3" y="14" width="9" height="1" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+          <rect x="14" y="14" width="7" height="1" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+          <rect x="24" y="14" width="7" height="1" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+          <rect x="34" y="14" width="9" height="1" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+      </>
+    );
+  }
+  if (type === 'footer' && v === 6) {
+    return (
+      <>
+          <rect x="3" y="14" width="10" height="1.8" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="16" y="14" width="6" height="1.4" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <rect x="24" y="14" width="6" height="1.4" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <rect x="32" y="14" width="6" height="1.4" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <rect x="40" y="13" width="5" height="3" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+      </>
+    );
+  }
+  if (type === 'footer' && v === 7) {
+    return (
+      <>
+          <rect x="3" y="3" width="42" height="8" rx="1.5" className="fill-current" style={{opacity:0.18}} />
+          <rect x="6" y="5.5" width="16" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="34" y="5" width="8" height="3" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="3" y="16" width="12" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="18" y="16" width="10" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <rect x="32" y="16" width="12" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+      </>
+    );
+  }
+  if (type === 'footer' && v === 8) {
+    return (
+      <>
+          <rect x="3" y="5" width="18" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="3" y="10" width="16" height="1" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="28" y="6" width="8" height="3" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="38" y="6" width="7" height="3" rx="0.5" className="fill-current" style={{opacity:0.25}} />
+          <line x1="3" y1="18" x2="45" y2="18" stroke="currentColor" strokeWidth="0.5" opacity="0.2" />
+          <rect x="3" y="22" width="7" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.4}} />
+          <rect x="12" y="22" width="7" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.4}} />
+          <rect x="21" y="22" width="7" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.4}} />
+      </>
+    );
+  }
+  if (type === 'footer' && v === 9) {
+    return (
+      <>
+          <rect x="3" y="6" width="13" height="20" rx="1.5" className="fill-current" style={{opacity:0.12}} />
+          <rect x="5" y="10" width="9" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="18" y="6" width="12" height="20" rx="1.5" className="fill-current" style={{opacity:0.12}} />
+          <rect x="20" y="10" width="8" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="33" y="6" width="12" height="20" rx="1.5" className="fill-current" style={{opacity:0.12}} />
+          <rect x="35" y="10" width="8" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+      </>
+    );
+  }
+  if (type === 'footer' && v === 10) {
+    return (
+      <>
+          <rect x="3" y="14" width="12" height="1.8" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="20" y="14" width="6" height="1.4" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <rect x="28" y="14" width="6" height="1.4" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <rect x="36" y="14" width="8" height="1.4" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <line x1="3" y1="26" x2="45" y2="26" stroke="currentColor" strokeWidth="0.5" opacity="0.2" />
+      </>
+    );
+  }
 
   return (
     <>

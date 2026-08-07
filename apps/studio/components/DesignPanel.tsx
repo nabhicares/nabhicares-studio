@@ -10,6 +10,7 @@ import {
   type FaviconPresetId,
 } from '@nabhicares/section-registry';
 import { LayoutWireframe } from './LayoutWireframe';
+import type { SystemPreviewMode } from './DraftCanvas';
 
 type ColorPalette = DesignTokens['colors'];
 type FontPair = Pick<DesignTokens['typography'], 'displayFamily' | 'bodyFamily'>;
@@ -223,10 +224,14 @@ function SectionLabel({ children, hint }: { children: React.ReactNode; hint?: st
 export function DesignPanel({
   hospitalId,
   onTokensChange,
+  systemPreview = 'page',
+  onSystemPreviewChange,
 }: {
   hospitalId: string;
   /** Called with latest tokens (on load + after save) so the canvas updates live. */
   onTokensChange?: (tokens: DesignTokens) => void;
+  systemPreview?: SystemPreviewMode;
+  onSystemPreviewChange?: (mode: SystemPreviewMode) => void;
 }) {
   const [tokens, setTokens] = useState<DesignTokens>(DEFAULT_DESIGN_TOKENS);
   const [status, setStatus] = useState('');
@@ -640,9 +645,32 @@ export function DesignPanel({
       <div className="h-px bg-outline-variant" />
 
       <div className="space-y-lg">
-        <SectionLabel hint="Edit copy and layout for /privacy and the 404 page. Publish to go live.">
+        <SectionLabel hint="Copy and layout for /privacy and the 404 page. Canvas previews the selected system page. Publish to go live. Footer is a normal page section — add it under Sections and pick a layout.">
           System pages
         </SectionLabel>
+
+        <div className="flex flex-wrap gap-xs">
+          {(
+            [
+              ['page', 'Page'],
+              ['notFound', '404'],
+              ['privacy', 'Privacy'],
+            ] as const
+          ).map(([mode, label]) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => onSystemPreviewChange?.(mode)}
+              className={`rounded-md px-sm py-xs font-inter text-label-sm font-semibold border ${
+                systemPreview === mode
+                  ? 'border-primary bg-primary-container/50 text-on-primary-container'
+                  : 'border-outline-variant text-on-surface-variant hover:bg-surface-container'
+              }`}
+            >
+              Preview {label}
+            </button>
+          ))}
+        </div>
 
         <div className="space-y-sm">
           <p className="font-inter text-label-md font-semibold text-on-surface">404 page</p>
@@ -654,15 +682,16 @@ export function DesignPanel({
                   key={`nf-${version}`}
                   type="button"
                   title={`404 layout ${String(version).padStart(2, '0')}`}
-                  onClick={() =>
+                  onClick={() => {
+                    onSystemPreviewChange?.('notFound');
                     update({
                       ...tokens,
                       systemPages: {
                         ...tokens.systemPages,
                         notFound: { ...tokens.systemPages.notFound, layoutVersion: version },
                       },
-                    })
-                  }
+                    });
+                  }}
                   className={`relative aspect-[4/3] rounded-lg overflow-hidden border ${
                     active
                       ? 'border-primary ring-1 ring-primary bg-primary-container/40'
@@ -694,29 +723,33 @@ export function DesignPanel({
                   className="field-input resize-none"
                   rows={3}
                   value={tokens.systemPages.notFound[key]}
-                  onChange={(e) =>
+                  onFocus={() => onSystemPreviewChange?.('notFound')}
+                  onChange={(e) => {
+                    onSystemPreviewChange?.('notFound');
                     update({
                       ...tokens,
                       systemPages: {
                         ...tokens.systemPages,
                         notFound: { ...tokens.systemPages.notFound, [key]: e.target.value },
                       },
-                    })
-                  }
+                    });
+                  }}
                 />
               ) : (
                 <input
                   className="field-input"
                   value={tokens.systemPages.notFound[key]}
-                  onChange={(e) =>
+                  onFocus={() => onSystemPreviewChange?.('notFound')}
+                  onChange={(e) => {
+                    onSystemPreviewChange?.('notFound');
                     update({
                       ...tokens,
                       systemPages: {
                         ...tokens.systemPages,
                         notFound: { ...tokens.systemPages.notFound, [key]: e.target.value },
                       },
-                    })
-                  }
+                    });
+                  }}
                 />
               )}
             </div>
@@ -733,15 +766,16 @@ export function DesignPanel({
                   key={`pr-${version}`}
                   type="button"
                   title={`Privacy layout ${String(version).padStart(2, '0')}`}
-                  onClick={() =>
+                  onClick={() => {
+                    onSystemPreviewChange?.('privacy');
                     update({
                       ...tokens,
                       systemPages: {
                         ...tokens.systemPages,
                         privacy: { ...tokens.systemPages.privacy, layoutVersion: version },
                       },
-                    })
-                  }
+                    });
+                  }}
                   className={`relative aspect-[4/3] rounded-lg overflow-hidden border ${
                     active
                       ? 'border-primary ring-1 ring-primary bg-primary-container/40'
@@ -763,15 +797,17 @@ export function DesignPanel({
             <input
               className="field-input"
               value={tokens.systemPages.privacy.title}
-              onChange={(e) =>
+              onFocus={() => onSystemPreviewChange?.('privacy')}
+              onChange={(e) => {
+                onSystemPreviewChange?.('privacy');
                 update({
                   ...tokens,
                   systemPages: {
                     ...tokens.systemPages,
                     privacy: { ...tokens.systemPages.privacy, title: e.target.value },
                   },
-                })
-              }
+                });
+              }}
             />
           </div>
           {(
@@ -787,15 +823,17 @@ export function DesignPanel({
                 className="field-input resize-none"
                 rows={3}
                 value={tokens.systemPages.privacy[key]}
-                onChange={(e) =>
+                onFocus={() => onSystemPreviewChange?.('privacy')}
+                onChange={(e) => {
+                  onSystemPreviewChange?.('privacy');
                   update({
                     ...tokens,
                     systemPages: {
                       ...tokens.systemPages,
                       privacy: { ...tokens.systemPages.privacy, [key]: e.target.value },
                     },
-                  })
-                }
+                  });
+                }}
               />
             </div>
           ))}
@@ -811,7 +849,12 @@ export function DesignPanel({
         <p className="font-inter text-body-sm text-on-surface-variant">
           Themes/colors/fonts save immediately. Publish to push the live hospital site.
           <span className="block mt-xs font-semibold text-primary">
-            {status || 'Live preview in canvas'}
+            {status ||
+              (systemPreview === 'notFound'
+                ? 'Previewing 404 in canvas'
+                : systemPreview === 'privacy'
+                  ? 'Previewing privacy in canvas'
+                  : 'Live preview in canvas')}
           </span>
         </p>
       </div>

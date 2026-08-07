@@ -29,6 +29,8 @@ export function PageView({
       : [{ slug: page.slug || 'home', label: page.slug === 'home' || !page.slug ? 'Home' : page.slug }];
   const contactSummary = contact ?? extractContactSummary([page]);
   const privacyHref = hrefForPage(page.slug, 'privacy');
+  const hasFooterSection = page.sections.some((s) => s.type === 'footer');
+  const footerLayoutVersion = page.sections.find((s) => s.type === 'footer')?.layoutVersion;
 
   return (
     <>
@@ -58,18 +60,24 @@ export function PageView({
               pageSlug={page.slug}
               index={index}
               hospitalSlug={hospitalSlug}
+              hospitalName={hospitalName}
+              pages={navPages}
               contact={contactSummary}
             />
           ))
         )}
       </main>
 
-      <SiteFooter
-        hospitalName={hospitalName}
-        currentSlug={page.slug}
-        pages={navPages}
-        contact={contactSummary}
-      />
+      {/* Chrome fallback when the page has no Footer section yet */}
+      {!hasFooterSection ? (
+        <SiteFooter
+          hospitalName={hospitalName}
+          currentSlug={page.slug}
+          pages={navPages}
+          contact={contactSummary}
+          layoutVersion={footerLayoutVersion}
+        />
+      ) : null}
       <ConsentBanner hospitalName={hospitalName} privacyHref={privacyHref} />
     </>
   );

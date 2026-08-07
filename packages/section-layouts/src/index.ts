@@ -24,6 +24,12 @@ export {
 } from './styles';
 export { resolveHref, sanitizeMapUrl, telHref, toDirectionsUrl } from './links';
 export { resolveHeroCtaHref, heroCtaHrefPlaceholder } from './hero/bits';
+export { resolveFooterLayout } from './footer';
+export type { FooterProps, FooterContact, FooterNavLink } from './footer';
+export { NotFoundView } from './not-found';
+export type { NotFoundProps } from './not-found';
+export { PrivacyView } from './privacy';
+export type { PrivacyProps } from './privacy';
 export {
   NABHI_CONSENT_KEY,
   NABHI_CONSENT_EVENT,

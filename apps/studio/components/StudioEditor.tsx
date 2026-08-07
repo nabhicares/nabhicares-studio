@@ -23,6 +23,7 @@ import { ContentJsonImport } from './ContentJsonImport';
 import { SectionRowMenu } from './SectionRowMenu';
 import { PublishChecklist } from './PublishChecklist';
 import { AppointmentRequestsPanel } from './AppointmentRequestsPanel';
+import { SocialMediaPanel } from './SocialMediaPanel';
 import type { DesignTokens } from '@nabhicares/section-registry';
 
 function heroHrefHint(ctaLabel: string, role: 'primary' | 'secondary'): string {
@@ -46,7 +47,7 @@ export type Page = {
   sections: Section[];
 };
 
-type Tab = 'pages' | 'sections' | 'design' | 'requests' | 'publish';
+type Tab = 'pages' | 'sections' | 'design' | 'social' | 'requests' | 'publish';
 
 function ContentForm({
   fields,
@@ -210,6 +211,7 @@ export function StudioEditor({
   seoTitle = '',
   seoDescription = '',
   ogImage = '',
+  ogCardStyle = 'hero',
   customDomain = '',
   isLive = false,
   migrationWarnings = [],
@@ -221,6 +223,7 @@ export function StudioEditor({
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: string;
+  ogCardStyle?: string;
   customDomain?: string;
   isLive?: boolean;
   migrationWarnings?: string[];
@@ -578,6 +581,7 @@ export function StudioEditor({
             {railBtn('pages', 'description', 'Pages')}
             {railBtn('sections', 'layers', 'Sections')}
             {railBtn('design', 'palette', 'Design')}
+            {railBtn('social', 'share', 'Social')}
             {railBtn('requests', 'event_available', 'Requests')}
             {railBtn('publish', 'cloud_upload', 'Publish')}
           </div>
@@ -889,6 +893,20 @@ export function StudioEditor({
             <div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain bg-surface">
               <AppointmentRequestsPanel hospitalId={hospitalId} />
             </div>
+          ) : tab === 'social' ? (
+            <div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain bg-surface">
+              <SocialMediaPanel
+                hospitalId={hospitalId}
+                hospitalName={hospitalName}
+                hospitalSlug={hospitalSlug}
+                seoTitle={seoTitle}
+                seoDescription={seoDescription}
+                ogImage={ogImage}
+                ogCardStyle={ogCardStyle}
+                accent={designTokens?.colors?.accent}
+                pages={pages}
+              />
+            </div>
           ) : tab === 'design' ? (
             <div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain">
               <div className="px-xl py-xl flex flex-col items-center gap-md w-full pb-24">
@@ -950,14 +968,15 @@ export function StudioEditor({
             hospitalId={hospitalId}
             hospitalName={hospitalName}
             hospitalSlug={hospitalSlug}
-            seoTitle={seoTitle}
-            seoDescription={seoDescription}
-            ogImage={ogImage}
             customDomain={customDomain}
             onClose={() => setShowSettings(false)}
             onUpdated={(next) => {
               setHospitalName(next.name);
               setHospitalSlug(next.slug);
+            }}
+            onOpenSocial={() => {
+              setShowSettings(false);
+              setTab('social');
             }}
           />
         ) : tab === 'design' ? (
@@ -973,7 +992,7 @@ export function StudioEditor({
               onTokensChange={setDesignTokens}
             />
           </aside>
-        ) : tab === 'requests' || tab === 'publish' ? null : selected ? (
+        ) : tab === 'requests' || tab === 'publish' || tab === 'social' ? null : selected ? (
           <aside className="w-80 bg-surface-container-lowest border-l border-outline-variant flex flex-col z-40 shrink-0">
             <div className="flex border-b border-outline-variant">
               {(

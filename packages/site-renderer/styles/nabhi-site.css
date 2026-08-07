@@ -224,6 +224,183 @@
   outline: none;
 }
 
+.nabhi-footer-cta,
+.nabhi-footer-cta-ghost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  border-radius: var(--radius-button);
+  padding: 0.7rem 1.15rem;
+}
+
+.nabhi-footer-cta {
+  background: var(--color-accent);
+  color: var(--color-bg);
+  border: none;
+}
+
+.nabhi-footer-cta-ghost {
+  background: transparent;
+  color: var(--color-fg);
+  border: 1px solid color-mix(in srgb, var(--color-fg) 22%, transparent);
+}
+
+.nabhi-footer-l02 .nabhi-footer-centered {
+  justify-items: center;
+  text-align: center;
+  grid-template-columns: 1fr;
+}
+
+.nabhi-footer-nav-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem 1.25rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.nabhi-footer-contact-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.nabhi-footer-l03 {
+  background: color-mix(in srgb, var(--color-accent) 14%, var(--color-bg));
+  border-top-color: color-mix(in srgb, var(--color-accent) 28%, transparent);
+}
+
+.nabhi-footer-l04 .nabhi-footer-split {
+  grid-template-columns: minmax(200px, 1.1fr) minmax(220px, 1fr);
+  align-items: start;
+}
+
+.nabhi-footer-split-right {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.nabhi-footer-l05 .nabhi-footer-quad {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.nabhi-footer-l06 .nabhi-footer-slim {
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.nabhi-footer-l06 .nabhi-footer-nav-row {
+  justify-content: flex-start;
+}
+
+.nabhi-footer-l06 .nabhi-footer-cta {
+  margin-top: 0;
+}
+
+.nabhi-footer-callout {
+  max-width: var(--content-max, 1120px);
+  margin: 0 auto 1.75rem;
+  padding: 1.15rem 1.25rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: calc(var(--radius-button) + 4px);
+  background: color-mix(in srgb, var(--color-accent) 16%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-fg) 10%, transparent);
+}
+
+.nabhi-footer-callout .nabhi-footer-cta {
+  margin-top: 0;
+}
+
+.nabhi-footer-l08 .nabhi-footer-heroish {
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+.nabhi-footer-heroish-top {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.nabhi-footer-heroish-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
+.nabhi-footer-heroish-cta .nabhi-footer-cta,
+.nabhi-footer-heroish-cta .nabhi-footer-cta-ghost {
+  margin-top: 0;
+}
+
+.nabhi-footer-l08 .nabhi-footer-nav-row {
+  justify-content: flex-start;
+  padding-top: 0.25rem;
+  border-top: 1px solid color-mix(in srgb, var(--color-fg) 10%, transparent);
+}
+
+.nabhi-footer-l09 {
+  background: var(--color-bg);
+}
+
+.nabhi-footer-l09 .nabhi-footer-cards {
+  gap: 1rem;
+}
+
+.nabhi-footer-card {
+  padding: 1.15rem 1.2rem;
+  border-radius: calc(var(--radius-button) + 4px);
+  border: 1px solid color-mix(in srgb, var(--color-fg) 12%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 75%, var(--color-bg));
+  box-shadow: 0 4px 16px color-mix(in srgb, var(--color-fg) 6%, transparent);
+}
+
+.nabhi-footer-l10 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.35rem;
+}
+
+.nabhi-footer-l10 .nabhi-footer-minimal {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1rem 1.5rem;
+}
+
+.nabhi-footer-l10 .nabhi-footer-nav-row {
+  justify-content: flex-end;
+}
+
+.nabhi-footer-l10 .nabhi-footer-bottom {
+  margin-top: 1rem;
+}
+
+@media (max-width: 760px) {
+  .nabhi-footer-l04 .nabhi-footer-split,
+  .nabhi-footer-l06 .nabhi-footer-slim,
+  .nabhi-footer-l10 .nabhi-footer-minimal {
+    grid-template-columns: 1fr;
+  }
+
+  .nabhi-footer-l06 .nabhi-footer-nav-row,
+  .nabhi-footer-l10 .nabhi-footer-nav-row {
+    justify-content: flex-start;
+  }
+}
+
 .nabhi-btn {
   transition: transform 180ms ease, filter 180ms ease, background 180ms ease, border-color 180ms ease;
 }

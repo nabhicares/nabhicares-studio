@@ -696,6 +696,7 @@ export type HospitalBundleHospital = {
   seoTitle?: string;
   seoDescription?: string;
   ogImage?: string;
+  ogCardStyle?: string;
 };
 
 export type HospitalBundleImportResult =
@@ -734,7 +735,7 @@ export function importHospitalBundleJson(raw: string): HospitalBundleImportResul
   }
 
   const hospital: HospitalBundleHospital = {};
-  for (const k of ['name', 'slug', 'seoTitle', 'seoDescription', 'ogImage'] as const) {
+  for (const k of ['name', 'slug', 'seoTitle', 'seoDescription', 'ogImage', 'ogCardStyle'] as const) {
     if (typeof hospitalRaw[k] === 'string' && (hospitalRaw[k] as string).trim()) {
       hospital[k] = (hospitalRaw[k] as string).trim();
     }
@@ -777,7 +778,8 @@ Return ONLY valid JSON (no markdown fences, no commentary) matching this exact s
     "slug": "lowercase-kebab-slug",
     "seoTitle": "string",
     "seoDescription": "string under 160 chars",
-    "ogImage": "https optional share image"
+    "ogImage": "https optional share image",
+    "ogCardStyle": "hero | brand | custom"
   },
   "sections": {
     "hero": {

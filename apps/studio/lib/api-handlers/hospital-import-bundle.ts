@@ -33,6 +33,7 @@ export async function POST(
     seoTitle?: string | null;
     seoDescription?: string | null;
     ogImage?: string | null;
+    ogCardStyle?: string | null;
   } = {};
   if (parsed.hospital.name) hospitalPatch.name = parsed.hospital.name;
   if (parsed.hospital.seoTitle !== undefined) {
@@ -43,6 +44,12 @@ export async function POST(
   }
   if (parsed.hospital.ogImage !== undefined) {
     hospitalPatch.ogImage = parsed.hospital.ogImage || null;
+  }
+  if (parsed.hospital.ogCardStyle !== undefined) {
+    const style = String(parsed.hospital.ogCardStyle || '').toLowerCase();
+    if (style === 'hero' || style === 'brand' || style === 'custom') {
+      hospitalPatch.ogCardStyle = style;
+    }
   }
 
   if (Object.keys(hospitalPatch).length) {

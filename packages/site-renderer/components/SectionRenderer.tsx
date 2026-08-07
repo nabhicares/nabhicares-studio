@@ -1,18 +1,22 @@
 import { resolveLayout, telHref, toDirectionsUrl } from '@nabhicares/section-layouts';
 import type { SiteSection } from '@/lib/types';
-import { hrefForPage, type SiteContactSummary } from '@/lib/site-chrome';
+import { hrefForPage, type NavPage, type SiteContactSummary } from '@/lib/site-chrome';
 
 export function SectionRenderer({
   section,
   pageSlug = 'home',
   index = 0,
   hospitalSlug,
+  hospitalName,
+  pages = [],
   contact,
 }: {
   section: SiteSection;
   pageSlug?: string;
   index?: number;
   hospitalSlug?: string;
+  hospitalName?: string;
+  pages?: NavPage[];
   contact?: SiteContactSummary;
 }) {
   const Layout = resolveLayout(section.type, section.layoutVersion ?? 1);
@@ -28,6 +32,7 @@ export function SectionRenderer({
   };
 
   const isHero = section.type === 'hero';
+  const isFooter = section.type === 'footer';
   // Subtle emphasis: base paper vs slightly cooler/tint surface — not heavy cards.
   const evenBg = 'var(--color-bg)';
   const oddBg = 'color-mix(in srgb, var(--color-surface) 55%, var(--color-bg))';
@@ -41,6 +46,12 @@ export function SectionRenderer({
 
   const studioApiUrl =
     typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_STUDIO_API_URL : undefined;
+
+  const navForFooter = pages.map((p) => ({
+    slug: p.slug,
+    label: p.label,
+    href: hrefForPage(pageSlug, p.slug),
+  }));
 
   return (
     <div
@@ -60,8 +71,9 @@ export function SectionRenderer({
           : index % 2 === 0
             ? evenBg
             : oddBg,
-        margin: isHero ? 0 : 0,
-        borderTop: isHero ? undefined : '1px solid color-mix(in srgb, var(--color-fg) 8%, transparent)',
+        margin: isHero || isFooter ? 0 : 0,
+        borderTop:
+          isHero || isFooter ? undefined : '1px solid color-mix(in srgb, var(--color-fg) 8%, transparent)',
       }}
     >
       <Layout
@@ -69,6 +81,9 @@ export function SectionRenderer({
         siteLinks={siteLinks}
         hospitalSlug={hospitalSlug}
         studioApiUrl={studioApiUrl}
+        hospitalName={hospitalName}
+        navPages={navForFooter}
+        contactSummary={contact}
       />
     </div>
   );
