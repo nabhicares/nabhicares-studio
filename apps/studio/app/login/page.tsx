@@ -8,8 +8,8 @@ function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const next = params.get('next') || '/';
-  const [email, setEmail] = useState('admin@nabhi.local');
-  const [password, setPassword] = useState('admin123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -39,6 +39,7 @@ function LoginForm() {
     <div className="min-h-screen bg-canvas flex items-center justify-center px-lg">
       <form
         onSubmit={onSubmit}
+        autoComplete="off"
         className="w-full max-w-md bg-surface-container-lowest border border-brand-sage rounded-xl shadow-soft p-xl flex flex-col gap-md"
       >
         <div>
@@ -52,7 +53,8 @@ function LoginForm() {
           <input
             className="border border-brand-sage rounded-lg px-md py-sm font-inter text-body-sm"
             type="email"
-            autoComplete="username"
+            name="email"
+            autoComplete="off"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -63,7 +65,8 @@ function LoginForm() {
           <input
             className="border border-brand-sage rounded-lg px-md py-sm font-inter text-body-sm"
             type="password"
-            autoComplete="current-password"
+            name="password"
+            autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -77,9 +80,6 @@ function LoginForm() {
         <button type="submit" className="btn-primary" disabled={busy}>
           {busy ? 'Signing in…' : 'Sign in'}
         </button>
-        <p className="font-inter text-label-sm text-outline">
-          Local seed: admin@nabhi.local / admin123 (super admin)
-        </p>
       </form>
     </div>
   );
