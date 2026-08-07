@@ -10,11 +10,13 @@ import {
 
 export function PageView({
   hospitalName,
+  hospitalSlug,
   page,
   pages = [],
   contact,
 }: {
   hospitalName: string;
+  hospitalSlug?: string;
   page: SitePage;
   pages?: { slug: string }[];
   contact?: SiteContactSummary;
@@ -52,6 +54,7 @@ export function PageView({
               section={section}
               pageSlug={page.slug}
               index={index}
+              hospitalSlug={hospitalSlug}
             />
           ))
         )}

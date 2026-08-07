@@ -1,10 +1,9 @@
 import { Layout01 } from './Layout01';
-import { Layout02 } from './Layout02';
 import type { LayoutComponent } from '../types';
 
 export const layouts: Record<number, LayoutComponent> = {
   1: Layout01,
-  2: Layout02,
+  2: Layout01,
   3: Layout01,
   4: Layout01,
   5: Layout01,

@@ -108,6 +108,20 @@ export type ContactContent = {
   ctaSecondaryHref?: string;
 };
 
+export type MapContent = {
+  title: string;
+  body?: string;
+  mapUrl?: string;
+  address?: string;
+};
+
+export type AppointmentsContent = {
+  title: string;
+  body?: string;
+  successMessage?: string;
+  submitLabel?: string;
+};
+
 export type SectionContent =
   | HeroContent
   | AboutContent
@@ -116,11 +130,17 @@ export type SectionContent =
   | GalleryContent
   | FaqContent
   | TestimonialsContent
-  | ContactContent;
+  | ContactContent
+  | MapContent
+  | AppointmentsContent;
 
 export type LayoutProps = {
   content: Record<string, unknown>;
   siteLinks?: SiteLinks;
+  /** Hospital slug — used by appointment forms to POST to Studio public API */
+  hospitalSlug?: string;
+  /** Studio origin for live forms, e.g. https://studio.example.com */
+  studioApiUrl?: string;
 };
 
 export type LayoutComponent = (props: LayoutProps) => ReactElement;

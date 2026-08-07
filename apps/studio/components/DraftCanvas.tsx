@@ -354,7 +354,9 @@ export function DraftCanvas({
               section.template.key === 'services' ||
               section.template.key === 'testimonials' ||
               section.template.key === 'contact' ||
-              section.template.key === 'doctors';
+              section.template.key === 'doctors' ||
+              section.template.key === 'map' ||
+              section.template.key === 'appointments';
             // Use a div, not <button>: section layouts are block-level and nesting
             // them in a button is invalid HTML — browsers clip/break the tree so
             // only the first section appears and the pane won't scroll.
@@ -390,10 +392,25 @@ export function DraftCanvas({
                   </div>
                 ) : null}
                 <div
-                  id={section.template.key === 'services' ? 'services' : undefined}
+                  id={
+                    section.template.key === 'services'
+                      ? 'services'
+                      : section.template.key === 'appointments'
+                        ? 'appointments'
+                        : undefined
+                  }
                   data-section-type={section.template.key}
                 >
-                  <Layout content={section.content ?? {}} siteLinks={siteLinks} />
+                  <Layout
+                    content={section.content ?? {}}
+                    siteLinks={siteLinks}
+                    hospitalSlug={hospitalSlug}
+                    studioApiUrl={
+                      typeof process !== 'undefined'
+                        ? process.env.NEXT_PUBLIC_STUDIO_API_URL
+                        : undefined
+                    }
+                  />
                 </div>
               </div>
             );

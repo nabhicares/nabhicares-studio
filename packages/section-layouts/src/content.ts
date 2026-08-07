@@ -1,11 +1,13 @@
 import type {
   AboutContent,
+  AppointmentsContent,
   ContactContent,
   DoctorsContent,
   FaqContent,
   GalleryContent,
   GalleryImage,
   HeroContent,
+  MapContent,
   ServiceItem,
   ServicesContent,
   TestimonialsContent,
@@ -153,5 +155,25 @@ export function normalizeContact(raw: Record<string, unknown>): ContactContent {
     variant,
     ctaSecondary: str(raw.ctaSecondary) || undefined,
     ctaSecondaryHref: str(raw.ctaSecondaryHref) || undefined,
+  };
+}
+
+export function normalizeMap(raw: Record<string, unknown>): MapContent {
+  return {
+    title: str(raw.title, 'Find us'),
+    body: str(raw.body) || undefined,
+    mapUrl: str(raw.mapUrl) || undefined,
+    address: str(raw.address) || undefined,
+  };
+}
+
+export function normalizeAppointments(raw: Record<string, unknown>): AppointmentsContent {
+  return {
+    title: str(raw.title, 'Book an appointment'),
+    body: str(raw.body) || undefined,
+    successMessage:
+      str(raw.successMessage) ||
+      'Thank you — we will contact you shortly to confirm.',
+    submitLabel: str(raw.submitLabel) || 'Request appointment',
   };
 }

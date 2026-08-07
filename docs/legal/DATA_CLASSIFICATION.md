@@ -8,9 +8,9 @@
 
 | Store | Contents | PHI? | Notes |
 |-------|----------|------|-------|
-| Builder DB | Hospital name/slug, page/section marketing copy, design tokens, publish metadata, Studio users | **No clinical PHI by design** | May contain **PII** (doctor names/photos/bios, patient *testimonial* names/quotes/photos) |
+| Builder DB | Hospital name/slug, page/section marketing copy, design tokens, publish metadata, Studio users, **website appointment requests** (visitor name/phone/email leads) | **No clinical PHI by design** | May contain **PII** (doctor names/photos/bios, patient *testimonial* names/quotes/photos, booking-form leads). Appointment **requests** are marketing leads — not HMS clinical appointments. |
 | MinIO / R2 | Static HTML/CSS/JS + uploaded images | Same as published marketing content | Public via CDN once published |
-| HMS DB | Patients, appointments, staff (RLS) | **Yes — clinical** | Out of scope for Studio publish path |
+| HMS DB | Patients, appointments, staff (RLS) | **Yes — clinical** | Out of scope for Studio publish path; scheduled clinical appointments stay here |
 | Redis | Publish job payloads (hospital slug, publish id, user id) | No | |
 
 ## 2. Classification decision (sign here)

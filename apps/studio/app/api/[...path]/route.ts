@@ -87,9 +87,26 @@ async function dispatch(
         hospitalId,
       });
     }
+    if (c === 'appointment-requests' && d && !p[4]) {
+      return call(import('@/lib/api-handlers/hospital-appointment-request'), method, {
+        hospitalId,
+        requestId: d,
+      });
+    }
+    if (c === 'appointment-requests' && !d) {
+      return call(import('@/lib/api-handlers/hospital-appointment-requests'), method, {
+        hospitalId,
+      });
+    }
     if (!c) {
       return call(import('@/lib/api-handlers/hospital'), method, { hospitalId });
     }
+  }
+
+  if (a === 'public' && b === 'hospitals' && c && d === 'appointment-requests' && !p[4]) {
+    return call(import('@/lib/api-handlers/public-appointment-requests'), method, {
+      slug: c,
+    });
   }
 
   if (a === 'pages' && b) {
@@ -138,3 +155,4 @@ export const POST = dispatch;
 export const PUT = dispatch;
 export const PATCH = dispatch;
 export const DELETE = dispatch;
+export const OPTIONS = dispatch;

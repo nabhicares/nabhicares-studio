@@ -50,6 +50,20 @@ function defaultContent(key: string): Record<string, unknown> {
         mapUrl: '',
         ctaPrimary: 'Get directions',
       };
+    case 'map':
+      return {
+        title: 'Find us',
+        body: 'Visit our campus.',
+        mapUrl: '',
+        address: '',
+      };
+    case 'appointments':
+      return {
+        title: 'Book an appointment',
+        body: 'Share your details and we will confirm your visit.',
+        successMessage: 'Thank you — we will contact you shortly to confirm.',
+        submitLabel: 'Request appointment',
+      };
     default:
       return { title: getSectionType(key)?.label ?? 'Section' };
   }

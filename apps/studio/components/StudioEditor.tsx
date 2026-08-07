@@ -21,6 +21,7 @@ import { HospitalSettings } from './HospitalSettings';
 import { ContentJsonImport } from './ContentJsonImport';
 import { SectionRowMenu } from './SectionRowMenu';
 import { PublishChecklist } from './PublishChecklist';
+import { AppointmentRequestsPanel } from './AppointmentRequestsPanel';
 import type { DesignTokens } from '@nabhicares/section-registry';
 
 type LayoutTemplate = { id: string; key: string; version: number };
@@ -40,7 +41,7 @@ export type Page = {
   sections: Section[];
 };
 
-type Tab = 'pages' | 'sections' | 'design' | 'publish';
+type Tab = 'pages' | 'sections' | 'design' | 'requests' | 'publish';
 
 function ContentForm({
   fields,
@@ -556,6 +557,7 @@ export function StudioEditor({
             {railBtn('pages', 'description', 'Pages')}
             {railBtn('sections', 'layers', 'Sections')}
             {railBtn('design', 'palette', 'Design')}
+            {railBtn('requests', 'event_available', 'Requests')}
             {railBtn('publish', 'cloud_upload', 'Publish')}
           </div>
           <div className="mt-auto flex flex-col gap-sm w-full px-xs">
@@ -862,6 +864,10 @@ export function StudioEditor({
                 }}
               />
             </div>
+          ) : tab === 'requests' ? (
+            <div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain bg-surface">
+              <AppointmentRequestsPanel hospitalId={hospitalId} />
+            </div>
           ) : tab === 'design' ? (
             <div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain">
               <div className="px-xl py-xl flex flex-col items-center gap-md w-full pb-24">
@@ -942,7 +948,7 @@ export function StudioEditor({
             </div>
             <DesignPanel hospitalId={hospitalId} onTokensChange={setDesignTokens} />
           </aside>
-        ) : selected ? (
+        ) : tab === 'requests' || tab === 'publish' ? null : selected ? (
           <aside className="w-80 bg-surface-container-lowest border-l border-outline-variant flex flex-col z-40 shrink-0">
             <div className="flex border-b border-outline-variant">
               {(
@@ -1049,21 +1055,26 @@ export function StudioEditor({
                     const tpl = layoutOptions.find((t) => t.version === version) ?? null;
                     const active = selected.template.version === version;
                     const recommended = version === 1;
-                    const isContact = selected.template.key === 'contact';
-                    const softDeprecated = !recommended && (isContact || version > 1);
+                    const key = selected.template.key;
+                    const l01Only = key === 'contact' || key === 'map' || key === 'appointments';
+                    const heroAlt = key === 'hero' && version === 2;
+                    const blocked = l01Only && version > 1;
+                    const softDeprecated = !recommended && !heroAlt && (l01Only || version > 1);
                     return (
                       <button
                         key={version}
                         type="button"
-                        disabled={!tpl || saving || (isContact && version > 1)}
+                        disabled={!tpl || saving || blocked}
                         title={
-                          isContact && version > 1
-                            ? 'Contact only ships Layout 01'
-                            : tpl
-                              ? recommended
-                                ? 'Layout 01 · recommended'
-                                : `Layout ${String(version).padStart(2, '0')} · experimental`
-                              : 'Not seeded'
+                          blocked
+                            ? `${getSectionType(key)?.label ?? key} only ships Layout 01`
+                            : heroAlt
+                              ? 'Layout 02 · centered overlay'
+                              : tpl
+                                ? recommended
+                                  ? 'Layout 01 · recommended'
+                                  : `Layout ${String(version).padStart(2, '0')} · experimental`
+                                : 'Not seeded'
                         }
                         onClick={() => {
                           if (!tpl) return;

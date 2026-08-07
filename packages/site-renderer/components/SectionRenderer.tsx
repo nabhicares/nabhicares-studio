@@ -6,10 +6,12 @@ export function SectionRenderer({
   section,
   pageSlug = 'home',
   index = 0,
+  hospitalSlug,
 }: {
   section: SiteSection;
   pageSlug?: string;
   index?: number;
+  hospitalSlug?: string;
 }) {
   const Layout = resolveLayout(section.type, section.layoutVersion ?? 1);
   const isHome = pageSlug === 'home' || pageSlug === '';
@@ -28,14 +30,25 @@ export function SectionRenderer({
     section.type === 'services' ||
     section.type === 'testimonials' ||
     section.type === 'contact' ||
-    section.type === 'doctors';
+    section.type === 'doctors' ||
+    section.type === 'map' ||
+    section.type === 'appointments';
+
+  const studioApiUrl =
+    typeof process !== 'undefined' ? process.env.NEXT_PUBLIC_STUDIO_API_URL : undefined;
 
   return (
     <div
       data-section-type={section.type}
       data-section-id={section.id}
       data-layout={section.layoutVersion ?? 1}
-      id={section.type === 'services' ? 'services' : undefined}
+      id={
+        section.type === 'services'
+          ? 'services'
+          : section.type === 'appointments'
+            ? 'appointments'
+            : undefined
+      }
       style={{
         ['--section-bg' as string]: emphasize
           ? 'color-mix(in srgb, var(--color-surface) 45%, var(--color-bg))'
@@ -46,7 +59,12 @@ export function SectionRenderer({
         borderTop: isHero ? undefined : '1px solid color-mix(in srgb, var(--color-fg) 8%, transparent)',
       }}
     >
-      <Layout content={section.content ?? {}} siteLinks={siteLinks} />
+      <Layout
+        content={section.content ?? {}}
+        siteLinks={siteLinks}
+        hospitalSlug={hospitalSlug}
+        studioApiUrl={studioApiUrl}
+      />
     </div>
   );
 }

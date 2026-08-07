@@ -1,5 +1,7 @@
 // Builder database - content, drafts, templates, publish pointers.
-// Read-heavy, rebuildable from a bad publish. No PHI/PII lives here.
+// Read-heavy, rebuildable from a bad publish.
+// Marketing PII may exist (doctor bios, testimonials, website appointment requests).
+// Clinical PHI belongs in HMS, not here.
 
 generator client {
   provider      = "prisma-client-js"
@@ -24,10 +26,29 @@ model Hospital {
   seoDescription String?
   createdAt   DateTime @default(now())
 
-  pages         Page[]
-  publishes     Publish[]
-  designSystem  DesignSystem?
-  memberships   HospitalMembership[]
+  pages               Page[]
+  publishes           Publish[]
+  designSystem        DesignSystem?
+  memberships         HospitalMembership[]
+  appointmentRequests AppointmentRequest[]
+}
+
+/// Website visitor booking leads (marketing PII). Not clinical HMS appointments.
+model AppointmentRequest {
+  id          String    @id @default(uuid())
+  hospitalId  String
+  hospital    Hospital  @relation(fields: [hospitalId], references: [id], onDelete: Cascade)
+  name        String
+  phone       String
+  email       String?
+  preferredAt DateTime?
+  message     String?
+  /// new | contacted | closed
+  status      String    @default("new")
+  createdAt   DateTime  @default(now())
+
+  @@index([hospitalId, createdAt])
+  @@index([hospitalId, status])
 }
 
 // Studio operators. Password auth for now (scrypt). Super admins see all hospitals.

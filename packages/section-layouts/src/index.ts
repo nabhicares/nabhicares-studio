@@ -8,6 +8,8 @@ export type {
   FaqContent,
   TestimonialsContent,
   ContactContent,
+  MapContent,
+  AppointmentsContent,
   LayoutProps,
   LayoutComponent,
   SectionContent,

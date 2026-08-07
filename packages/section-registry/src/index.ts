@@ -193,6 +193,30 @@ export const SECTION_REGISTRY: SectionTypeDef[] = [
       { name: 'ctaSecondaryHref', label: 'Secondary CTA link', type: 'string' },
     ],
   },
+  {
+    key: 'map',
+    label: 'Map',
+    description: 'Standalone map embed for location',
+    componentRef: 'sections/map',
+    fields: [
+      { name: 'title', label: 'Title', type: 'string' },
+      { name: 'body', label: 'Intro', type: 'text' },
+      { name: 'mapUrl', label: 'Google Maps URL', type: 'string' },
+      { name: 'address', label: 'Address (fallback for embed)', type: 'text' },
+    ],
+  },
+  {
+    key: 'appointments',
+    label: 'Appointments',
+    description: 'Visitor booking request form',
+    componentRef: 'sections/appointments',
+    fields: [
+      { name: 'title', label: 'Title', type: 'string' },
+      { name: 'body', label: 'Intro', type: 'text' },
+      { name: 'successMessage', label: 'Success message', type: 'text' },
+      { name: 'submitLabel', label: 'Submit button label', type: 'string' },
+    ],
+  },
 ];
 
 export function getSectionType(key: string): SectionTypeDef | undefined {
@@ -301,6 +325,20 @@ export function exampleContentForSection(key: string): Record<string, unknown> {
         hours: 'Mon–Sat 8:00–20:00\nEmergency 24/7',
         mapUrl: 'https://maps.google.com/?q=hospital',
         ctaPrimary: 'Get directions',
+      };
+    case 'map':
+      return {
+        title: 'Find us',
+        body: 'Visit our campus.',
+        mapUrl: 'https://maps.google.com/?q=hospital',
+        address: '123 Care Road, Your City, State 560001',
+      };
+    case 'appointments':
+      return {
+        title: 'Book an appointment',
+        body: 'Share your details and we will confirm your visit.',
+        successMessage: 'Thank you — we will contact you shortly to confirm.',
+        submitLabel: 'Request appointment',
       };
     default:
       return { title: 'Section' };

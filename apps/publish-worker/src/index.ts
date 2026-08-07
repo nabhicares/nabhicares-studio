@@ -191,6 +191,11 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
   await runCommand('npx', ['next', 'build'], SITE_RENDERER_ROOT, {
     ...process.env,
     SITE_BASE_PATH: `/${hospital.slug}`,
+    // Bake Studio origin into appointment forms on the static site.
+    NEXT_PUBLIC_STUDIO_API_URL:
+      process.env.NEXT_PUBLIC_STUDIO_API_URL ||
+      process.env.STUDIO_PUBLIC_URL ||
+      '',
   });
 
   const outDir = join(SITE_RENDERER_ROOT, 'out');

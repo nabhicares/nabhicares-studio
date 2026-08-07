@@ -1,29 +1,34 @@
 import type { LayoutProps } from '../types';
 import {
-  accentBarStyle,
   bodyStyle,
   buttonGhostStyle,
   buttonPrimaryStyle,
-  cardStyle,
-  containerStyle,
-  mutedStyle,
   placeholderGradient,
   sectionBaseStyle,
-  surfaceStyle,
   titleStyle,
-  wideContainerStyle,
+  containerStyle,
 } from '../styles';
 import { normalizeHero } from '../content';
 
+function resolveHref(
+  explicit: string | undefined,
+  fallback: string | undefined,
+): string {
+  if (explicit && explicit.trim()) return explicit.trim();
+  return fallback || '#';
+}
+
 /** Full-bleed centered overlay */
-export function Layout02({ content }: LayoutProps) {
+export function Layout02({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
+  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact);
+  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services);
   return (
     <section
       style={{
         ...sectionBaseStyle,
         padding: 0,
-        minHeight: 'min(72vh, 680px)',
+        minHeight: 'min(var(--hero-vh, 72vh), 680px)',
         position: 'relative',
         display: 'grid',
         placeItems: 'center',
@@ -43,12 +48,16 @@ export function Layout02({ content }: LayoutProps) {
         </p>
         <div style={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', gap: '0.75rem' }}>
           {c.ctaPrimary ? (
-            <a href="#" style={buttonPrimaryStyle}>
+            <a href={primaryHref} className="nabhi-btn" style={buttonPrimaryStyle}>
               {c.ctaPrimary}
             </a>
           ) : null}
           {c.ctaSecondary ? (
-            <a href="#" style={{ ...buttonGhostStyle, borderColor: 'rgba(255,255,255,0.45)', color: '#fff' }}>
+            <a
+              href={secondaryHref}
+              className="nabhi-btn"
+              style={{ ...buttonGhostStyle, borderColor: 'rgba(255,255,255,0.45)', color: '#fff' }}
+            >
               {c.ctaSecondary}
             </a>
           ) : null}

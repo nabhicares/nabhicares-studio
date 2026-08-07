@@ -8,6 +8,8 @@ import { layouts as gallery } from './gallery';
 import { layouts as faq } from './faq';
 import { layouts as testimonials } from './testimonials';
 import { layouts as contact } from './contact';
+import { layouts as map } from './map';
+import { layouts as appointments } from './appointments';
 
 const REGISTRY: Record<string, Record<number, LayoutComponent>> = {
   hero,
@@ -18,6 +20,8 @@ const REGISTRY: Record<string, Record<number, LayoutComponent>> = {
   faq,
   testimonials,
   contact,
+  map,
+  appointments,
 };
 
 function Fallback({ content }: { content: Record<string, unknown> }) {

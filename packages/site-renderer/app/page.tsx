@@ -18,6 +18,7 @@ export default function HomePage() {
   return (
     <PageView
       hospitalName={site.hospitalName}
+      hospitalSlug={site.hospitalSlug}
       page={page}
       pages={site.pages}
       contact={extractContactSummary(site.pages)}

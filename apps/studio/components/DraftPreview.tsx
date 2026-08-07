@@ -199,7 +199,15 @@ export function DraftPreview({
               const Layout = resolveLayout(section.type, section.layoutVersion ?? 1);
               return (
                 <div key={section.id} data-section-type={section.type}>
-                  <Layout content={(section.content ?? {}) as Record<string, unknown>} />
+                  <Layout
+                    content={(section.content ?? {}) as Record<string, unknown>}
+                    hospitalSlug={hospitalSlug}
+                    studioApiUrl={
+                      typeof process !== 'undefined'
+                        ? process.env.NEXT_PUBLIC_STUDIO_API_URL
+                        : undefined
+                    }
+                  />
                 </div>
               );
             })}

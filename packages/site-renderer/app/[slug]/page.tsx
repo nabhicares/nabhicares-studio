@@ -19,6 +19,7 @@ export default function SlugPage({ params }: { params: { slug: string } }) {
   return (
     <PageView
       hospitalName={site.hospitalName}
+      hospitalSlug={site.hospitalSlug}
       page={page}
       pages={site.pages}
       contact={extractContactSummary(site.pages)}
