@@ -1056,7 +1056,7 @@ export function StudioEditor({
                     const active = selected.template.version === version;
                     const recommended = version === 1;
                     const key = selected.template.key;
-                    const l01Only = key === 'contact' || key === 'map' || key === 'appointments';
+                    const l01Only = key === 'map' || key === 'appointments';
                     const blocked = l01Only && version > 1;
                     return (
                       <button
