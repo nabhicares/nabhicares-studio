@@ -14,7 +14,7 @@ import {
 import { heroCtaHrefPlaceholder } from '@nabhicares/section-layouts';
 import { DesignPanel } from './DesignPanel';
 import { PublishDrawer } from './PublishDrawer';
-import { DraftCanvas, ViewportToggle, type PreviewViewport, type SystemPreviewMode } from './DraftCanvas';
+import { DraftCanvas, ViewportToggle, type PreviewViewport } from './DraftCanvas';
 import { LayoutWireframe } from './LayoutWireframe';
 import { ImageField, looksLikeImageField } from './ImageField';
 import { DraftPreview } from './DraftPreview';
@@ -247,7 +247,6 @@ export function StudioEditor({
   const [renamingPageId, setRenamingPageId] = useState<string | null>(null);
   const [renameSlug, setRenameSlug] = useState('');
   const [designTokens, setDesignTokens] = useState<DesignTokens | undefined>(undefined);
-  const [systemPreview, setSystemPreview] = useState<SystemPreviewMode>('page');
   const [showPreview, setShowPreview] = useState(false);
   const [previewViewport, setPreviewViewport] = useState<PreviewViewport>('desktop');
   const [showSettings, setShowSettings] = useState(false);
@@ -513,7 +512,6 @@ export function StudioEditor({
       onClick={() => {
         setShowSettings(false);
         setTab(id);
-        if (id !== 'design') setSystemPreview('page');
       }}
       className={`w-full aspect-square flex items-center justify-center rounded-lg transition-all ${
         tab === id && !showSettings
@@ -906,7 +904,6 @@ export function StudioEditor({
                   selectedSectionId={selected?.id}
                   viewport={previewViewport}
                   designTokens={designTokens}
-                  systemPreview={systemPreview}
                   onSelectSection={setSelectedSectionId}
                 />
               </div>
@@ -974,8 +971,6 @@ export function StudioEditor({
             <DesignPanel
               hospitalId={hospitalId}
               onTokensChange={setDesignTokens}
-              systemPreview={systemPreview}
-              onSystemPreviewChange={setSystemPreview}
             />
           </aside>
         ) : tab === 'requests' || tab === 'publish' ? null : selected ? (
