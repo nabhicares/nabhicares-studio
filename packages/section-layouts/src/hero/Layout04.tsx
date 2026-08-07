@@ -9,13 +9,13 @@ import {
 } from '../styles';
 import { normalizeHero } from '../content';
 import { TreatedMedia } from '../polish';
-import { resolveHref } from './bits';
+import { resolveHeroCtaHref } from './bits';
 
 /** Stacked editorial — copy then wide image band */
 export function Layout04({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
-  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact, siteLinks);
-  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services, siteLinks);
+  const primaryHref = resolveHeroCtaHref(c.ctaPrimaryHref, c.ctaPrimary, 'primary', siteLinks);
+  const secondaryHref = resolveHeroCtaHref(c.ctaSecondaryHref, c.ctaSecondary, 'secondary', siteLinks);
 
   return (
     <section style={sectionBaseStyle}>

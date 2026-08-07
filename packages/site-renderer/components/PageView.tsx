@@ -58,6 +58,7 @@ export function PageView({
               pageSlug={page.slug}
               index={index}
               hospitalSlug={hospitalSlug}
+              contact={contactSummary}
             />
           ))
         )}

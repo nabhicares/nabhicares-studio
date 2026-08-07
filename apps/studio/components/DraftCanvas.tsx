@@ -3,7 +3,7 @@
 import { apiFetch } from '@/lib/api-client';
 
 import { useEffect, useState, type CSSProperties } from 'react';
-import { resolveLayout } from '@nabhicares/section-layouts';
+import { resolveLayout, telHref, toDirectionsUrl } from '@nabhicares/section-layouts';
 import { DEFAULT_DESIGN_TOKENS, getSectionType, type DesignTokens } from '@nabhicares/section-registry';
 import type { Page } from './StudioEditor';
 
@@ -339,17 +339,31 @@ export function DraftCanvas({
         {sections.length === 0 ? (
           <p className="text-on-surface-variant text-body-md p-xl">No sections on this page.</p>
         ) : (
-          sections.map((section, index) => {
-            const label = getSectionType(section.template.key)?.label ?? section.template.key;
-            const selected = section.id === selectedSectionId;
-            const Layout = resolveLayout(section.template.key, section.template.version);
-            const siteLinks = {
+          (() => {
+            let phone = '';
+            let mapUrl = '';
+            let address = '';
+            for (const s of sections) {
+              if (s.template.key !== 'contact') continue;
+              const c = s.content ?? {};
+              if (!phone && typeof c.phone === 'string') phone = c.phone.trim();
+              if (!mapUrl && typeof c.mapUrl === 'string') mapUrl = c.mapUrl.trim();
+              if (!address && typeof c.address === 'string') address = c.address.trim();
+            }
+            const draftLinks = {
               home: '#',
               contact: '#',
               doctors: '#',
               services: '#services',
               privacy: '#',
+              tel: phone ? telHref(phone) : undefined,
+              directions: toDirectionsUrl(mapUrl || undefined, address || undefined),
             };
+            return sections.map((section, index) => {
+            const label = getSectionType(section.template.key)?.label ?? section.template.key;
+            const selected = section.id === selectedSectionId;
+            const Layout = resolveLayout(section.template.key, section.template.version);
+            const siteLinks = draftLinks;
             const isHero = section.template.key === 'hero';
             const emphasize =
               section.template.key === 'services' ||
@@ -415,7 +429,8 @@ export function DraftCanvas({
                 </div>
               </div>
             );
-          })
+          });
+          })()
         )}
         <div
           className="px-xl py-lg border-t text-label-sm"

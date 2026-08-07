@@ -6,6 +6,10 @@ export type SiteLinks = {
   doctors?: string;
   services?: string;
   privacy?: string;
+  /** Dialable tel: link from hospital contact */
+  tel?: string;
+  /** Google Maps directions URL */
+  directions?: string;
 };
 
 export type HeroContent = {

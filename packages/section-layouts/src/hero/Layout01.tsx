@@ -8,13 +8,13 @@ import {
   titleStyle,
 } from '../styles';
 import { normalizeHero } from '../content';
-import { resolveHref } from './bits';
+import { resolveHeroCtaHref } from './bits';
 
 /** Full-bleed image plane + hospital-forward copy */
 export function Layout01({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
-  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact, siteLinks);
-  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services, siteLinks);
+  const primaryHref = resolveHeroCtaHref(c.ctaPrimaryHref, c.ctaPrimary, 'primary', siteLinks);
+  const secondaryHref = resolveHeroCtaHref(c.ctaSecondaryHref, c.ctaSecondary, 'secondary', siteLinks);
   const onImage = Boolean(c.image);
   const titleColor = onImage ? 'var(--color-bg)' : 'var(--color-fg)';
   const bodyColor = onImage

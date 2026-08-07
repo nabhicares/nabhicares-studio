@@ -11,6 +11,7 @@ import {
   type FieldDef,
   type SectionTypeDef,
 } from '@nabhicares/section-registry';
+import { heroCtaHrefPlaceholder } from '@nabhicares/section-layouts';
 import { DesignPanel } from './DesignPanel';
 import { PublishDrawer } from './PublishDrawer';
 import { DraftCanvas, ViewportToggle, type PreviewViewport } from './DraftCanvas';
@@ -23,6 +24,10 @@ import { SectionRowMenu } from './SectionRowMenu';
 import { PublishChecklist } from './PublishChecklist';
 import { AppointmentRequestsPanel } from './AppointmentRequestsPanel';
 import type { DesignTokens } from '@nabhicares/section-registry';
+
+function heroHrefHint(ctaLabel: string, role: 'primary' | 'secondary'): string {
+  return heroCtaHrefPlaceholder(ctaLabel, role);
+}
 
 type LayoutTemplate = { id: string; key: string; version: number };
 
@@ -70,15 +75,29 @@ function ContentForm({
             );
           }
           const Tag = field.type === 'text' ? 'textarea' : 'input';
+          let placeholder = field.placeholder;
+          if (field.name === 'ctaPrimaryHref') {
+            const label = String(value.ctaPrimary ?? '');
+            placeholder = heroHrefHint(label, 'primary') || placeholder;
+          } else if (field.name === 'ctaSecondaryHref') {
+            const label = String(value.ctaSecondary ?? '');
+            placeholder = heroHrefHint(label, 'secondary') || placeholder;
+          }
           return (
             <div className="flex flex-col gap-xs" key={field.name}>
               <label className="font-inter text-label-sm text-outline ml-1">{field.label}</label>
               <Tag
                 className="field-input resize-none"
                 rows={field.type === 'text' ? 4 : undefined}
+                placeholder={placeholder}
                 value={String(value[field.name] ?? '')}
                 onChange={(e) => onChange({ ...value, [field.name]: e.target.value })}
               />
+              {field.name === 'ctaPrimaryHref' || field.name === 'ctaSecondaryHref' ? (
+                <p className="font-inter text-label-sm text-outline ml-1">
+                  Leave blank to use the page default shown above.
+                </p>
+              ) : null}
             </div>
           );
         }

@@ -16,8 +16,10 @@ export type FieldDef = {
   name: string;
   label: string;
   type: FieldType;
+  /** Shown when the field is empty (Studio content form). */
+  placeholder?: string;
   /** object[] item shape — only content fields, never colors/spacing */
-  itemFields?: { name: string; label: string; type: 'string' | 'text' }[];
+  itemFields?: { name: string; label: string; type: 'string' | 'text'; placeholder?: string }[];
 };
 
 export type SectionTypeDef = {
@@ -46,10 +48,20 @@ export const SECTION_REGISTRY: SectionTypeDef[] = [
     fields: [
       { name: 'title', label: 'Headline', type: 'string' },
       { name: 'body', label: 'Supporting text', type: 'text' },
-      { name: 'ctaPrimary', label: 'Primary CTA', type: 'string' },
-      { name: 'ctaPrimaryHref', label: 'Primary CTA link', type: 'string' },
-      { name: 'ctaSecondary', label: 'Secondary CTA', type: 'string' },
-      { name: 'ctaSecondaryHref', label: 'Secondary CTA link', type: 'string' },
+      { name: 'ctaPrimary', label: 'Primary CTA', type: 'string', placeholder: 'Book appointment' },
+      {
+        name: 'ctaPrimaryHref',
+        label: 'Primary CTA link',
+        type: 'string',
+        placeholder: 'contact/  ·  or tel:+91…',
+      },
+      { name: 'ctaSecondary', label: 'Secondary CTA', type: 'string', placeholder: 'Explore services' },
+      {
+        name: 'ctaSecondaryHref',
+        label: 'Secondary CTA link',
+        type: 'string',
+        placeholder: '#services  ·  or doctors/',
+      },
       { name: 'image', label: 'Image URL', type: 'string' },
     ],
   },
@@ -188,9 +200,14 @@ export const SECTION_REGISTRY: SectionTypeDef[] = [
       { name: 'address', label: 'Address', type: 'text' },
       { name: 'hours', label: 'Hours', type: 'text' },
       { name: 'mapUrl', label: 'Google Maps URL', type: 'string' },
-      { name: 'ctaPrimary', label: 'Primary CTA', type: 'string' },
-      { name: 'ctaSecondary', label: 'Secondary CTA', type: 'string' },
-      { name: 'ctaSecondaryHref', label: 'Secondary CTA link', type: 'string' },
+      { name: 'ctaPrimary', label: 'Primary CTA', type: 'string', placeholder: 'Get directions' },
+      { name: 'ctaSecondary', label: 'Secondary CTA', type: 'string', placeholder: 'Contact details' },
+      {
+        name: 'ctaSecondaryHref',
+        label: 'Secondary CTA link',
+        type: 'string',
+        placeholder: 'contact/',
+      },
     ],
   },
   {

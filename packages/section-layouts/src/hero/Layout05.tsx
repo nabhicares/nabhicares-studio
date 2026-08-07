@@ -8,13 +8,13 @@ import {
   titleStyle,
 } from '../styles';
 import { normalizeHero } from '../content';
-import { resolveHref } from './bits';
+import { resolveHeroCtaHref } from './bits';
 
 /** Minimal centered — no image */
 export function Layout05({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
-  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact, siteLinks);
-  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services, siteLinks);
+  const primaryHref = resolveHeroCtaHref(c.ctaPrimaryHref, c.ctaPrimary, 'primary', siteLinks);
+  const secondaryHref = resolveHeroCtaHref(c.ctaSecondaryHref, c.ctaSecondary, 'secondary', siteLinks);
 
   return (
     <section style={{ ...sectionBaseStyle, minHeight: 'min(56vh, 520px)', display: 'grid', placeItems: 'center' }}>

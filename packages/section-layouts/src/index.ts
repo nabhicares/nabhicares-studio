@@ -23,6 +23,7 @@ export {
   bodyStyle,
 } from './styles';
 export { resolveHref, sanitizeMapUrl, telHref, toDirectionsUrl } from './links';
+export { resolveHeroCtaHref, heroCtaHrefPlaceholder } from './hero/bits';
 export {
   NABHI_CONSENT_KEY,
   NABHI_CONSENT_EVENT,

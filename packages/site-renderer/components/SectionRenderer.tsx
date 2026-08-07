@@ -1,17 +1,19 @@
-import { resolveLayout } from '@nabhicares/section-layouts';
+import { resolveLayout, telHref, toDirectionsUrl } from '@nabhicares/section-layouts';
 import type { SiteSection } from '@/lib/types';
-import { hrefForPage } from '@/lib/site-chrome';
+import { hrefForPage, type SiteContactSummary } from '@/lib/site-chrome';
 
 export function SectionRenderer({
   section,
   pageSlug = 'home',
   index = 0,
   hospitalSlug,
+  contact,
 }: {
   section: SiteSection;
   pageSlug?: string;
   index?: number;
   hospitalSlug?: string;
+  contact?: SiteContactSummary;
 }) {
   const Layout = resolveLayout(section.type, section.layoutVersion ?? 1);
   const isHome = pageSlug === 'home' || pageSlug === '';
@@ -21,6 +23,8 @@ export function SectionRenderer({
     doctors: hrefForPage(pageSlug, 'doctors'),
     services: isHome ? '#services' : '../#services',
     privacy: hrefForPage(pageSlug, 'privacy'),
+    tel: contact?.phone ? telHref(contact.phone) : undefined,
+    directions: toDirectionsUrl(contact?.mapUrl, contact?.address),
   };
 
   const isHero = section.type === 'hero';
