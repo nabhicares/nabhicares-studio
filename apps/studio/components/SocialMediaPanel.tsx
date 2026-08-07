@@ -346,7 +346,7 @@ function OgCardPreview({
 
   // WhatsApp
   return (
-    <div className="rounded-lg overflow-hidden max-w-sm border border-outline-variant bg-[#d1f4cc]/
+    <div className="rounded-lg overflow-hidden max-w-sm border border-outline-variant bg-[#d1f4cc]">
       <div className="m-sm rounded-md overflow-hidden bg-surface-container-lowest shadow-sm">
         {media}
         <div className="p-sm space-y-xs bg-[#f5f6f6]">
