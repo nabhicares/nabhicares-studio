@@ -6,19 +6,22 @@ import {
   mutedStyle,
 } from '../styles';
 import { contactRowIcon, IconBadge, toMapEmbedSrc } from '../icons';
-import { resolveHref, sanitizeMapUrl, telHref } from '../links';
+import { resolveHref, telHref, toDirectionsUrl } from '../links';
 import { elevatedCardStyle } from '../polish';
 
 export type ContactRow = { label: string; value: string; href?: string };
 
 export function contactRows(c: ContactContent, isTeaser: boolean): ContactRow[] {
   const phoneHref = c.phone ? telHref(c.phone) : undefined;
+  const directionsHref = toDirectionsUrl(c.mapUrl, c.address);
   return [
     c.phone ? { label: 'Phone', value: c.phone, href: phoneHref } : null,
     !isTeaser && c.email
       ? { label: 'Email', value: c.email, href: `mailto:${c.email}` }
       : null,
-    c.address ? { label: 'Address', value: c.address, href: undefined } : null,
+    c.address
+      ? { label: 'Address', value: c.address, href: directionsHref }
+      : null,
     !isTeaser && c.hours ? { label: 'Hours', value: c.hours, href: undefined } : null,
   ].filter(Boolean) as ContactRow[];
 }
@@ -31,8 +34,9 @@ export function contactTelHref(c: ContactContent): string | undefined {
   return c.phone ? telHref(c.phone) : undefined;
 }
 
+/** Directions link for Maps app / Google Maps web. */
 export function contactMapHref(c: ContactContent): string | undefined {
-  return sanitizeMapUrl(c.mapUrl);
+  return toDirectionsUrl(c.mapUrl, c.address);
 }
 
 export function ContactCtas({
@@ -44,17 +48,16 @@ export function ContactCtas({
   siteLinks?: SiteLinks;
   isTeaser: boolean;
 }): ReactElement | null {
-  const mapHref = contactMapHref(c);
-  const embedSrc = toMapEmbedSrc(c.mapUrl, c.address);
+  const directionsHref = contactMapHref(c);
   const detailHref = contactDetailHref(c, siteLinks);
   const phoneHref = contactTelHref(c);
   const buttons: ReactNode[] = [];
 
-  if (c.ctaPrimary && (mapHref || embedSrc)) {
+  if (c.ctaPrimary && directionsHref) {
     buttons.push(
       <a
         key="dir"
-        href={mapHref || '#'}
+        href={directionsHref}
         className="nabhi-btn"
         style={buttonPrimaryStyle}
         target="_blank"

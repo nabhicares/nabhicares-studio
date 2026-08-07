@@ -1,5 +1,6 @@
 import type { NavPage, SiteContactSummary } from '@/lib/site-chrome';
 import { hrefForPage, sanitizeMapUrl, telHref } from '@/lib/site-chrome';
+import { toDirectionsUrl } from '@nabhicares/section-layouts';
 
 export function SiteHeader({
   hospitalName,
@@ -129,9 +130,13 @@ export function SiteFooter({
               {contact.email}
             </a>
           ) : null}
-          {contact.mapUrl ? (
+          {contact.mapUrl || contact.address ? (
             <a
-              href={sanitizeMapUrl(contact.mapUrl) || contact.mapUrl}
+              href={
+                toDirectionsUrl(contact.mapUrl, contact.address) ||
+                sanitizeMapUrl(contact.mapUrl) ||
+                '#'
+              }
               className="nabhi-footer-link"
               target="_blank"
               rel="noreferrer"
@@ -139,7 +144,7 @@ export function SiteFooter({
               Directions
             </a>
           ) : null}
-          {!contact.phone && !contact.email && !contact.mapUrl ? (
+          {!contact.phone && !contact.email && !contact.mapUrl && !contact.address ? (
             <span className="nabhi-footer-meta">Add contact details in Studio</span>
           ) : null}
         </div>

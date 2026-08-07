@@ -943,6 +943,157 @@ function renderSketch(type: string, v: number) {
       </>
     );
   }
+  if (type === 'contact' && v === 1) {
+    return (
+      <>
+          <rect x="3" y="3" width="18" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="3" y="7" width="14" height="1.1" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="3" y="11" width="6" height="2.4" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="10" y="11" width="6" height="2.4" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+          <rect x="3" y="16" width="20" height="16" rx="1.5" className="fill-current" style={{opacity:0.12}} />
+          <rect x="5" y="18" width="16" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="5" y="22" width="16" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <rect x="5" y="26" width="16" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <rect x="25" y="3" width="20" height="29" rx="1.5" className="fill-current opacity-18" /><path d="M25 32 L45 3" stroke="currentColor" strokeWidth="0.4" opacity="0.12" /><path d="M25 3 L45 32" stroke="currentColor" strokeWidth="0.4" opacity="0.12" />
+      </>
+    );
+  }
+  if (type === 'contact' && v === 2) {
+    return (
+      <>
+          <rect x="14" y="2" width="20" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="16" y="6" width="7" height="2.3" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="25" y="6" width="7" height="2.3" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+          <rect x="3" y="11" width="13" height="8" rx="1.5" className="fill-current" style={{opacity:0.15}} />
+          <rect x="5" y="14" width="9" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="18" y="11" width="12" height="8" rx="1.5" className="fill-current" style={{opacity:0.15}} />
+          <rect x="20" y="14" width="8" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="32" y="11" width="13" height="8" rx="1.5" className="fill-current" style={{opacity:0.15}} />
+          <rect x="34" y="14" width="9" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="3" y="22" width="42" height="12" rx="1.5" className="fill-current opacity-18" /><path d="M3 34 L45 22" stroke="currentColor" strokeWidth="0.4" opacity="0.12" /><path d="M3 22 L45 34" stroke="currentColor" strokeWidth="0.4" opacity="0.12" />
+      </>
+    );
+  }
+  if (type === 'contact' && v === 3) {
+    return (
+      <>
+          <rect x="2" y="3" width="22" height="30" rx="1.5" className="fill-current opacity-18" /><path d="M2 33 L24 3" stroke="currentColor" strokeWidth="0.4" opacity="0.12" /><path d="M2 3 L24 33" stroke="currentColor" strokeWidth="0.4" opacity="0.12" />
+          <rect x="27" y="4" width="18" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="27" y="8" width="14" height="1.1" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="27" y="12" width="6" height="2.3" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="34" y="12" width="6" height="2.3" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+          <rect x="27" y="17" width="18" height="5" rx="1" className="fill-current" style={{opacity:0.14}} />
+          <rect x="27" y="24" width="18" height="5" rx="1" className="fill-current" style={{opacity:0.14}} />
+      </>
+    );
+  }
+  if (type === 'contact' && v === 4) {
+    return (
+      <>
+          <rect x="3" y="4" width="18" height="2.2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="3" y="8" width="16" height="1.1" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="28" y="5" width="7" height="2.5" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="37" y="5" width="7" height="2.5" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+          <rect x="3" y="16" width="13" height="14" rx="1.5" className="fill-current" style={{opacity:0.14}} />
+          <rect x="5" y="20" width="9" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="18" y="16" width="13" height="14" rx="1.5" className="fill-current" style={{opacity:0.14}} />
+          <rect x="20" y="20" width="9" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="33" y="16" width="12" height="14" rx="1.5" className="fill-current" style={{opacity:0.14}} />
+          <rect x="35" y="20" width="8" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+      </>
+    );
+  }
+  if (type === 'contact' && v === 5) {
+    return (
+      <>
+          <rect x="3" y="2" width="18" height="1.8" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="30" y="2" width="6" height="2.2" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="38" y="2" width="6" height="2.2" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+          <rect x="3" y="7" width="42" height="8" rx="1.5" className="fill-current" style={{opacity:0.2}} />
+          <rect x="6" y="10" width="20" height="1.5" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="3" y="18" width="20" height="14" rx="1.5" className="fill-current" style={{opacity:0.12}} />
+          <rect x="5" y="21" width="16" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="5" y="25" width="16" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <rect x="25" y="18" width="20" height="14" rx="1.5" className="fill-current opacity-18" /><path d="M25 32 L45 18" stroke="currentColor" strokeWidth="0.4" opacity="0.12" /><path d="M25 18 L45 32" stroke="currentColor" strokeWidth="0.4" opacity="0.12" />
+      </>
+    );
+  }
+  if (type === 'contact' && v === 6) {
+    return (
+      <>
+          <rect x="3" y="3" width="14" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="3" y="7" width="12" height="1.1" rx="0.5" className="fill-current" style={{opacity:0.3}} />
+          <rect x="3" y="11" width="5" height="2.2" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="9" y="11" width="5" height="2.2" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+          <rect x="3" y="16" width="14" height="5" rx="1" className="fill-current" style={{opacity:0.14}} />
+          <rect x="3" y="23" width="14" height="5" rx="1" className="fill-current" style={{opacity:0.14}} />
+          <rect x="3" y="30" width="14" height="3" rx="1" className="fill-current" style={{opacity:0.14}} />
+          <rect x="20" y="3" width="25" height="30" rx="1.5" className="fill-current opacity-18" /><path d="M20 33 L45 3" stroke="currentColor" strokeWidth="0.4" opacity="0.12" /><path d="M20 3 L45 33" stroke="currentColor" strokeWidth="0.4" opacity="0.12" />
+      </>
+    );
+  }
+  if (type === 'contact' && v === 7) {
+    return (
+      <>
+          <rect x="2" y="2" width="44" height="10" rx="1.5" className="fill-current" style={{opacity:0.16}} />
+          <rect x="5" y="4" width="16" height="1.8" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="5" y="7.5" width="6" height="2.2" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="13" y="7.5" width="6" height="2.2" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+          <rect x="3" y="15" width="20" height="8" rx="1.5" className="fill-current" style={{opacity:0.14}} />
+          <rect x="5" y="18" width="16" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="3" y="25" width="20" height="8" rx="1.5" className="fill-current" style={{opacity:0.14}} />
+          <rect x="5" y="28" width="16" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="25" y="15" width="20" height="18" rx="1.5" className="fill-current opacity-18" /><path d="M25 33 L45 15" stroke="currentColor" strokeWidth="0.4" opacity="0.12" /><path d="M25 15 L45 33" stroke="currentColor" strokeWidth="0.4" opacity="0.12" />
+      </>
+    );
+  }
+  if (type === 'contact' && v === 8) {
+    return (
+      <>
+          <rect x="3" y="2" width="18" height="1.8" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="3" y="5.5" width="6" height="2.1" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="10" y="5.5" width="6" height="2.1" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+          <rect x="3" y="10" width="42" height="18" rx="1.5" className="fill-current opacity-18" /><path d="M3 28 L45 10" stroke="currentColor" strokeWidth="0.4" opacity="0.12" /><path d="M3 10 L45 28" stroke="currentColor" strokeWidth="0.4" opacity="0.12" />
+          <rect x="6" y="23" width="11" height="10" rx="1.5" className="fill-current" style={{opacity:0.28}} />
+          <rect x="8" y="26" width="7" height="1.1" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="19" y="23" width="11" height="10" rx="1.5" className="fill-current" style={{opacity:0.28}} />
+          <rect x="21" y="26" width="7" height="1.1" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="32" y="23" width="10" height="10" rx="1.5" className="fill-current" style={{opacity:0.28}} />
+          <rect x="34" y="26" width="6" height="1.1" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+      </>
+    );
+  }
+  if (type === 'contact' && v === 9) {
+    return (
+      <>
+          <rect x="14" y="2" width="20" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="16" y="6" width="16" height="3" rx="1" className="fill-current" style={{opacity:0.5}} />
+          <rect x="14" y="11" width="20" height="5" rx="1.5" className="fill-current" style={{opacity:0.16}} />
+          <rect x="18" y="13" width="12" height="1.2" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="17" y="18" width="6" height="2.2" rx="0.5" className="fill-current" style={{opacity:0.35}} />
+          <rect x="25" y="18" width="6" height="2.2" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+          <rect x="8" y="22" width="14" height="5" rx="1" className="fill-current" style={{opacity:0.14}} />
+          <rect x="26" y="22" width="14" height="5" rx="1" className="fill-current" style={{opacity:0.14}} />
+          <rect x="14" y="29" width="20" height="5" rx="1.5" className="fill-current opacity-18" /><path d="M14 34 L34 29" stroke="currentColor" strokeWidth="0.4" opacity="0.12" /><path d="M14 29 L34 34" stroke="currentColor" strokeWidth="0.4" opacity="0.12" />
+      </>
+    );
+  }
+  if (type === 'contact' && v === 10) {
+    return (
+      <>
+          <rect x="3" y="2" width="18" height="2" rx="0.5" className="fill-current" style={{opacity:0.55}} />
+          <rect x="30" y="2" width="6" height="2.2" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="38" y="2" width="6" height="2.2" rx="0.5" className="fill-current" style={{opacity:0.22}} />
+          <rect x="3" y="7" width="42" height="5" rx="1" className="fill-current" style={{opacity:0.14}} />
+          <rect x="5" y="8.5" width="20" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="3" y="14" width="42" height="5" rx="1" className="fill-current" style={{opacity:0.1}} />
+          <rect x="5" y="15.5" width="20" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.45}} />
+          <rect x="3" y="21" width="42" height="5" rx="1" className="fill-current" style={{opacity:0.14}} />
+          <rect x="5" y="22.5" width="20" height="1.3" rx="0.5" className="fill-current" style={{opacity:0.5}} />
+          <rect x="3" y="28" width="42" height="6" rx="1.5" className="fill-current opacity-18" /><path d="M3 34 L45 28" stroke="currentColor" strokeWidth="0.4" opacity="0.12" /><path d="M3 28 L45 34" stroke="currentColor" strokeWidth="0.4" opacity="0.12" />
+      </>
+    );
+  }
 
   return (
     <>

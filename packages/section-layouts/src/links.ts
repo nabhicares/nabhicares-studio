@@ -42,6 +42,53 @@ export function sanitizeMapUrl(raw?: string): string | undefined {
   return undefined;
 }
 
+function extractDestination(from: string): string | undefined {
+  const at = from.match(/@(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
+  if (at) return `${at[1]},${at[2]}`;
+
+  const pinned = from.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+  if (pinned) return `${pinned[1]},${pinned[2]}`;
+
+  try {
+    const u = new URL(from);
+    const q =
+      u.searchParams.get('destination') ||
+      u.searchParams.get('daddr') ||
+      u.searchParams.get('q') ||
+      u.searchParams.get('query');
+    if (q?.trim()) return q.trim();
+
+    const place = u.pathname.match(/\/place\/([^/]+)/);
+    if (place?.[1]) {
+      return decodeURIComponent(place[1].replace(/\+/g, ' '));
+    }
+  } catch {
+    /* ignore */
+  }
+
+  return undefined;
+}
+
+/**
+ * Open Google Maps in directions mode (web or app).
+ * Prefer coordinates from a place URL, then address, then a cleaned place link.
+ */
+export function toDirectionsUrl(mapUrl?: string, address?: string): string | undefined {
+  const cleaned = sanitizeMapUrl(mapUrl);
+  const addr = (address ?? '').trim();
+
+  const destination =
+    (cleaned ? extractDestination(cleaned) : undefined) ||
+    (mapUrl ? extractDestination(mapUrl) : undefined) ||
+    (addr || undefined);
+
+  if (destination) {
+    return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
+  }
+
+  return cleaned;
+}
+
 /** Build a dialable tel: href; normalize common Indian local numbers to +91. */
 export function telHref(phone: string): string {
   let digits = phone.replace(/[^\d+]/g, '');
@@ -83,8 +130,8 @@ export function resolveHref(
     raw.includes('maps.app.goo.gl') ||
     raw.includes('goo.gl/maps')
   ) {
-    const cleaned = sanitizeMapUrl(raw);
-    if (cleaned) return cleaned;
+    const directions = toDirectionsUrl(raw);
+    if (directions) return directions;
     if (/^https?:\/\//i.test(raw)) return raw;
   }
 

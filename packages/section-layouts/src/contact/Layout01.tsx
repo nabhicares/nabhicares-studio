@@ -30,7 +30,7 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
     !isTeaser && c.email
       ? { label: 'Email', value: c.email, href: `mailto:${c.email}` }
       : null,
-    c.address ? { label: 'Address', value: c.address, href: undefined } : null,
+    c.address ? { label: 'Address', value: c.address, href: mapHref } : null,
     !isTeaser && c.hours ? { label: 'Hours', value: c.hours, href: undefined } : null,
   ].filter(Boolean) as { label: string; value: string; href?: string }[];
 
@@ -52,9 +52,9 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
           <h2 style={{ ...titleStyle, fontSize: 'clamp(1.85rem, 3.2vw, 2.6rem)' }}>{c.title}</h2>
           {c.body ? <p style={bodyStyle}>{c.body}</p> : null}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '0.25rem' }}>
-            {c.ctaPrimary && (mapHref || embedSrc) ? (
+            {c.ctaPrimary && mapHref ? (
               <a
-                href={mapHref || '#'}
+                href={mapHref}
                 className="nabhi-btn"
                 style={buttonPrimaryStyle}
                 target="_blank"
