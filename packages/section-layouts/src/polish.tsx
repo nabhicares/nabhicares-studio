@@ -79,6 +79,8 @@ export function TreatedMedia({
   emptyLabel = 'Add a photo in Studio',
   style,
   round,
+  priority = false,
+  sizes,
 }: {
   src?: string;
   aspectRatio?: string;
@@ -87,6 +89,9 @@ export function TreatedMedia({
   style?: CSSProperties;
   /** Circular crop (e.g. doctor avatar) */
   round?: boolean;
+  /** Hero / LCP image — eager + high fetch priority */
+  priority?: boolean;
+  sizes?: string;
 }): ReactElement {
   const shell: CSSProperties = {
     ...imageTreatmentStyle,
@@ -102,6 +107,10 @@ export function TreatedMedia({
         <img
           src={src}
           alt=""
+          loading={priority ? 'eager' : 'lazy'}
+          decoding={priority ? 'sync' : 'async'}
+          fetchPriority={priority ? 'high' : 'auto'}
+          sizes={sizes || (round ? '112px' : '(max-width: 760px) 100vw, 560px')}
           style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
         />
       </div>

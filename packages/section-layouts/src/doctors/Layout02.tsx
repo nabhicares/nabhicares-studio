@@ -2,7 +2,7 @@ import type { LayoutProps } from '../types';
 import {
   buttonGhostStyle,
   containerStyle,
-  mutedStyle,
+  mutedStyle, accentLabelStyle,
   sectionBaseStyle,
   wideContainerStyle,
 } from '../styles';
@@ -71,10 +71,7 @@ export function Layout02({ content, siteLinks }: LayoutProps) {
                 <p
                   style={{
                     ...mutedStyle,
-                    margin: 0,
-                    fontSize: '0.9rem',
-                    color: 'var(--color-accent)',
-                    fontWeight: 600,
+                    ...accentLabelStyle,
                   }}
                 >
                   {d.specialty}

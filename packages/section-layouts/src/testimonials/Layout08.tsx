@@ -73,7 +73,7 @@ export function Layout08({ content }: LayoutProps) {
               <div
                 role="tablist"
                 aria-label="Patient stories"
-                style={{ display: 'flex', gap: '0.4rem', justifyContent: 'center', marginTop: '1.5rem' }}
+                style={{ display: 'flex', gap: '0.25rem', justifyContent: 'center', marginTop: '1.25rem' }}
               >
                 {items.map((_, i) => (
                   <button
@@ -84,19 +84,33 @@ export function Layout08({ content }: LayoutProps) {
                     aria-label={`Show story ${i + 1}`}
                     onClick={() => setIndex(i)}
                     style={{
-                      width: i === index ? 18 : 8,
-                      height: 8,
+                      width: 44,
+                      height: 44,
                       borderRadius: 999,
                       border: 'none',
                       padding: 0,
                       cursor: 'pointer',
-                      background:
-                        i === index
-                          ? 'var(--color-accent)'
-                          : 'color-mix(in srgb, var(--color-fg) 20%, transparent)',
-                      transition: 'width 180ms ease, background 180ms ease',
+                      background: 'transparent',
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
                     }}
-                  />
+                  >
+                    <span
+                      aria-hidden
+                      style={{
+                        display: 'block',
+                        width: i === index ? 18 : 10,
+                        height: 10,
+                        borderRadius: 999,
+                        background:
+                          i === index
+                            ? 'var(--color-accent)'
+                            : 'color-mix(in srgb, var(--color-fg) 28%, transparent)',
+                        transition: 'width 180ms ease, background 180ms ease',
+                      }}
+                    />
+                  </button>
                 ))}
               </div>
             ) : null}

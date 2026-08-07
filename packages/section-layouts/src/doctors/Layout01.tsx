@@ -4,7 +4,7 @@ import {
   buttonGhostStyle,
   imageTreatmentStyle,
   kickerStyle,
-  mutedStyle,
+  mutedStyle, accentLabelStyle,
   placeholderGradient,
   sectionBaseStyle,
   titleStyle,
@@ -91,10 +91,7 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
                   <p
                     style={{
                       ...mutedStyle,
-                      margin: 0,
-                      fontSize: '0.9rem',
-                      color: 'var(--color-accent)',
-                      fontWeight: 600,
+                      ...accentLabelStyle,
                     }}
                   >
                     {d.specialty}

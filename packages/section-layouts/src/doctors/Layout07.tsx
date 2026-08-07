@@ -1,5 +1,5 @@
 import type { LayoutProps } from '../types';
-import { buttonGhostStyle, containerStyle, mutedStyle, sectionBaseStyle } from '../styles';
+import { buttonGhostStyle, containerStyle, mutedStyle, accentLabelStyle, sectionBaseStyle } from '../styles';
 import { normalizeDoctors } from '../content';
 import { EmptyCopy, SectionHeader } from '../polish';
 
@@ -35,16 +35,14 @@ export function Layout07({ content, siteLinks }: LayoutProps) {
                     <div
                       style={{
                         ...mutedStyle,
-                        fontSize: '0.9rem',
-                        color: 'var(--color-accent)',
-                        fontWeight: 600,
+                        ...accentLabelStyle,
                       }}
                     >
                       {d.specialty}
                     </div>
                   ) : null}
                   {d.bio ? (
-                    <p style={{ ...mutedStyle, margin: '0.4rem 0 0' }}>{d.bio}</p>
+                    <p style={{ ...mutedStyle, ...accentLabelStyle, margin: '0.4rem 0 0' }}>{d.bio}</p>
                   ) : null}
                 </div>
               </div>

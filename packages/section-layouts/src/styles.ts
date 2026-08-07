@@ -96,9 +96,17 @@ export const kickerStyle: CSSProperties = {
   fontSize: '0.78rem',
   letterSpacing: '0.12em',
   textTransform: 'uppercase',
-  fontWeight: 600,
-  color: 'var(--color-accent)',
+  fontWeight: 700,
+  // Mix with fg so light accents still pass contrast on light surfaces.
+  color: 'color-mix(in srgb, var(--color-accent) 42%, var(--color-fg) 58%)',
   fontFamily: 'var(--font-body)',
+};
+
+/** Specialty / meta labels — readable accent without failing contrast. */
+export const accentLabelStyle: CSSProperties = {
+  color: 'color-mix(in srgb, var(--color-accent) 48%, var(--color-fg) 52%)',
+  fontSize: '0.8rem',
+  fontWeight: 600,
 };
 
 export const imageTreatmentStyle: CSSProperties = {

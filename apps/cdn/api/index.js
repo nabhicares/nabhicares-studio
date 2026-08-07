@@ -395,7 +395,15 @@ module.exports = async function handler(req, res) {
 
     res.statusCode = 200;
     res.setHeader('Content-Type', contentType);
-    res.setHeader('Cache-Control', 'public, max-age=60');
+    const immutable =
+      objectPath.includes('_next/static/') ||
+      /\.(?:woff2?|png|jpe?g|webp|gif|svg|ico)$/i.test(objectPath);
+    res.setHeader(
+      'Cache-Control',
+      immutable
+        ? 'public, max-age=31536000, immutable'
+        : 'public, max-age=60',
+    );
     res.setHeader('X-Nabhi-Object-Key', objectKey);
     res.setHeader('X-Nabhi-Live-Id', liveId || 'legacy-current');
     res.setHeader('X-Nabhi-Minio', MINIO.replace(/^https?:\/\//, '').split('/')[0] || '');

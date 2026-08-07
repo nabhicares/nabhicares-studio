@@ -77,6 +77,9 @@ export function Layout01({ content }: LayoutProps) {
             <img
               src={c.image}
               alt=""
+              loading="lazy"
+              decoding="async"
+              sizes="(max-width: 760px) 100vw, 480px"
               style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
             />
           ) : (

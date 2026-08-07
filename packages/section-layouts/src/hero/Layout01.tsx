@@ -31,13 +31,27 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
         display: 'flex',
         alignItems: 'flex-end',
         overflow: 'hidden',
-        background: c.image ? undefined : undefined,
-        backgroundImage: c.image ? `url(${c.image})` : undefined,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
       }}
     >
-      {!c.image ? (
+      {c.image ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={c.image}
+          alt=""
+          fetchPriority="high"
+          loading="eager"
+          decoding="async"
+          sizes="100vw"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+          }}
+        />
+      ) : (
         <div
           aria-hidden
           className="nabhi-empty-media"
@@ -55,7 +69,7 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
           </span>
           <span style={{ fontFamily: 'var(--font-body)' }}>Add a hero image in Studio</span>
         </div>
-      ) : null}
+      )}
       <div
         aria-hidden
         style={{

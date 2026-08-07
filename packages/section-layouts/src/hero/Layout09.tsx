@@ -53,12 +53,20 @@ export function Layout09({ content, siteLinks }: LayoutProps) {
           height: 'clamp(180px, 28vw, 320px)',
           borderRadius: 0,
           position: 'relative',
-          backgroundImage: c.image ? `url(${c.image})` : undefined,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          overflow: 'hidden',
         }}
       >
-        {!c.image ? (
+        {c.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={c.image}
+            alt=""
+            loading="lazy"
+            decoding="async"
+            sizes="100vw"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+          />
+        ) : (
           <div
             className="nabhi-empty-media"
             style={{
@@ -73,7 +81,8 @@ export function Layout09({ content, siteLinks }: LayoutProps) {
             </span>
             <span style={{ fontSize: '0.85rem' }}>Add a hero image in Studio</span>
           </div>
-        ) : (
+        )}
+        {c.image ? (
           <div
             aria-hidden
             style={{
@@ -83,7 +92,7 @@ export function Layout09({ content, siteLinks }: LayoutProps) {
                 'linear-gradient(180deg, transparent 40%, color-mix(in srgb, var(--color-fg) 18%, transparent))',
             }}
           />
-        )}
+        ) : null}
       </div>
     </section>
   );

@@ -242,7 +242,7 @@
 }
 
 .nabhi-footer-credit a {
-  color: var(--color-accent);
+  color: color-mix(in srgb, var(--color-accent) 45%, var(--color-fg) 55%);
   text-decoration: none;
   font-weight: 600;
 }

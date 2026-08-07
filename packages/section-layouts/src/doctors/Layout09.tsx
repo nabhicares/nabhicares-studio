@@ -1,5 +1,5 @@
 import type { LayoutProps } from '../types';
-import { buttonGhostStyle, mutedStyle, sectionBaseStyle, wideContainerStyle } from '../styles';
+import { buttonGhostStyle, mutedStyle, accentLabelStyle, sectionBaseStyle, wideContainerStyle } from '../styles';
 import { normalizeDoctors } from '../content';
 import { EmptyCopy, SectionHeader, elevatedCardStyle } from '../polish';
 
@@ -39,10 +39,7 @@ export function Layout09({ content, siteLinks }: LayoutProps) {
                   <span
                     style={{
                       ...mutedStyle,
-                      marginLeft: 8,
-                      fontSize: '0.9rem',
-                      color: 'var(--color-accent)',
-                      fontWeight: 600,
+                      ...accentLabelStyle,
                     }}
                   >
                     {d.specialty}

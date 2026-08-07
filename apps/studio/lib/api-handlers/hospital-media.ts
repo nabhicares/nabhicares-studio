@@ -1,11 +1,27 @@
 import { cdnBase } from '@/lib/cdn';
 import { randomUUID } from 'crypto';
+import sharp from 'sharp';
 import { badRequest, json } from '@/lib/api';
 import { requireHospitalAccess } from '@/lib/auth';
 import { uploadAsset } from '@nabhicares/snapshot-store';
 
 const ALLOWED = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif']);
 const MAX_BYTES = 5 * 1024 * 1024;
+/** Longest edge for published photos — cuts Lighthouse oversized-image waste. */
+const MAX_EDGE = 1920;
+
+async function optimizeToWebp(input: Buffer): Promise<Buffer> {
+  return sharp(input)
+    .rotate()
+    .resize({
+      width: MAX_EDGE,
+      height: MAX_EDGE,
+      fit: 'inside',
+      withoutEnlargement: true,
+    })
+    .webp({ quality: 78, effort: 4 })
+    .toBuffer();
+}
 
 /** Upload an image for a hospital. multipart field name: `file`. */
 export async function POST(
@@ -25,19 +41,29 @@ export async function POST(
   }
   if (file.size > MAX_BYTES) return badRequest('Image must be under 5MB');
 
-  const ext =
-    file.type === 'image/png'
-      ? 'png'
-      : file.type === 'image/webp'
-        ? 'webp'
-        : file.type === 'image/gif'
-          ? 'gif'
-          : 'jpg';
+  const raw = Buffer.from(await file.arrayBuffer());
+
+  // Keep animated GIFs as-is; everything else → WebP for share/LCP weight.
+  let buffer: Buffer = raw;
+  let contentType = file.type;
+  let ext = 'webp';
+  if (file.type === 'image/gif') {
+    ext = 'gif';
+  } else {
+    try {
+      buffer = Buffer.from(await optimizeToWebp(raw));
+      contentType = 'image/webp';
+      ext = 'webp';
+    } catch (err) {
+      console.error('[media optimize]', err);
+      return badRequest('Could not process image — try a different JPG/PNG');
+    }
+  }
+
   const filename = `${randomUUID()}.${ext}`;
-  const buffer = Buffer.from(await file.arrayBuffer());
 
   try {
-    await uploadAsset(hospital.slug, filename, buffer, file.type);
+    await uploadAsset(hospital.slug, filename, buffer, contentType);
   } catch (err) {
     console.error('[media upload]', err);
     return json({ error: 'Upload failed — is MinIO running?' }, 502);

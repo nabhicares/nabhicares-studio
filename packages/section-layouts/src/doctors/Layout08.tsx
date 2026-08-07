@@ -1,5 +1,5 @@
 import type { LayoutProps } from '../types';
-import { buttonGhostStyle, mutedStyle, sectionBaseStyle, wideContainerStyle } from '../styles';
+import { buttonGhostStyle, mutedStyle, accentLabelStyle, sectionBaseStyle, wideContainerStyle } from '../styles';
 import { normalizeDoctors } from '../content';
 import { EmptyCopy, SectionHeader, TreatedMedia } from '../polish';
 
@@ -63,9 +63,7 @@ export function Layout08({ content, siteLinks }: LayoutProps) {
                     <div
                       style={{
                         ...mutedStyle,
-                        fontSize: '0.8rem',
-                        color: 'var(--color-accent)',
-                        fontWeight: 600,
+                        ...accentLabelStyle,
                       }}
                     >
                       {d.specialty}
