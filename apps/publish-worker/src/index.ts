@@ -12,6 +12,7 @@ import {
   migrateSectionContent,
   buildFaviconSvg,
   isFaviconPresetId,
+  normalizeSystemPages,
   type DesignTokens,
   type FaviconPresetId,
 } from '@nabhicares/section-registry';
