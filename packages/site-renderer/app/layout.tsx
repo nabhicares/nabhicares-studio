@@ -91,31 +91,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {fontHref ? (
-          <>
-            <link rel="preload" as="style" href={fontHref} />
-            <link
-              rel="stylesheet"
-              href={fontHref}
-              media="print"
-              // Non-blocking: swap to all after load (static HTML attribute).
-              {...({ onLoad: "this.media='all'" } as object)}
-            />
-            <noscript>
-              <link rel="stylesheet" href={fontHref} />
-            </noscript>
-          </>
-        ) : null}
-        <link
-          rel="preload"
-          as="style"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0&display=swap"
-        />
+        {fontHref ? <link rel="stylesheet" href={fontHref} /> : null}
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,500,0,0&display=swap"
-          media="print"
-          {...({ onLoad: "this.media='all'" } as object)}
         />
         {/* Explicit tags so static crawlers (WhatsApp/Meta) always see absolute card fields */}
         <meta property="og:title" content={title} />
