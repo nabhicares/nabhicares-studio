@@ -67,13 +67,14 @@ export const buttonGhostStyle: CSSProperties = {
 
 export const surfaceStyle: CSSProperties = {
   background: 'var(--color-surface)',
-  borderRadius: 'calc(var(--radius-button) + 2px)',
+  // Cap so pill-like --radius-button doesn't balloon whole sections on mobile.
+  borderRadius: 'min(1.25rem, calc(var(--radius-button) + 2px))',
 };
 
 /** Soft list row — clear border, light surface */
 export const cardStyle: CSSProperties = {
   background: 'var(--color-bg)',
-  borderRadius: 'calc(var(--radius-button) + 2px)',
+  borderRadius: 'min(1.15rem, calc(var(--radius-button) + 2px))',
   border: '1px solid color-mix(in srgb, var(--color-fg) 12%, transparent)',
   padding: '1.2rem 1.25rem',
   boxShadow: '0 4px 16px color-mix(in srgb, var(--color-fg) 5%, transparent)',

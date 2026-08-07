@@ -86,9 +86,9 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
         <h1
           style={{
             ...titleStyle,
-            fontSize: 'clamp(2.35rem, 6.5vw, 4rem)',
+            fontSize: 'clamp(1.85rem, 7vw, 4rem)',
             marginBottom: '1rem',
-            maxWidth: '14ch',
+            maxWidth: '18ch',
             color: titleColor,
             textWrap: 'balance' as never,
           }}

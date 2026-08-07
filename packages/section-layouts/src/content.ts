@@ -14,8 +14,20 @@ import type {
 } from './types';
 import { sanitizeMapUrl } from './links';
 
+function decodeBasicEntities(value: string): string {
+  let s = value;
+  for (let i = 0; i < 4 && /&amp;/i.test(s); i += 1) {
+    s = s.replace(/&amp;/gi, '&');
+  }
+  return s
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/g, "'");
+}
+
 function str(v: unknown, fallback = ''): string {
-  return typeof v === 'string' ? v : fallback;
+  return typeof v === 'string' ? decodeBasicEntities(v) : fallback;
 }
 
 function arr<T>(v: unknown): T[] {

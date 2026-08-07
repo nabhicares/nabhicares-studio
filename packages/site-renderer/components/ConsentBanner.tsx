@@ -42,17 +42,17 @@ export function ConsentBanner({
       <div className="nabhi-consent-inner">
         <div className="nabhi-consent-copy">
           <p id="nabhi-consent-title" className="nabhi-consent-title">
-            Your privacy on {hospitalName}
+            Privacy
           </p>
           <p className="nabhi-consent-body">
-            We use essential storage to remember this choice and to process appointment requests you
-            submit. Optional embeds (Google Maps) load only if you accept all. See our{' '}
-            <a href={privacyHref}>Privacy notice</a> for DPDP-aligned details.
+            Essential cookies remember this choice. Maps load only if you accept all.{' '}
+            <a href={privacyHref}>Privacy notice</a>
+            <span className="nabhi-consent-site"> · {hospitalName}</span>
           </p>
         </div>
         <div className="nabhi-consent-actions">
           <button type="button" className="nabhi-consent-btn nabhi-consent-btn-ghost" onClick={() => choose('essential')}>
-            Essential only
+            Essential
           </button>
           <button type="button" className="nabhi-consent-btn nabhi-consent-btn-primary" onClick={() => choose('all')}>
             Accept all

@@ -14,7 +14,7 @@ export const elevatedShadow =
 
 export const elevatedCardStyle: CSSProperties = {
   background: 'var(--color-bg)',
-  borderRadius: 'calc(var(--radius-button) + 2px)',
+  borderRadius: 'min(1.15rem, calc(var(--radius-button) + 2px))',
   border: '1px solid color-mix(in srgb, var(--color-fg) 12%, transparent)',
   padding: '1.2rem 1.25rem',
   boxShadow: elevatedShadow,

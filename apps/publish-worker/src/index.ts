@@ -481,17 +481,17 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
   );
   files.length = 0;
   files.push(...withoutBrokenOg);
-  const base = `/${hospital.slug}`;
+  const origin = publicOrigin.replace(/\/$/, '');
   const sitemapUrls = [
     ...hospital.pages.map((p) => {
-      const path = p.slug === 'home' ? `${base}/` : `${base}/${p.slug}/`;
-      return `  <url><loc>${path}</loc></url>`;
+      const path = p.slug === 'home' ? `/` : `/${p.slug}/`;
+      return `  <url><loc>${origin}${path}</loc></url>`;
     }),
-    `  <url><loc>${base}/privacy/</loc></url>`,
+    `  <url><loc>${origin}/privacy/</loc></url>`,
   ].join('\n');
   files.push({
     path: 'robots.txt',
-    body: `User-agent: *\nAllow: /\nSitemap: ${base}/sitemap.xml\n`,
+    body: `User-agent: *\nAllow: /\nSitemap: ${origin}/sitemap.xml\n`,
     contentType: 'text/plain; charset=utf-8',
   });
   files.push({
