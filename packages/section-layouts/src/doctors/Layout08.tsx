@@ -1,35 +1,81 @@
 import type { LayoutProps } from '../types';
-import {
-  bodyStyle,
-  mutedStyle,
-  placeholderGradient,
-  sectionBaseStyle,
-  titleStyle,
-  wideContainerStyle
-} from '../styles';
+import { buttonGhostStyle, mutedStyle, sectionBaseStyle, wideContainerStyle } from '../styles';
 import { normalizeDoctors } from '../content';
+import { EmptyCopy, SectionHeader, TreatedMedia } from '../polish';
 
 /** Circular portrait mosaic */
-export function Layout08({ content }: LayoutProps) {
+export function Layout08({ content, siteLinks }: LayoutProps) {
   const c = normalizeDoctors(content);
+  const doctors = c.doctors ?? [];
   return (
     <section style={sectionBaseStyle}>
       <div style={{ ...wideContainerStyle, textAlign: 'center' }}>
-        <h2 style={titleStyle}>{c.title}</h2>
-        {c.body ? <p style={{ ...bodyStyle, marginLeft: 'auto', marginRight: 'auto' }}>{c.body}</p> : null}
-        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '1.75rem' }}>
-          {(c.doctors ?? []).map((d) => (
-            <figure key={d.name} style={{ margin: 0, width: 140 }}>
-              <div style={{ width: 110, height: 110, borderRadius: '50%', margin: '0 auto 0.75rem', background: placeholderGradient, overflow: 'hidden', border: '3px solid color-mix(in srgb, var(--color-accent) 50%, transparent)' }}>
-                {d.image ? <img src={d.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : null}
-              </div>
-              <figcaption>
-                <div style={{ fontWeight: 600, fontFamily: 'var(--font-display)', fontSize: '0.95rem' }}>{d.name}</div>
-                <div style={{ ...mutedStyle, fontSize: '0.8rem' }}>{d.specialty}</div>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+        <SectionHeader kicker="Care team" title={c.title} body={c.body} center />
+        {doctors.length === 0 ? (
+          <div>
+            <EmptyCopy>Team profiles coming soon. Add doctors in Studio when ready.</EmptyCopy>
+            {siteLinks?.doctors ? (
+              <a
+                href={siteLinks.doctors}
+                className="nabhi-btn"
+                style={{ ...buttonGhostStyle, marginTop: '1rem' }}
+              >
+                Doctors page
+              </a>
+            ) : null}
+          </div>
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              gap: '1.75rem',
+              marginTop: '0.5rem',
+            }}
+          >
+            {doctors.map((d) => (
+              <figure key={d.name} style={{ margin: 0, width: 140 }}>
+                <TreatedMedia
+                  src={d.image}
+                  round
+                  emptyIcon="person"
+                  emptyLabel="Photo coming soon"
+                  style={{
+                    width: 110,
+                    height: 110,
+                    margin: '0 auto 0.75rem',
+                    border:
+                      '3px solid color-mix(in srgb, var(--color-accent) 50%, transparent)',
+                  }}
+                />
+                <figcaption>
+                  <div
+                    style={{
+                      fontWeight: 600,
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '0.95rem',
+                    }}
+                  >
+                    {d.name}
+                  </div>
+                  {d.specialty ? (
+                    <div
+                      style={{
+                        ...mutedStyle,
+                        fontSize: '0.8rem',
+                        color: 'var(--color-accent)',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {d.specialty}
+                    </div>
+                  ) : null}
+                </figcaption>
+              </figure>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

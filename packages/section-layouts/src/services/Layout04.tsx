@@ -1,31 +1,63 @@
-import type { LayoutProps } from '../types';
-import {
-  bodyStyle,
-  mutedStyle,
-  sectionBaseStyle,
-  titleStyle,
-  wideContainerStyle
-} from '../styles';
+import type { LayoutProps, ServiceItem } from '../types';
+import { mutedStyle, sectionBaseStyle, wideContainerStyle } from '../styles';
 import { normalizeServices } from '../content';
+import { IconBadge, resolveServiceIcon } from '../icons';
+import {
+  elevatedCardStyle,
+  EmptyCopy,
+  itemTitleStyle,
+  SectionHeader,
+} from '../polish';
 
 /** Split headline / service list */
 export function Layout04({ content }: LayoutProps) {
   const c = normalizeServices(content);
+  const items = (c.items as ServiceItem[]) ?? [];
   return (
     <section style={sectionBaseStyle}>
-      <div style={{ ...wideContainerStyle, display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))' }}>
-        <div>
-          <h2 style={titleStyle}>{c.title}</h2>
-          {c.body ? <p style={{ ...bodyStyle, maxWidth: 'none' }}>{c.body}</p> : null}
-        </div>
-        <ol style={{ margin: 0, paddingLeft: '1.25rem' }}>
-          {(c.items as { title: string; description?: string }[]).map((item) => (
-            <li key={item.title} style={{ marginBottom: '1rem' }}>
-              <strong>{item.title}</strong>
-              {item.description ? <div style={mutedStyle}>{item.description}</div> : null}
-            </li>
-          ))}
-        </ol>
+      <div
+        style={{
+          ...wideContainerStyle,
+          display: 'grid',
+          gap: '2rem',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          alignItems: 'start',
+        }}
+      >
+        <SectionHeader kicker="Services" title={c.title} body={c.body} />
+        {items.length === 0 ? (
+          <EmptyCopy>Services will appear here once added in Studio.</EmptyCopy>
+        ) : (
+          <ol style={{ margin: 0, padding: 0, listStyle: 'none' }}>
+            {items.map((item) => {
+              const icon = (item.icon ?? '').trim();
+              const iconIsUrl = /^https?:\/\//i.test(icon);
+              const symbol = resolveServiceIcon(item.title, iconIsUrl ? undefined : icon);
+              return (
+                <li
+                  key={item.title}
+                  style={{
+                    ...elevatedCardStyle,
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: '0.95rem',
+                    marginBottom: '0.85rem',
+                  }}
+                >
+                  <IconBadge name={symbol} imageUrl={iconIsUrl ? icon : undefined} size={42} />
+                  <div>
+                    <h3 style={{ ...itemTitleStyle, margin: 0 }}>{item.title}</h3>
+                    {item.description ? (
+                      <p style={{ ...mutedStyle, margin: '0.3rem 0 0', lineHeight: 1.65 }}>
+                        {item.description}
+                      </p>
+                    ) : null}
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
+        )}
       </div>
     </section>
   );

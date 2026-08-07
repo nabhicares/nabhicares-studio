@@ -1,23 +1,23 @@
 import type { LayoutProps } from '../types';
 import {
-  accentBarStyle,
   bodyStyle,
   buttonGhostStyle,
   buttonPrimaryStyle,
-  cardStyle,
-  containerStyle,
-  mutedStyle,
-  placeholderGradient,
+  imageTreatmentStyle,
   sectionBaseStyle,
-  surfaceStyle,
   titleStyle,
   wideContainerStyle,
 } from '../styles';
 import { normalizeHero } from '../content';
+import { TreatedMedia, elevatedCardStyle } from '../polish';
+import { resolveHref } from './bits';
 
 /** Floating card on soft surface */
-export function Layout10({ content }: LayoutProps) {
+export function Layout10({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
+  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact);
+  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services);
+
   return (
     <section
       style={{
@@ -34,7 +34,7 @@ export function Layout10({ content }: LayoutProps) {
           display: 'grid',
           gap: 0,
           gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
-          ...cardStyle,
+          ...elevatedCardStyle,
           padding: 0,
           overflow: 'hidden',
           maxWidth: 960,
@@ -45,26 +45,26 @@ export function Layout10({ content }: LayoutProps) {
           <p style={bodyStyle}>{c.body}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
             {c.ctaPrimary ? (
-              <a href="#" style={buttonPrimaryStyle}>
+              <a href={primaryHref} className="nabhi-btn" style={buttonPrimaryStyle}>
                 {c.ctaPrimary}
               </a>
             ) : null}
             {c.ctaSecondary ? (
-              <a href="#" style={buttonGhostStyle}>
+              <a href={secondaryHref} className="nabhi-btn" style={buttonGhostStyle}>
                 {c.ctaSecondary}
               </a>
             ) : null}
           </div>
         </div>
-        <div
-          style={{
-            minHeight: 260,
-            background: c.image ? undefined : placeholderGradient,
-            backgroundImage: c.image ? `url(${c.image})` : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        />
+        <div style={{ ...imageTreatmentStyle, minHeight: 260, borderRadius: 0 }}>
+          <TreatedMedia
+            src={c.image}
+            aspectRatio="auto"
+            emptyIcon="local_hospital"
+            emptyLabel="Add a hero image in Studio"
+            style={{ height: '100%', minHeight: 260, borderRadius: 0 }}
+          />
+        </div>
       </div>
     </section>
   );

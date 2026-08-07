@@ -1,13 +1,8 @@
 import type { LayoutProps } from '../types';
-import {
-  bodyStyle,
-  containerStyle,
-  placeholderGradient,
-  sectionBaseStyle,
-  surfaceStyle,
-  titleStyle
-} from '../styles';
+import { mutedStyle, sectionBaseStyle, containerStyle } from '../styles';
 import { normalizeAbout } from '../content';
+import { IconBadge, resolveServiceIcon } from '../icons';
+import { SectionHeader, TreatedMedia, elevatedCardStyle } from '../polish';
 
 /** Centered stack with optional image below */
 export function Layout02({ content }: LayoutProps) {
@@ -15,15 +10,53 @@ export function Layout02({ content }: LayoutProps) {
   return (
     <section style={sectionBaseStyle}>
       <div style={{ ...containerStyle, textAlign: 'center' }}>
-        <h2 style={{ ...titleStyle, marginLeft: 'auto', marginRight: 'auto' }}>{c.title}</h2>
-        <p style={{ ...bodyStyle, marginLeft: 'auto', marginRight: 'auto' }}>{c.body}</p>
-        <div style={{ ...surfaceStyle, overflow: 'hidden', maxWidth: 640, margin: '0 auto', minHeight: 220 }}>
-          {c.image ? (
-        <img src={c.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-      ) : (
-        <div style={{ width: '100%', height: '100%', minHeight: 180, background: placeholderGradient }} />
-      )}
-        </div>
+        <SectionHeader kicker="About" title={c.title} body={c.body} center />
+        <TreatedMedia
+          src={c.image}
+          aspectRatio="16 / 9"
+          emptyLabel="Add a hospital photo in Studio"
+          style={{ maxWidth: 640, margin: '0 auto', minHeight: 220 }}
+        />
+        {c.highlights?.length ? (
+          <ul
+            style={{
+              listStyle: 'none',
+              padding: 0,
+              margin: '1.5rem auto 0',
+              maxWidth: 480,
+              display: 'grid',
+              gap: '0.85rem',
+              textAlign: 'left',
+            }}
+          >
+            {c.highlights.map((h) => (
+              <li
+                key={h.label}
+                style={{
+                  ...elevatedCardStyle,
+                  display: 'flex',
+                  gap: '0.9rem',
+                  alignItems: 'flex-start',
+                }}
+              >
+                <IconBadge name={resolveServiceIcon(h.label)} size={42} />
+                <div>
+                  <strong
+                    style={{
+                      display: 'block',
+                      marginBottom: 4,
+                      fontFamily: 'var(--font-display)',
+                      fontSize: '1.05rem',
+                    }}
+                  >
+                    {h.label}
+                  </strong>
+                  <span style={{ ...mutedStyle, lineHeight: 1.55 }}>{h.text}</span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : null}
       </div>
     </section>
   );

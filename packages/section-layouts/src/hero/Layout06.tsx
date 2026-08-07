@@ -1,23 +1,22 @@
 import type { LayoutProps } from '../types';
 import {
-  accentBarStyle,
   bodyStyle,
   buttonGhostStyle,
   buttonPrimaryStyle,
-  cardStyle,
-  containerStyle,
-  mutedStyle,
-  placeholderGradient,
   sectionBaseStyle,
-  surfaceStyle,
   titleStyle,
   wideContainerStyle,
 } from '../styles';
 import { normalizeHero } from '../content';
+import { TreatedMedia, elevatedCardStyle } from '../polish';
+import { resolveHref } from './bits';
 
 /** Asymmetric bento */
-export function Layout06({ content }: LayoutProps) {
+export function Layout06({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
+  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact);
+  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services);
+
   return (
     <section style={sectionBaseStyle}>
       <div
@@ -29,29 +28,38 @@ export function Layout06({ content }: LayoutProps) {
           alignItems: 'stretch',
         }}
       >
-        <div style={{ ...cardStyle, display: 'flex', flexDirection: 'column', justifyContent: 'center', minHeight: 320 }}>
+        <div
+          style={{
+            ...elevatedCardStyle,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            minHeight: 320,
+            padding: '1.5rem',
+          }}
+        >
           <h1 style={{ ...titleStyle, fontSize: 'clamp(1.6rem, 3vw, 2.4rem)' }}>{c.title}</h1>
           <p style={bodyStyle}>{c.body}</p>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: 'auto' }}>
             {c.ctaPrimary ? (
-              <a href="#" style={buttonPrimaryStyle}>
+              <a href={primaryHref} className="nabhi-btn" style={buttonPrimaryStyle}>
                 {c.ctaPrimary}
               </a>
             ) : null}
             {c.ctaSecondary ? (
-              <a href="#" style={buttonGhostStyle}>
+              <a href={secondaryHref} className="nabhi-btn" style={buttonGhostStyle}>
                 {c.ctaSecondary}
               </a>
             ) : null}
           </div>
         </div>
-        <div style={{ ...surfaceStyle, overflow: 'hidden', minHeight: 320 }}>
-          {c.image ? (
-            <img src={c.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-          ) : (
-            <div style={{ width: '100%', height: '100%', background: placeholderGradient }} />
-          )}
-        </div>
+        <TreatedMedia
+          src={c.image}
+          aspectRatio="4 / 5"
+          emptyIcon="local_hospital"
+          emptyLabel="Add a hero image in Studio"
+          style={{ minHeight: 320 }}
+        />
         <div
           style={{
             background: 'var(--color-accent)',
@@ -63,6 +71,7 @@ export function Layout06({ content }: LayoutProps) {
             fontFamily: 'var(--font-display)',
             fontWeight: 600,
             color: 'var(--color-fg)',
+            boxShadow: '0 4px 18px color-mix(in srgb, var(--color-fg) 6%, transparent)',
           }}
         >
           Trusted care

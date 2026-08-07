@@ -4,20 +4,20 @@ import {
   bodyStyle,
   buttonGhostStyle,
   buttonPrimaryStyle,
-  cardStyle,
-  containerStyle,
-  mutedStyle,
-  placeholderGradient,
   sectionBaseStyle,
-  surfaceStyle,
   titleStyle,
   wideContainerStyle,
 } from '../styles';
 import { normalizeHero } from '../content';
+import { TreatedMedia } from '../polish';
+import { resolveHref } from './bits';
 
 /** Side accent bar + split */
-export function Layout07({ content }: LayoutProps) {
+export function Layout07({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
+  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact);
+  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services);
+
   return (
     <section style={sectionBaseStyle}>
       <div style={{ ...wideContainerStyle, display: 'flex', gap: '1.5rem', alignItems: 'stretch' }}>
@@ -36,24 +36,24 @@ export function Layout07({ content }: LayoutProps) {
             <p style={bodyStyle}>{c.body}</p>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
               {c.ctaPrimary ? (
-                <a href="#" style={buttonPrimaryStyle}>
+                <a href={primaryHref} className="nabhi-btn" style={buttonPrimaryStyle}>
                   {c.ctaPrimary}
                 </a>
               ) : null}
               {c.ctaSecondary ? (
-                <a href="#" style={buttonGhostStyle}>
+                <a href={secondaryHref} className="nabhi-btn" style={buttonGhostStyle}>
                   {c.ctaSecondary}
                 </a>
               ) : null}
             </div>
           </div>
-          <div style={{ ...surfaceStyle, overflow: 'hidden', aspectRatio: '5 / 4', minHeight: 220 }}>
-            {c.image ? (
-              <img src={c.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            ) : (
-              <div style={{ width: '100%', height: '100%', background: placeholderGradient }} />
-            )}
-          </div>
+          <TreatedMedia
+            src={c.image}
+            aspectRatio="5 / 4"
+            emptyIcon="local_hospital"
+            emptyLabel="Add a hero image in Studio"
+            style={{ minHeight: 220 }}
+          />
         </div>
       </div>
     </section>

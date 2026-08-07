@@ -1,33 +1,59 @@
 import type { LayoutProps } from '../types';
-import {
-  bodyStyle,
-  placeholderGradient,
-  sectionBaseStyle,
-  surfaceStyle,
-  titleStyle,
-  wideContainerStyle
-} from '../styles';
+import { sectionBaseStyle, wideContainerStyle } from '../styles';
 import { normalizeGallery } from '../content';
+import { SectionHeader, EmptyCopy, TreatedMedia } from '../polish';
 
 /** Hero image + thumbnail row */
 export function Layout05({ content }: LayoutProps) {
   const c = normalizeGallery(content);
-  const [hero, ...rest] = c.images ?? [];
+  const images = c.images ?? [];
+  const [hero, ...rest] = images;
   return (
     <section style={sectionBaseStyle}>
       <div style={wideContainerStyle}>
-        <h2 style={titleStyle}>{c.title}</h2>
-        {c.body ? <p style={bodyStyle}>{c.body}</p> : null}
-        <div style={{ ...surfaceStyle, overflow: 'hidden', minHeight: 260, marginBottom: '0.75rem' }}>
-          {hero?.src ? <img src={hero.src} alt={hero.caption ?? ''} style={{ width: '100%', height: 280, objectFit: 'cover', display: 'block' }} /> : <div style={{ height: 280, background: placeholderGradient }} />}
-        </div>
-        <div style={{ display: 'grid', gap: '0.65rem', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))' }}>
-          {rest.map((img, i) => (
-            <div key={i} style={{ ...surfaceStyle, overflow: 'hidden', height: 90 }}>
-              {img.src ? <img src={img.src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <div style={{ width: '100%', height: '100%', background: placeholderGradient }} />}
-            </div>
-          ))}
-        </div>
+        <SectionHeader kicker="Gallery" title={c.title} body={c.body} />
+        {images.length === 0 ? (
+          <>
+            <TreatedMedia
+              src={undefined}
+              aspectRatio="21 / 9"
+              emptyIcon="photo_library"
+              emptyLabel="Photos coming soon. Add images in Studio or import from Maps."
+              style={{ minHeight: 260 }}
+            />
+            <EmptyCopy>Photos coming soon. Add images in Studio or import from Maps.</EmptyCopy>
+          </>
+        ) : (
+          <>
+            <TreatedMedia
+              src={hero?.src}
+              aspectRatio="21 / 9"
+              emptyIcon="photo_library"
+              emptyLabel="Add photo"
+              style={{ minHeight: 260, marginBottom: '0.75rem' }}
+            />
+            {rest.length ? (
+              <div
+                style={{
+                  display: 'grid',
+                  gap: '0.65rem',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))',
+                }}
+              >
+                {rest.map((img, i) => (
+                  <TreatedMedia
+                    key={i}
+                    src={img.src}
+                    aspectRatio="4 / 3"
+                    emptyIcon="photo_library"
+                    emptyLabel="Add photo"
+                    style={{ height: 90 }}
+                  />
+                ))}
+              </div>
+            ) : null}
+          </>
+        )}
       </div>
     </section>
   );

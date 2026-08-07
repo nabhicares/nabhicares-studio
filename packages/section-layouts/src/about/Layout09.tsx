@@ -1,49 +1,62 @@
 import type { LayoutProps } from '../types';
-import {
-  bodyStyle,
-  mutedStyle,
-  placeholderGradient,
-  sectionBaseStyle,
-  surfaceStyle,
-  titleStyle,
-  wideContainerStyle
-} from '../styles';
+import { mutedStyle, sectionBaseStyle, wideContainerStyle } from '../styles';
 import { normalizeAbout } from '../content';
+import { IconBadge, resolveServiceIcon } from '../icons';
+import { SectionHeader, TreatedMedia, elevatedCardStyle } from '../polish';
 
 /** Horizontal highlight strip under title */
 export function Layout09({ content }: LayoutProps) {
   const c = normalizeAbout(content);
-  const highlights = c.highlights?.length
-    ? c.highlights
-    : [
-        { label: 'Years', text: 'Trusted care' },
-        { label: 'Staff', text: 'Dedicated team' },
-        { label: 'Patients', text: 'Community first' },
-      ];
   return (
     <section style={sectionBaseStyle}>
       <div style={wideContainerStyle}>
-        <div style={{ display: 'grid', gap: '2rem', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', alignItems: 'end', marginBottom: '1.5rem' }}>
-          <div>
-            <h2 style={titleStyle}>{c.title}</h2>
-            <p style={{ ...bodyStyle, marginBottom: 0 }}>{c.body}</p>
-          </div>
-          <div style={{ ...surfaceStyle, overflow: 'hidden', minHeight: 160 }}>
-            {c.image ? (
-        <img src={c.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-      ) : (
-        <div style={{ width: '100%', height: '100%', minHeight: 180, background: placeholderGradient }} />
-      )}
-          </div>
+        <div
+          style={{
+            display: 'grid',
+            gap: '2rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+            alignItems: 'end',
+            marginBottom: '1.5rem',
+          }}
+        >
+          <SectionHeader kicker="About" title={c.title} body={c.body} />
+          <TreatedMedia
+            src={c.image}
+            aspectRatio="16 / 10"
+            emptyLabel="Add a hospital photo in Studio"
+            style={{ minHeight: 160 }}
+          />
         </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', borderTop: '1px solid color-mix(in srgb, var(--color-fg) 10%, transparent)', paddingTop: '1.25rem' }}>
-          {highlights.map((h) => (
-            <div key={h.label} style={{ flex: '1 1 140px' }}>
-              <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600 }}>{h.label}</div>
-              <div style={mutedStyle}>{h.text}</div>
-            </div>
-          ))}
-        </div>
+        {c.highlights?.length ? (
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '1rem',
+              borderTop: '1px solid color-mix(in srgb, var(--color-fg) 10%, transparent)',
+              paddingTop: '1.25rem',
+            }}
+          >
+            {c.highlights.map((h) => (
+              <div
+                key={h.label}
+                style={{
+                  ...elevatedCardStyle,
+                  flex: '1 1 140px',
+                  display: 'flex',
+                  gap: '0.75rem',
+                  alignItems: 'flex-start',
+                }}
+              >
+                <IconBadge name={resolveServiceIcon(h.label)} size={36} />
+                <div>
+                  <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600 }}>{h.label}</div>
+                  <div style={{ ...mutedStyle, marginTop: 4, lineHeight: 1.5 }}>{h.text}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
       </div>
     </section>
   );

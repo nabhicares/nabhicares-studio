@@ -1,36 +1,89 @@
 import type { LayoutProps } from '../types';
 import {
-  bodyStyle,
-  cardStyle,
+  buttonGhostStyle,
   containerStyle,
   mutedStyle,
-  placeholderGradient,
   sectionBaseStyle,
-  titleStyle,
-  wideContainerStyle
+  wideContainerStyle,
 } from '../styles';
 import { normalizeDoctors } from '../content';
+import { EmptyCopy, SectionHeader, TreatedMedia, elevatedCardStyle } from '../polish';
 
 /** Centered intro + horizontal scroll-friendly row */
-export function Layout02({ content }: LayoutProps) {
+export function Layout02({ content, siteLinks }: LayoutProps) {
   const c = normalizeDoctors(content);
+  const doctors = c.doctors ?? [];
   return (
     <section style={sectionBaseStyle}>
-      <div style={{ ...containerStyle, textAlign: 'center', marginBottom: '1.5rem' }}>
-        <h2 style={titleStyle}>{c.title}</h2>
-        {c.body ? <p style={{ ...bodyStyle, marginLeft: 'auto', marginRight: 'auto' }}>{c.body}</p> : null}
+      <div style={{ ...containerStyle, marginBottom: '1.5rem' }}>
+        <SectionHeader kicker="Care team" title={c.title} body={c.body} center />
       </div>
-      <div style={{ ...wideContainerStyle, display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: 8 }}>
-        {(c.doctors ?? []).map((d) => (
-          <article key={d.name} style={{ ...cardStyle, minWidth: 220, flex: '0 0 auto', textAlign: 'center' }}>
-            <div style={{ width: 72, height: 72, borderRadius: '50%', margin: '0 auto 0.75rem', background: placeholderGradient, overflow: 'hidden' }}>
-              {d.image ? <img src={d.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : null}
-            </div>
-            <h3 style={{ margin: '0 0 0.25rem', fontFamily: 'var(--font-display)', fontSize: '1.05rem' }}>{d.name}</h3>
-            <p style={{ ...mutedStyle, margin: 0 }}>{d.specialty}</p>
-          </article>
-        ))}
-      </div>
+      {doctors.length === 0 ? (
+        <div style={wideContainerStyle}>
+          <EmptyCopy>Team profiles coming soon. Add doctors in Studio when ready.</EmptyCopy>
+          {siteLinks?.doctors ? (
+            <a
+              href={siteLinks.doctors}
+              className="nabhi-btn"
+              style={{ ...buttonGhostStyle, marginTop: '1rem' }}
+            >
+              Doctors page
+            </a>
+          ) : null}
+        </div>
+      ) : (
+        <div
+          style={{
+            ...wideContainerStyle,
+            display: 'flex',
+            gap: '1rem',
+            overflowX: 'auto',
+            paddingBottom: 8,
+          }}
+        >
+          {doctors.map((d) => (
+            <article
+              key={d.name}
+              style={{
+                ...elevatedCardStyle,
+                minWidth: 220,
+                flex: '0 0 auto',
+                textAlign: 'center',
+              }}
+            >
+              <TreatedMedia
+                src={d.image}
+                round
+                emptyIcon="person"
+                emptyLabel="Photo coming soon"
+                style={{ width: 72, height: 72, margin: '0 auto 0.75rem' }}
+              />
+              <h3
+                style={{
+                  margin: '0 0 0.25rem',
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '1.05rem',
+                }}
+              >
+                {d.name}
+              </h3>
+              {d.specialty ? (
+                <p
+                  style={{
+                    ...mutedStyle,
+                    margin: 0,
+                    fontSize: '0.9rem',
+                    color: 'var(--color-accent)',
+                    fontWeight: 600,
+                  }}
+                >
+                  {d.specialty}
+                </p>
+              ) : null}
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

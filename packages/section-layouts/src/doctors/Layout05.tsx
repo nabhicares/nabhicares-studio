@@ -1,45 +1,106 @@
 import type { LayoutProps } from '../types';
-import {
-  bodyStyle,
-  cardStyle,
-  mutedStyle,
-  placeholderGradient,
-  sectionBaseStyle,
-  surfaceStyle,
-  titleStyle,
-  wideContainerStyle
-} from '../styles';
+import { buttonGhostStyle, mutedStyle, sectionBaseStyle, wideContainerStyle } from '../styles';
 import { normalizeDoctors } from '../content';
+import { EmptyCopy, SectionHeader, TreatedMedia, elevatedCardStyle } from '../polish';
 
 /** Featured first doctor large + others compact */
-export function Layout05({ content }: LayoutProps) {
+export function Layout05({ content, siteLinks }: LayoutProps) {
   const c = normalizeDoctors(content);
-  const [lead, ...rest] = c.doctors ?? [];
+  const doctors = c.doctors ?? [];
+  const [lead, ...rest] = doctors;
   return (
     <section style={sectionBaseStyle}>
       <div style={wideContainerStyle}>
-        <h2 style={titleStyle}>{c.title}</h2>
-        {c.body ? <p style={bodyStyle}>{c.body}</p> : null}
-        <div style={{ display: 'grid', gap: '1.25rem', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))' }}>
-          {lead ? (
-            <article style={{ ...surfaceStyle, padding: '1.5rem', gridColumn: 'span 1' }}>
-              <div style={{ height: 200, borderRadius: 'var(--radius-button)', overflow: 'hidden', marginBottom: '1rem', background: placeholderGradient }}>
-                {lead.image ? <img src={lead.image} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : null}
-              </div>
-              <h3 style={{ margin: '0 0 0.25rem', fontFamily: 'var(--font-display)' }}>{lead.name}</h3>
-              <p style={{ ...mutedStyle, margin: 0 }}>{lead.specialty}</p>
-              {lead.bio ? <p style={{ marginTop: '0.75rem' }}>{lead.bio}</p> : null}
-            </article>
-          ) : null}
-          <div style={{ display: 'grid', gap: '0.75rem', alignContent: 'start' }}>
-            {rest.map((d) => (
-              <div key={d.name} style={cardStyle}>
-                <strong>{d.name}</strong>
-                <div style={mutedStyle}>{d.specialty}</div>
-              </div>
-            ))}
+        <SectionHeader kicker="Care team" title={c.title} body={c.body} />
+        {doctors.length === 0 ? (
+          <div>
+            <EmptyCopy>Team profiles coming soon. Add doctors in Studio when ready.</EmptyCopy>
+            {siteLinks?.doctors ? (
+              <a
+                href={siteLinks.doctors}
+                className="nabhi-btn"
+                style={{ ...buttonGhostStyle, marginTop: '1rem' }}
+              >
+                Doctors page
+              </a>
+            ) : null}
           </div>
-        </div>
+        ) : (
+          <div
+            style={{
+              display: 'grid',
+              gap: '1.25rem',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+              marginTop: '0.5rem',
+            }}
+          >
+            {lead ? (
+              <article style={{ ...elevatedCardStyle, maxWidth: 260, width: '100%' }}>
+                <TreatedMedia
+                  src={lead.image}
+                  aspectRatio="3 / 4"
+                  emptyIcon="person"
+                  emptyLabel="Photo coming soon"
+                  style={{ marginBottom: '1rem' }}
+                />
+                <h3
+                  style={{
+                    margin: '0 0 0.25rem',
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '1.15rem',
+                    letterSpacing: '-0.02em',
+                  }}
+                >
+                  {lead.name}
+                </h3>
+                {lead.specialty ? (
+                  <p
+                    style={{
+                      ...mutedStyle,
+                      margin: 0,
+                      fontSize: '0.9rem',
+                      color: 'var(--color-accent)',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {lead.specialty}
+                  </p>
+                ) : null}
+                {lead.bio ? (
+                  <p
+                    style={{
+                      ...mutedStyle,
+                      margin: '0.55rem 0 0',
+                      fontSize: '0.92rem',
+                      lineHeight: 1.55,
+                    }}
+                  >
+                    {lead.bio}
+                  </p>
+                ) : null}
+              </article>
+            ) : null}
+            <div style={{ display: 'grid', gap: '0.75rem', alignContent: 'start' }}>
+              {rest.map((d) => (
+                <div key={d.name} style={elevatedCardStyle}>
+                  <strong style={{ fontFamily: 'var(--font-display)' }}>{d.name}</strong>
+                  {d.specialty ? (
+                    <div
+                      style={{
+                        ...mutedStyle,
+                        fontSize: '0.9rem',
+                        color: 'var(--color-accent)',
+                        fontWeight: 600,
+                      }}
+                    >
+                      {d.specialty}
+                    </div>
+                  ) : null}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

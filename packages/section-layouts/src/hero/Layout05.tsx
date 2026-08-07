@@ -1,23 +1,21 @@
 import type { LayoutProps } from '../types';
 import {
-  accentBarStyle,
   bodyStyle,
   buttonGhostStyle,
   buttonPrimaryStyle,
-  cardStyle,
   containerStyle,
-  mutedStyle,
-  placeholderGradient,
   sectionBaseStyle,
-  surfaceStyle,
   titleStyle,
-  wideContainerStyle,
 } from '../styles';
 import { normalizeHero } from '../content';
+import { resolveHref } from './bits';
 
 /** Minimal centered — no image */
-export function Layout05({ content }: LayoutProps) {
+export function Layout05({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
+  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact);
+  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services);
+
   return (
     <section style={{ ...sectionBaseStyle, minHeight: 'min(56vh, 520px)', display: 'grid', placeItems: 'center' }}>
       <div style={{ ...containerStyle, textAlign: 'center' }}>
@@ -34,12 +32,12 @@ export function Layout05({ content }: LayoutProps) {
         <p style={{ ...bodyStyle, margin: '0 auto 1.5rem' }}>{c.body}</p>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
           {c.ctaPrimary ? (
-            <a href="#" style={buttonPrimaryStyle}>
+            <a href={primaryHref} className="nabhi-btn" style={buttonPrimaryStyle}>
               {c.ctaPrimary}
             </a>
           ) : null}
           {c.ctaSecondary ? (
-            <a href="#" style={buttonGhostStyle}>
+            <a href={secondaryHref} className="nabhi-btn" style={buttonGhostStyle}>
               {c.ctaSecondary}
             </a>
           ) : null}

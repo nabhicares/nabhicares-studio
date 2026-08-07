@@ -1,23 +1,21 @@
 import type { LayoutProps } from '../types';
 import {
-  accentBarStyle,
   bodyStyle,
   buttonGhostStyle,
   buttonPrimaryStyle,
-  cardStyle,
-  containerStyle,
-  mutedStyle,
-  placeholderGradient,
   sectionBaseStyle,
-  surfaceStyle,
   titleStyle,
-  wideContainerStyle,
 } from '../styles';
 import { normalizeHero } from '../content';
+import { TreatedMedia } from '../polish';
+import { resolveHref } from './bits';
 
 /** Image left / text right */
-export function Layout03({ content }: LayoutProps) {
+export function Layout03({ content, siteLinks }: LayoutProps) {
   const c = normalizeHero(content);
+  const primaryHref = resolveHref(c.ctaPrimaryHref, siteLinks?.contact);
+  const secondaryHref = resolveHref(c.ctaSecondaryHref, siteLinks?.services);
+
   return (
     <section
       style={{
@@ -28,14 +26,17 @@ export function Layout03({ content }: LayoutProps) {
         minHeight: 'min(68vh, 620px)',
       }}
     >
-      <div
+      <TreatedMedia
+        src={c.image}
+        aspectRatio="4 / 3"
+        emptyIcon="local_hospital"
+        emptyLabel="Add a hero image in Studio"
         style={{
           flex: '1.4 1 340px',
           minHeight: 260,
-          background: c.image ? undefined : placeholderGradient,
-          backgroundImage: c.image ? `url(${c.image})` : undefined,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          borderRadius: 0,
+          height: 'auto',
+          alignSelf: 'stretch',
         }}
       />
       <div
@@ -51,12 +52,12 @@ export function Layout03({ content }: LayoutProps) {
         <p style={bodyStyle}>{c.body}</p>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
           {c.ctaPrimary ? (
-            <a href="#" style={buttonPrimaryStyle}>
+            <a href={primaryHref} className="nabhi-btn" style={buttonPrimaryStyle}>
               {c.ctaPrimary}
             </a>
           ) : null}
           {c.ctaSecondary ? (
-            <a href="#" style={buttonGhostStyle}>
+            <a href={secondaryHref} className="nabhi-btn" style={buttonGhostStyle}>
               {c.ctaSecondary}
             </a>
           ) : null}
