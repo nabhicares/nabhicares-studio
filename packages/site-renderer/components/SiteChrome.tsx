@@ -66,13 +66,26 @@ export function SiteHeader({
           ) : null}
         </nav>
         <details className="nabhi-menu">
-          <summary className="nabhi-menu-btn">Menu</summary>
+          <summary className="nabhi-menu-btn" aria-label="Open menu">
+            <span className="nabhi-menu-icon" aria-hidden>
+              <span />
+              <span />
+              <span />
+            </span>
+          </summary>
           <nav className="nabhi-site-nav-mobile" aria-label="Mobile">
-            {pages.map((p) => (
-              <a key={p.slug} href={hrefForPage(currentSlug, p.slug)} className="nabhi-nav-link">
-                {p.label}
-              </a>
-            ))}
+            {pages.map((p) => {
+              const active = p.slug === currentSlug || (p.slug === 'home' && isHome);
+              return (
+                <a
+                  key={p.slug}
+                  href={hrefForPage(currentSlug, p.slug)}
+                  className={active ? 'nabhi-nav-link nabhi-nav-link-active' : 'nabhi-nav-link'}
+                >
+                  {p.label}
+                </a>
+              );
+            })}
             {phone ? (
               <a href={telHref(phone)} className="nabhi-nav-cta">
                 Call Now
