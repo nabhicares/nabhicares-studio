@@ -234,6 +234,25 @@ export const SECTION_REGISTRY: SectionTypeDef[] = [
       { name: 'submitLabel', label: 'Submit button label', type: 'string' },
     ],
   },
+  {
+    key: 'footer',
+    label: 'Footer',
+    description: 'Site footer — pick a layout; contact fields optional (falls back to Contact section)',
+    componentRef: 'sections/footer',
+    fields: [
+      {
+        name: 'tagline',
+        label: 'Tagline (optional)',
+        type: 'string',
+        placeholder: 'Care close to home',
+      },
+      { name: 'phone', label: 'Phone (optional override)', type: 'string' },
+      { name: 'email', label: 'Email (optional override)', type: 'string' },
+      { name: 'address', label: 'Address (optional override)', type: 'text' },
+      { name: 'hours', label: 'Hours (optional override)', type: 'text' },
+      { name: 'mapUrl', label: 'Maps URL (optional override)', type: 'string' },
+    ],
+  },
 ];
 
 export function getSectionType(key: string): SectionTypeDef | undefined {
@@ -356,6 +375,15 @@ export function exampleContentForSection(key: string): Record<string, unknown> {
         body: 'Share your details and we will confirm your visit.',
         successMessage: 'Thank you — we will contact you shortly to confirm.',
         submitLabel: 'Request appointment',
+      };
+    case 'footer':
+      return {
+        tagline: '',
+        phone: '',
+        email: '',
+        address: '',
+        hours: '',
+        mapUrl: '',
       };
     default:
       return { title: 'Section' };
@@ -564,6 +592,9 @@ export const DEFAULT_DESIGN_TOKENS = {
       formsNote: '',
       rightsNote: '',
     },
+    footer: {
+      layoutVersion: 1,
+    },
   },
 } as const;
 
@@ -584,9 +615,14 @@ export type PrivacyPageConfig = {
   rightsNote: string;
 };
 
+export type FooterPageConfig = {
+  layoutVersion: number;
+};
+
 export type SystemPagesConfig = {
   notFound: NotFoundPageConfig;
   privacy: PrivacyPageConfig;
+  footer: FooterPageConfig;
 };
 
 export type DesignTokens = {
@@ -628,6 +664,11 @@ export function normalizeSystemPages(
       ...(raw?.privacy ?? {}),
       layoutVersion: Math.min(3, Math.max(1, Number(raw?.privacy?.layoutVersion) || 1)),
     },
+    footer: {
+      ...base.footer,
+      ...(raw?.footer ?? {}),
+      layoutVersion: Math.min(10, Math.max(1, Number(raw?.footer?.layoutVersion) || 1)),
+    },
   };
 }
 
@@ -654,6 +695,7 @@ export type HospitalBundleHospital = {
   slug?: string;
   seoTitle?: string;
   seoDescription?: string;
+  ogImage?: string;
 };
 
 export type HospitalBundleImportResult =
@@ -692,7 +734,7 @@ export function importHospitalBundleJson(raw: string): HospitalBundleImportResul
   }
 
   const hospital: HospitalBundleHospital = {};
-  for (const k of ['name', 'slug', 'seoTitle', 'seoDescription'] as const) {
+  for (const k of ['name', 'slug', 'seoTitle', 'seoDescription', 'ogImage'] as const) {
     if (typeof hospitalRaw[k] === 'string' && (hospitalRaw[k] as string).trim()) {
       hospital[k] = (hospitalRaw[k] as string).trim();
     }
@@ -734,7 +776,8 @@ Return ONLY valid JSON (no markdown fences, no commentary) matching this exact s
     "name": "string",
     "slug": "lowercase-kebab-slug",
     "seoTitle": "string",
-    "seoDescription": "string under 160 chars"
+    "seoDescription": "string under 160 chars",
+    "ogImage": "https optional share image"
   },
   "sections": {
     "hero": {

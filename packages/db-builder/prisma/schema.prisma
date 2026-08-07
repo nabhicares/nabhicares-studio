@@ -24,6 +24,8 @@ model Hospital {
   customDomain String? @unique
   seoTitle       String?
   seoDescription String?
+  /// Absolute https URL for WhatsApp / Meta / Twitter share cards (optional override).
+  ogImage        String?
   createdAt   DateTime @default(now())
 
   pages               Page[]

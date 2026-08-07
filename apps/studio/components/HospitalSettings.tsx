@@ -38,6 +38,7 @@ export function HospitalSettings({
   hospitalSlug,
   seoTitle: initialSeoTitle = '',
   seoDescription: initialSeoDescription = '',
+  ogImage: initialOgImage = '',
   customDomain: initialCustomDomain = '',
   onClose,
   onUpdated,
@@ -47,6 +48,7 @@ export function HospitalSettings({
   hospitalSlug: string;
   seoTitle?: string;
   seoDescription?: string;
+  ogImage?: string;
   customDomain?: string | null;
   onClose: () => void;
   onUpdated: (next: { name: string; slug: string }) => void;
@@ -56,10 +58,18 @@ export function HospitalSettings({
   const [slug, setSlug] = useState(hospitalSlug);
   const [seoTitle, setSeoTitle] = useState(initialSeoTitle);
   const [seoDescription, setSeoDescription] = useState(initialSeoDescription);
+  const [ogImage, setOgImage] = useState(initialOgImage);
   const [customDomain, setCustomDomain] = useState(initialCustomDomain ?? '');
   const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
   const root = cdnRootDomain();
+  const previewTitle = seoTitle.trim() || name || 'Hospital';
+  const previewDesc =
+    seoDescription.trim() ||
+    `${name || 'Hospital'} — hospital website published with Nabhi Studio`;
+  const previewImage =
+    ogImage.trim() ||
+    (slug ? `${liveSiteUrl(slug).replace(/\/$/, '')}/og.png` : '');
 
   async function save() {
     setSaving(true);
@@ -72,6 +82,7 @@ export function HospitalSettings({
         slug,
         seoTitle,
         seoDescription,
+        ogImage,
         customDomain: customDomain.trim() || null,
       }),
     });
@@ -84,7 +95,9 @@ export function HospitalSettings({
     onUpdated({ name: data.name, slug: data.slug });
     if (typeof data.customDomain === 'string') setCustomDomain(data.customDomain);
     if (data.customDomain == null) setCustomDomain('');
-    setStatus('Saved');
+    if (typeof data.ogImage === 'string') setOgImage(data.ogImage);
+    if (data.ogImage == null) setOgImage('');
+    setStatus('Saved — publish so WhatsApp / Meta pick up the new card');
     if (data.slug !== hospitalSlug) {
       router.replace(`/h/${data.slug}`);
     }
@@ -181,24 +194,74 @@ export function HospitalSettings({
           <GeminiHospitalImport hospitalId={hospitalId} />
         </SettingsGroup>
 
-        <SettingsGroup title="SEO" description="Basic search title and description for this hospital.">
+        <SettingsGroup
+          title="SEO & social share"
+          description="Title, description, and image used in Google and WhatsApp / Instagram / Meta link cards. Leave image blank to auto-generate on publish."
+        >
           <div className="flex flex-col gap-xs">
-            <label className="font-inter text-label-sm text-outline">SEO title</label>
+            <label className="font-inter text-label-sm text-outline">Share / SEO title</label>
             <input
               className="field-input"
               value={seoTitle}
               onChange={(e) => setSeoTitle(e.target.value)}
               placeholder={name || 'Hospital name'}
+              maxLength={120}
             />
           </div>
           <div className="flex flex-col gap-xs">
-            <label className="font-inter text-label-sm text-outline">SEO description</label>
+            <label className="font-inter text-label-sm text-outline">Share / SEO description</label>
             <textarea
               className="field-input min-h-[80px]"
               value={seoDescription}
               onChange={(e) => setSeoDescription(e.target.value)}
-              placeholder="Short blurb for search results"
+              placeholder="Short blurb for search and link previews"
+              maxLength={320}
             />
+          </div>
+          <div className="flex flex-col gap-xs">
+            <label className="font-inter text-label-sm text-outline">
+              Share image URL (optional)
+            </label>
+            <input
+              className="field-input"
+              value={ogImage}
+              onChange={(e) => setOgImage(e.target.value)}
+              placeholder="https://…/your-photo.jpg  ·  blank = auto card"
+            />
+            <p className="font-inter text-label-sm text-outline">
+              Must be a public https image (≈1200×630). If blank: hero photo if set, else an
+              auto-generated branded card on publish.
+            </p>
+          </div>
+
+          <div className="rounded-lg border border-outline-variant overflow-hidden bg-surface-container-low">
+            <p className="font-inter text-[10px] uppercase tracking-wider text-outline px-sm py-xs border-b border-outline-variant">
+              Link card preview
+            </p>
+            {previewImage ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={previewImage}
+                alt=""
+                className="w-full aspect-[1.91/1] object-cover bg-surface-container"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            ) : (
+              <div className="aspect-[1.91/1] flex items-center justify-center text-outline font-inter text-label-sm">
+                Image appears after publish
+              </div>
+            )}
+            <div className="p-sm space-y-xs">
+              <p className="font-inter text-label-sm text-primary truncate">
+                {slug ? liveSiteUrl(slug).replace(/^https?:\/\//, '').replace(/\/$/, '') : 'site'}
+              </p>
+              <p className="font-outfit text-[15px] font-semibold text-on-surface line-clamp-2">
+                {previewTitle}
+              </p>
+              <p className="font-inter text-label-sm text-outline line-clamp-2">{previewDesc}</p>
+            </div>
           </div>
         </SettingsGroup>
 

@@ -6,6 +6,12 @@ import { DEFAULT_DESIGN_TOKENS, type DesignTokens } from '@nabhicares/section-re
 export type SiteDataWithDesign = SiteData & {
   designTokens?: DesignTokens;
   builtAt?: string;
+  /** Absolute site origin baked at publish, e.g. https://slug.nabhilabs.info */
+  publicOrigin?: string;
+  customDomain?: string | null;
+  ogImage?: string | null;
+  /** Resolved absolute share-card image (custom, hero, or generated). */
+  resolvedOgImage?: string | null;
 };
 
 export function loadSiteData(): SiteDataWithDesign {
@@ -37,4 +43,41 @@ export function tokensToCssVars(tokens: DesignTokens = DEFAULT_DESIGN_TOKENS): s
     `--content-max: ${tokens.spacing.contentMax}`,
     `--radius-button: ${tokens.radii.button}`,
   ].join('; ');
+}
+
+/** Public https origin for OG/canonical URLs (subdomain or custom domain). */
+export function resolvePublicOrigin(site: SiteDataWithDesign): string {
+  if (site.publicOrigin?.trim()) {
+    return site.publicOrigin.trim().replace(/\/$/, '') + '/';
+  }
+  if (site.customDomain?.trim()) {
+    const host = site.customDomain.replace(/^https?:\/\//, '').replace(/\/$/, '');
+    return `https://${host}/`;
+  }
+  const root = (process.env.CDN_ROOT_DOMAIN || process.env.NEXT_PUBLIC_CDN_ROOT_DOMAIN || '')
+    .replace(/^\./, '')
+    .toLowerCase();
+  if (root && site.hospitalSlug) {
+    return `https://${site.hospitalSlug}.${root}/`;
+  }
+  const base = (process.env.SITE_PUBLIC_ORIGIN || '').replace(/\/$/, '');
+  if (base) return `${base}/`;
+  return `https://${site.hospitalSlug || 'hospital'}.example.com/`;
+}
+
+function isAbsoluteHttpUrl(value: string): boolean {
+  return /^https?:\/\//i.test(value.trim());
+}
+
+/** Absolute image URL for WhatsApp / Meta / Twitter cards. */
+export function resolveOgImageUrl(site: SiteDataWithDesign): string | undefined {
+  if (site.resolvedOgImage && isAbsoluteHttpUrl(site.resolvedOgImage)) {
+    return site.resolvedOgImage.trim();
+  }
+  if (site.ogImage && isAbsoluteHttpUrl(site.ogImage)) {
+    return site.ogImage.trim();
+  }
+  const origin = resolvePublicOrigin(site).replace(/\/$/, '');
+  // next/og static file from app/opengraph-image.tsx — also copied to og.png on publish
+  return `${origin}/og.png`;
 }

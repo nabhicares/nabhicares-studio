@@ -14,7 +14,7 @@ import {
 import { heroCtaHrefPlaceholder } from '@nabhicares/section-layouts';
 import { DesignPanel } from './DesignPanel';
 import { PublishDrawer } from './PublishDrawer';
-import { DraftCanvas, ViewportToggle, type PreviewViewport } from './DraftCanvas';
+import { DraftCanvas, ViewportToggle, type PreviewViewport, type SystemPreviewMode } from './DraftCanvas';
 import { LayoutWireframe } from './LayoutWireframe';
 import { ImageField, looksLikeImageField } from './ImageField';
 import { DraftPreview } from './DraftPreview';
@@ -209,6 +209,7 @@ export function StudioEditor({
   hospitalName: initialName,
   seoTitle = '',
   seoDescription = '',
+  ogImage = '',
   customDomain = '',
   isLive = false,
   migrationWarnings = [],
@@ -219,6 +220,7 @@ export function StudioEditor({
   hospitalName: string;
   seoTitle?: string;
   seoDescription?: string;
+  ogImage?: string;
   customDomain?: string;
   isLive?: boolean;
   migrationWarnings?: string[];
@@ -245,6 +247,7 @@ export function StudioEditor({
   const [renamingPageId, setRenamingPageId] = useState<string | null>(null);
   const [renameSlug, setRenameSlug] = useState('');
   const [designTokens, setDesignTokens] = useState<DesignTokens | undefined>(undefined);
+  const [systemPreview, setSystemPreview] = useState<SystemPreviewMode>('page');
   const [showPreview, setShowPreview] = useState(false);
   const [previewViewport, setPreviewViewport] = useState<PreviewViewport>('desktop');
   const [showSettings, setShowSettings] = useState(false);
@@ -510,6 +513,7 @@ export function StudioEditor({
       onClick={() => {
         setShowSettings(false);
         setTab(id);
+        if (id !== 'design') setSystemPreview('page');
       }}
       className={`w-full aspect-square flex items-center justify-center rounded-lg transition-all ${
         tab === id && !showSettings
@@ -902,6 +906,7 @@ export function StudioEditor({
                   selectedSectionId={selected?.id}
                   viewport={previewViewport}
                   designTokens={designTokens}
+                  systemPreview={systemPreview}
                   onSelectSection={setSelectedSectionId}
                 />
               </div>
@@ -950,6 +955,7 @@ export function StudioEditor({
             hospitalSlug={hospitalSlug}
             seoTitle={seoTitle}
             seoDescription={seoDescription}
+            ogImage={ogImage}
             customDomain={customDomain}
             onClose={() => setShowSettings(false)}
             onUpdated={(next) => {
@@ -965,7 +971,12 @@ export function StudioEditor({
                 Site-wide tokens for the patient preview
               </p>
             </div>
-            <DesignPanel hospitalId={hospitalId} onTokensChange={setDesignTokens} />
+            <DesignPanel
+              hospitalId={hospitalId}
+              onTokensChange={setDesignTokens}
+              systemPreview={systemPreview}
+              onSystemPreviewChange={setSystemPreview}
+            />
           </aside>
         ) : tab === 'requests' || tab === 'publish' ? null : selected ? (
           <aside className="w-80 bg-surface-container-lowest border-l border-outline-variant flex flex-col z-40 shrink-0">

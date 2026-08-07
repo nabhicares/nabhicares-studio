@@ -32,6 +32,7 @@ export async function POST(
     name?: string;
     seoTitle?: string | null;
     seoDescription?: string | null;
+    ogImage?: string | null;
   } = {};
   if (parsed.hospital.name) hospitalPatch.name = parsed.hospital.name;
   if (parsed.hospital.seoTitle !== undefined) {
@@ -39,6 +40,9 @@ export async function POST(
   }
   if (parsed.hospital.seoDescription !== undefined) {
     hospitalPatch.seoDescription = parsed.hospital.seoDescription || null;
+  }
+  if (parsed.hospital.ogImage !== undefined) {
+    hospitalPatch.ogImage = parsed.hospital.ogImage || null;
   }
 
   if (Object.keys(hospitalPatch).length) {

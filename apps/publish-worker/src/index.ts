@@ -160,12 +160,47 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
     });
   }
 
+  const rootDomain = (process.env.CDN_ROOT_DOMAIN || process.env.NEXT_PUBLIC_CDN_ROOT_DOMAIN || '')
+    .replace(/^\./, '')
+    .toLowerCase();
+  const publicOrigin = hospital.customDomain
+    ? `https://${hospital.customDomain.replace(/^https?:\/\//, '').replace(/\/$/, '')}/`
+    : rootDomain
+      ? `https://${hospital.slug}.${rootDomain}/`
+      : `https://${hospital.slug}.localhost/`;
+
+  let resolvedOgImage =
+    typeof hospital.ogImage === 'string' && /^https:\/\//i.test(hospital.ogImage.trim())
+      ? hospital.ogImage.trim()
+      : '';
+  if (!resolvedOgImage) {
+    for (const page of pages) {
+      for (const section of page.sections) {
+        if (section.type !== 'hero') continue;
+        const img = section.content?.image;
+        if (typeof img === 'string' && /^https:\/\//i.test(img.trim())) {
+          resolvedOgImage = img.trim();
+          break;
+        }
+      }
+      if (resolvedOgImage) break;
+    }
+  }
+  if (!resolvedOgImage) {
+    // Generated opengraph-image.png is copied to og.png after build (stable public path).
+    resolvedOgImage = `${publicOrigin.replace(/\/$/, '')}/og.png`;
+  }
+
   const siteData = {
     hospitalId: hospital.id,
     hospitalName: hospital.name,
     hospitalSlug: hospital.slug,
     seoTitle: hospital.seoTitle,
     seoDescription: hospital.seoDescription,
+    ogImage: hospital.ogImage,
+    resolvedOgImage,
+    publicOrigin,
+    customDomain: hospital.customDomain,
     designTokens: tokens,
     favicon,
     builtAt: new Date().toISOString(),
@@ -196,6 +231,8 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
   await runCommand('npx', ['next', 'build'], SITE_RENDERER_ROOT, {
     ...process.env,
     SITE_BASE_PATH: `/${hospital.slug}`,
+    CDN_ROOT_DOMAIN: rootDomain || process.env.CDN_ROOT_DOMAIN || '',
+    SITE_PUBLIC_ORIGIN: publicOrigin.replace(/\/$/, ''),
     // Bake Studio origin into appointment forms on the static site.
     NEXT_PUBLIC_STUDIO_API_URL:
       process.env.NEXT_PUBLIC_STUDIO_API_URL ||
@@ -234,6 +271,22 @@ async function buildStaticSite(hospitalIdOrSlug: string) {
       body: notFoundFile.body,
       contentType: 'text/html; charset=utf-8',
     });
+  }
+
+  // Stable share-card path: /og.png (WhatsApp/Meta prefer png). Prefer Next opengraph-image output.
+  const ogGenerated =
+    files.find((f) => f.path === 'opengraph-image.png' || f.path === 'opengraph-image.jpg') ||
+    files.find((f) => /(^|\/)opengraph-image[\w.-]*\.(png|jpg|jpeg)$/i.test(f.path));
+  if (ogGenerated && !files.some((f) => f.path === 'og.png')) {
+    files.push({
+      path: 'og.png',
+      body: ogGenerated.body,
+      contentType: 'image/png',
+    });
+  } else if (!files.some((f) => f.path === 'og.png') && !files.some((f) => f.path === 'opengraph-image.png')) {
+    console.warn(
+      '[build] warning: no opengraph-image.png in out/ — social cards may use hero/custom ogImage only',
+    );
   }
   const base = `/${hospital.slug}`;
   const sitemapUrls = [

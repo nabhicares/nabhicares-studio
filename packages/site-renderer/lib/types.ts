@@ -18,6 +18,7 @@ export type SiteData = {
   hospitalSlug: string;
   seoTitle?: string | null;
   seoDescription?: string | null;
+  ogImage?: string | null;
   favicon?: string | null;
   pages: SitePage[];
 };

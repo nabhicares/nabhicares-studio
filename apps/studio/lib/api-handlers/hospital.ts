@@ -71,6 +71,7 @@ export async function PATCH(
     slug?: string;
     seoTitle?: string | null;
     seoDescription?: string | null;
+    ogImage?: string | null;
     customDomain?: string | null;
   } = {};
 
@@ -91,6 +92,16 @@ export async function PATCH(
   }
   if (typeof body.seoDescription === 'string') {
     data.seoDescription = body.seoDescription.trim().slice(0, 320) || null;
+  }
+  if (typeof body.ogImage === 'string') {
+    const raw = body.ogImage.trim();
+    if (!raw) {
+      data.ogImage = null;
+    } else if (!/^https:\/\//i.test(raw)) {
+      return badRequest('ogImage must be an https:// URL (WhatsApp/Meta require absolute https)');
+    } else {
+      data.ogImage = raw.slice(0, 500);
+    }
   }
   if (body.customDomain !== undefined) {
     try {
@@ -117,9 +128,10 @@ export async function PATCH(
     !data.slug &&
     data.seoTitle === undefined &&
     data.seoDescription === undefined &&
+    data.ogImage === undefined &&
     data.customDomain === undefined
   ) {
-    return badRequest('name, slug, SEO, or customDomain required');
+    return badRequest('name, slug, SEO, social image, or customDomain required');
   }
 
   const updated = await prisma.hospital.update({
