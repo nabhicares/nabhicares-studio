@@ -20,6 +20,7 @@ export function SectionRenderer({
     contact: hrefForPage(pageSlug, 'contact'),
     doctors: hrefForPage(pageSlug, 'doctors'),
     services: isHome ? '#services' : '../#services',
+    privacy: hrefForPage(pageSlug, 'privacy'),
   };
 
   const isHero = section.type === 'hero';

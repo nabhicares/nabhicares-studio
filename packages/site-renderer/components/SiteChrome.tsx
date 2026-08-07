@@ -155,7 +155,7 @@ export function SiteFooter({
         </span>
         <span className="nabhi-footer-credit">
           Website by{' '}
-          <a href="https://nabhilabs.info" target="_blank" rel="noreferrer">
+          <a href="https://www.nabhilabs.com" target="_blank" rel="noreferrer">
             Nabhi Labs
           </a>
         </span>

@@ -348,6 +348,7 @@ export function DraftCanvas({
               contact: '#',
               doctors: '#',
               services: '#services',
+              privacy: '#',
             };
             const isHero = section.template.key === 'hero';
             const emphasize =
@@ -427,7 +428,15 @@ export function DraftCanvas({
           <div className="flex flex-wrap justify-between gap-sm">
             <span>© {hospitalName}</span>
             <span>
-              Website by <span style={{ color: tokens.colors.accent, fontWeight: 600 }}>Nabhi Labs</span>
+              Website by{' '}
+              <a
+                href="https://www.nabhilabs.com"
+                target="_blank"
+                rel="noreferrer"
+                style={{ color: tokens.colors.accent, fontWeight: 600, textDecoration: 'none' }}
+              >
+                Nabhi Labs
+              </a>
             </span>
           </div>
         </div>

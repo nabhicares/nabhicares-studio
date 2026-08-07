@@ -23,3 +23,12 @@ export {
   bodyStyle,
 } from './styles';
 export { resolveHref, sanitizeMapUrl, telHref, toDirectionsUrl } from './links';
+export {
+  NABHI_CONSENT_KEY,
+  NABHI_CONSENT_EVENT,
+  readConsent,
+  writeConsent,
+  allowsOptionalEmbeds,
+} from './consent';
+export type { NabhiConsent, NabhiConsentChoice } from './consent';
+export { ConsentAwareMap } from './ConsentAwareMap';

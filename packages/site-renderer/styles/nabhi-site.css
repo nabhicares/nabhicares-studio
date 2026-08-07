@@ -381,6 +381,87 @@ details[open] > .nabhi-faq-summary::after {
   text-decoration: none;
 }
 
+.nabhi-consent {
+  position: fixed;
+  z-index: 60;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 1rem clamp(1rem, 3vw, 1.5rem) calc(1rem + env(safe-area-inset-bottom, 0px));
+  pointer-events: none;
+}
+
+.nabhi-consent-inner {
+  pointer-events: auto;
+  margin: 0 auto;
+  max-width: min(720px, 100%);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 1.1rem 1.25rem;
+  border-radius: calc(var(--radius-button) + 6px);
+  border: 1px solid color-mix(in srgb, var(--color-fg) 12%, transparent);
+  background: color-mix(in srgb, var(--color-bg) 92%, var(--color-surface));
+  box-shadow: 0 12px 40px color-mix(in srgb, var(--color-fg) 18%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.nabhi-consent-copy {
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.nabhi-consent-title {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--color-fg);
+}
+
+.nabhi-consent-body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--color-muted);
+}
+
+.nabhi-consent-body a {
+  color: var(--color-accent);
+}
+
+.nabhi-consent-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  flex-shrink: 0;
+}
+
+.nabhi-consent-btn {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: var(--radius-button);
+  padding: 0.7rem 1.1rem;
+  cursor: pointer;
+}
+
+.nabhi-consent-btn-primary {
+  border: none;
+  background: var(--color-accent);
+  color: var(--color-bg);
+}
+
+.nabhi-consent-btn-ghost {
+  border: 1px solid color-mix(in srgb, var(--color-fg) 22%, transparent);
+  background: transparent;
+  color: var(--color-fg);
+}
+
 @media (max-width: 760px) {
   .nabhi-site-nav-desktop {
     display: none;

@@ -8,6 +8,7 @@ import {
 import { contactRowIcon, IconBadge, toMapEmbedSrc } from '../icons';
 import { resolveHref, telHref, toDirectionsUrl } from '../links';
 import { elevatedCardStyle } from '../polish';
+import { ConsentAwareMap } from '../ConsentAwareMap';
 
 export type ContactRow = { label: string; value: string; href?: string };
 
@@ -159,13 +160,7 @@ export function ContactMapPanel({
       }}
     >
       {embedSrc ? (
-        <iframe
-          src={embedSrc}
-          title="Map"
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          style={{ width: '100%', height: '100%', minHeight, border: 0, display: 'block' }}
-        />
+        <ConsentAwareMap embedSrc={embedSrc} title="Map" minHeight={minHeight} />
       ) : (
         <div
           className="nabhi-empty-media"

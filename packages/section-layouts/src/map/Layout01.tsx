@@ -9,6 +9,7 @@ import {
 } from '../styles';
 import { normalizeMap } from '../content';
 import { toMapEmbedSrc } from '../icons';
+import { ConsentAwareMap } from '../ConsentAwareMap';
 
 /** Standalone map embed */
 export function Layout01({ content }: LayoutProps) {
@@ -34,14 +35,7 @@ export function Layout01({ content }: LayoutProps) {
               background: 'color-mix(in srgb, var(--color-surface) 70%, var(--color-bg))',
             }}
           >
-            <iframe
-              title={c.title || 'Map'}
-              src={embedSrc}
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              style={{ width: '100%', height: 360, border: 0, display: 'block' }}
-              allowFullScreen
-            />
+            <ConsentAwareMap embedSrc={embedSrc} title={c.title || 'Map'} minHeight={360} />
           </div>
         ) : (
           <p style={mutedStyle}>Add a Google Maps URL or address to show the map.</p>

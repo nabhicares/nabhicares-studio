@@ -1,8 +1,10 @@
 import type { SitePage } from '@/lib/types';
 import { SectionRenderer } from './SectionRenderer';
 import { SiteFooter, SiteHeader } from './SiteChrome';
+import { ConsentBanner } from './ConsentBanner';
 import {
   extractContactSummary,
+  hrefForPage,
   navPagesFromSite,
   type NavPage,
   type SiteContactSummary,
@@ -26,6 +28,7 @@ export function PageView({
       ? navPagesFromSite(pages)
       : [{ slug: page.slug || 'home', label: page.slug === 'home' || !page.slug ? 'Home' : page.slug }];
   const contactSummary = contact ?? extractContactSummary([page]);
+  const privacyHref = hrefForPage(page.slug, 'privacy');
 
   return (
     <>
@@ -66,6 +69,7 @@ export function PageView({
         pages={navPages}
         contact={contactSummary}
       />
+      <ConsentBanner hospitalName={hospitalName} privacyHref={privacyHref} />
     </>
   );
 }

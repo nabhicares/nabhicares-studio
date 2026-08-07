@@ -5,6 +5,7 @@ export type SiteLinks = {
   contact?: string;
   doctors?: string;
   services?: string;
+  privacy?: string;
 };
 
 export type HeroContent = {

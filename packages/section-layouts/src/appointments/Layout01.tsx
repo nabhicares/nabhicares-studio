@@ -44,10 +44,11 @@ function resolveStudioApiUrl(explicit?: string): string {
 }
 
 /** Visitor appointment request form */
-export function Layout01({ content, hospitalSlug, studioApiUrl }: LayoutProps) {
+export function Layout01({ content, hospitalSlug, studioApiUrl, siteLinks }: LayoutProps) {
   const c = normalizeAppointments(content);
   const [status, setStatus] = useState<'idle' | 'submitting' | 'ok' | 'error'>('idle');
   const [error, setError] = useState('');
+  const privacyHref = siteLinks?.privacy || 'privacy/';
 
   async function onSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -154,6 +155,33 @@ export function Layout01({ content, hospitalSlug, studioApiUrl }: LayoutProps) {
               <label style={labelStyle}>
                 Notes
                 <textarea name="message" rows={3} style={{ ...fieldStyle, resize: 'vertical' }} />
+              </label>
+              <label
+                style={{
+                  display: 'flex',
+                  gap: '0.65rem',
+                  alignItems: 'flex-start',
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.88rem',
+                  color: 'var(--color-muted)',
+                  lineHeight: 1.45,
+                }}
+              >
+                <input
+                  name="privacyConsent"
+                  type="checkbox"
+                  required
+                  style={{ marginTop: '0.2rem', flexShrink: 0 }}
+                />
+                <span>
+                  I agree to {hospitalSlug ? 'the hospital' : 'this hospital'} processing my name,
+                  phone, and any optional details I provide to respond to this appointment request,
+                  as described in the{' '}
+                  <a href={privacyHref} style={{ color: 'var(--color-accent)' }}>
+                    Privacy notice
+                  </a>
+                  .
+                </span>
               </label>
               {status === 'error' && error ? (
                 <p style={{ ...mutedStyle, color: 'var(--color-accent)', margin: 0 }}>{error}</p>

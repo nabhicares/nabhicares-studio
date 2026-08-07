@@ -5,6 +5,7 @@ const PAGE_LINK_KEYS: Record<string, keyof SiteLinks> = {
   contact: 'contact',
   doctors: 'doctors',
   services: 'services',
+  privacy: 'privacy',
 };
 
 /** Unwrap markdown links and decode repeated &amp; entities from pasted Maps URLs. */

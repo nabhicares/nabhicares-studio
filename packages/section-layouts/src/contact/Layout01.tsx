@@ -16,6 +16,7 @@ import {
   contactMapHref,
   contactTelHref,
 } from './bits';
+import { ConsentAwareMap } from '../ConsentAwareMap';
 
 /** Contact — address, phone, hours, map CTA (full or home teaser) */
 export function Layout01({ content, siteLinks }: LayoutProps) {
@@ -155,13 +156,7 @@ export function Layout01({ content, siteLinks }: LayoutProps) {
             }}
           >
             {embedSrc ? (
-              <iframe
-                src={embedSrc}
-                title="Map"
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-                style={{ width: '100%', height: '100%', minHeight: 320, border: 0, display: 'block' }}
-              />
+              <ConsentAwareMap embedSrc={embedSrc} title="Map" minHeight={320} />
             ) : (
               <div className="nabhi-empty-media" style={{ minHeight: 320, alignItems: 'center', justifyContent: 'center' }}>
                 <span className="material-symbols-outlined" style={{ fontSize: 42, color: 'var(--color-accent)' }}>
