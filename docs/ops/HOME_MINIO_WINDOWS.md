@@ -2,6 +2,8 @@
 
 Run MinIO + the publish worker on an always-on Windows PC. Studio/CDN stay on Vercel; Neon + Upstash stay as-is. Data lives on the PC’s disk, so it survives sleep/redeploy unlike free Render MinIO.
 
+**Prefer Ubuntu?** Use the permanent-tunnel guide: [HOME_MINIO_UBUNTU.md](./HOME_MINIO_UBUNTU.md).
+
 ## 1. Install on the Windows box
 
 1. [Docker Desktop for Windows](https://www.docker.com/products/docker-desktop/) — WSL2 backend on, start Docker

@@ -1,5 +1,6 @@
-# Persistent MinIO for an always-on Windows PC (Docker Desktop).
-# Bind only to localhost — expose via Cloudflare Tunnel, not port-forward.
+# Persistent MinIO for an always-on home PC (Docker Desktop on Windows, or Docker Engine on Ubuntu).
+# Bind only to localhost — expose via a permanent Cloudflare Tunnel, not port-forward.
+# Ops: docs/ops/HOME_MINIO_UBUNTU.md (preferred) or docs/ops/HOME_MINIO_WINDOWS.md
 #
 #   cd infra/home-minio
 #   copy .env.example .env   # edit credentials
