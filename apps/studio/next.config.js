@@ -8,7 +8,10 @@ const nextConfig = {
     outputFileTracingRoot: path.join(__dirname, '../..'),
     outputFileTracingIncludes: {
       '/*': ['./../../packages/db-builder/src/generated/client/**/*'],
-      '/api/**/*': ['./../../packages/db-builder/src/generated/client/**/*'],
+      '/api/**/*': [
+        './../../packages/db-builder/src/generated/client/**/*',
+        './public/fonts/**/*',
+      ],
     },
   },
   // Must transpile the TS workspace package; do not also mark it external.
