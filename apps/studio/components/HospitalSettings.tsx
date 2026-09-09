@@ -54,7 +54,33 @@ export function HospitalSettings({
   const [customDomain, setCustomDomain] = useState(initialCustomDomain ?? '');
   const [status, setStatus] = useState('');
   const [saving, setSaving] = useState(false);
+  const [zipBusy, setZipBusy] = useState(false);
   const root = cdnRootDomain();
+
+  async function downloadSiteZip() {
+    setZipBusy(true);
+    setStatus('Building site zip…');
+    try {
+      const res = await apiFetch(`/api/hospitals/${hospitalId}/site-zip`);
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        setStatus(data.error ?? 'Download failed — publish a live site first.');
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${slug}-website.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setStatus('Site zip downloaded (includes SETUP.md)');
+    } catch {
+      setStatus('Download failed');
+    } finally {
+      setZipBusy(false);
+    }
+  }
 
   async function save() {
     setSaving(true);
@@ -165,6 +191,24 @@ export function HospitalSettings({
             </p>
           </div>
           <DnsSetupPanel hospitalSlug={slug} customDomain={customDomain} />
+        </SettingsGroup>
+
+        <SettingsGroup
+          title="Self-host export"
+          description="Download the live static site if the hospital will host on their own DNS. Prefer a custom domain on Nabhi when possible."
+        >
+          <button
+            type="button"
+            className="btn-ghost w-full justify-center gap-xs"
+            disabled={zipBusy || saving}
+            onClick={() => void downloadSiteZip()}
+          >
+            <span className="material-symbols-outlined text-[18px]">folder_zip</span>
+            {zipBusy ? 'Preparing zip…' : 'Download site zip'}
+          </button>
+          <p className="font-inter text-label-sm text-outline">
+            Includes SETUP.md with DNS and hosting steps. Requires a successful publish.
+          </p>
         </SettingsGroup>
 
         <SettingsGroup

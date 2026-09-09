@@ -137,6 +137,11 @@ async function dispatch(
         hospitalId,
       });
     }
+    if (c === 'site-zip' && !d) {
+      return call(import('@/lib/api-handlers/hospital-site-zip'), method, {
+        hospitalId,
+      });
+    }
     if (c === 'photos' && !d) {
       return call(import('@/lib/api-handlers/hospital-photos'), method, {
         hospitalId,

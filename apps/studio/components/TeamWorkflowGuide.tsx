@@ -35,6 +35,10 @@ export function TeamWorkflowGuide() {
       title: 'CRM status',
       body: 'Demo = live for the visit. Accept if they say yes. Decline → 30-day trash. Use the campaign QR pack for print sheets.',
     },
+    {
+      title: 'Custom domain vs self-host',
+      body: 'Prefer Hospital settings → Custom domain on Nabhi. If they insist on hosting themselves: Publish → Download site zip (includes SETUP.md). Never give Studio source.',
+    },
   ];
 
   return (

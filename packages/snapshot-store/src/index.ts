@@ -295,6 +295,118 @@ export async function purgeHospitalStorage(hospitalKey: string): Promise<number>
   return deleted;
 }
 
+export type SnapshotFile = {
+  path: string;
+  body: Buffer;
+};
+
+const DEFAULT_MAX_FILES = 2500;
+const DEFAULT_MAX_BYTES = 45 * 1024 * 1024;
+
+async function listObjectKeys(prefix: string): Promise<string[]> {
+  const keys: string[] = [];
+  let token: string | undefined;
+  do {
+    const listed = await s3.send(
+      new ListObjectsV2Command({
+        Bucket: BUCKET,
+        Prefix: prefix,
+        ContinuationToken: token,
+      }),
+    );
+    for (const obj of listed.Contents ?? []) {
+      if (obj.Key) keys.push(obj.Key);
+    }
+    token = listed.IsTruncated ? listed.NextContinuationToken : undefined;
+  } while (token);
+  return keys;
+}
+
+async function getObjectBody(key: string): Promise<Buffer> {
+  const out = await s3.send(new GetObjectCommand({ Bucket: BUCKET, Key: key }));
+  if (!out.Body) return Buffer.alloc(0);
+  const bytes = await out.Body.transformToByteArray();
+  return Buffer.from(bytes);
+}
+
+/**
+ * Download all files for the LIVE publish version (excludes `.complete` marker).
+ * Throws if the tree exceeds maxFiles / maxTotalBytes (serverless safety).
+ */
+export async function downloadLiveSiteFiles(
+  hospitalKey: string,
+  opts?: { maxFiles?: number; maxTotalBytes?: number },
+): Promise<{ publishId: string; files: SnapshotFile[] } | null> {
+  const publishId = await readLivePublishId(hospitalKey);
+  if (!publishId) return null;
+
+  const maxFiles = opts?.maxFiles ?? DEFAULT_MAX_FILES;
+  const maxBytes = opts?.maxTotalBytes ?? DEFAULT_MAX_BYTES;
+  const prefix = versionPrefix(hospitalKey, publishId);
+  const keys = (await listObjectKeys(prefix)).filter(
+    (k) => !k.endsWith('/.complete') && !k.endsWith('.complete'),
+  );
+
+  if (keys.length > maxFiles) {
+    throw new Error(
+      `Live site has ${keys.length} files (limit ${maxFiles}). Contact Nabhi for a larger export.`,
+    );
+  }
+
+  const files: SnapshotFile[] = [];
+  let total = 0;
+  for (const key of keys) {
+    const rel = key.slice(prefix.length);
+    if (!rel || rel.endsWith('/')) continue;
+    const body = await getObjectBody(key);
+    total += body.length;
+    if (total > maxBytes) {
+      throw new Error(
+        `Live site exceeds ${Math.round(maxBytes / (1024 * 1024))}MB export limit. Contact Nabhi for a larger export.`,
+      );
+    }
+    files.push({ path: rel, body });
+  }
+
+  if (!files.some((f) => f.path === 'index.html' || f.path.endsWith('/index.html'))) {
+    throw new IncompleteSnapshotError(`LIVE snapshot ${publishId} is missing index.html`);
+  }
+
+  return { publishId, files };
+}
+
+/** Download hospital media under `{slug}/assets/` as paths `assets/...`. */
+export async function downloadHospitalAssets(
+  hospitalKey: string,
+  opts?: { maxFiles?: number; maxTotalBytes?: number; alreadyBytes?: number },
+): Promise<SnapshotFile[]> {
+  const maxFiles = opts?.maxFiles ?? DEFAULT_MAX_FILES;
+  const maxBytes = opts?.maxTotalBytes ?? DEFAULT_MAX_BYTES;
+  let total = opts?.alreadyBytes ?? 0;
+  const prefix = `${hospitalKey}/assets/`;
+  const keys = await listObjectKeys(prefix);
+  if (keys.length > maxFiles) {
+    throw new Error(
+      `Hospital has ${keys.length} media files (limit ${maxFiles}). Contact Nabhi for a larger export.`,
+    );
+  }
+
+  const files: SnapshotFile[] = [];
+  for (const key of keys) {
+    const rel = key.slice(`${hospitalKey}/`.length);
+    if (!rel || rel.endsWith('/')) continue;
+    const body = await getObjectBody(key);
+    total += body.length;
+    if (total > maxBytes) {
+      throw new Error(
+        `Export exceeds ${Math.round(maxBytes / (1024 * 1024))}MB limit (site + media). Contact Nabhi for a larger export.`,
+      );
+    }
+    files.push({ path: rel, body });
+  }
+  return files;
+}
+
 /** Upload a hospital media asset. Returns a public URL (MinIO anonymous download). */
 export async function uploadAsset(
   hospitalKey: string,

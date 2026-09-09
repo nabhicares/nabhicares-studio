@@ -39,6 +39,7 @@ export function PublishDrawer({
   const [activeStatus, setActiveStatus] = useState<string>('PENDING');
   const [statusLine, setStatusLine] = useState('');
   const [reviewNoteDraft, setReviewNoteDraft] = useState('');
+  const [zipBusy, setZipBusy] = useState(false);
 
   async function refresh() {
     const res = await apiFetch(`/api/hospitals/${hospitalId}/publish`);
@@ -89,6 +90,31 @@ export function PublishDrawer({
     setActiveId(pub.id);
     setActiveStatus(pub.status);
     void refresh();
+  }
+
+  async function downloadSiteZip() {
+    setZipBusy(true);
+    setStatusLine('Building site zip…');
+    try {
+      const res = await apiFetch(`/api/hospitals/${hospitalId}/site-zip`);
+      if (!res.ok) {
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        setStatusLine(data.error ?? 'Download failed — publish a live site first.');
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${hospitalSlug}-website.zip`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setStatusLine('Site zip downloaded (includes SETUP.md)');
+    } catch {
+      setStatusLine('Download failed');
+    } finally {
+      setZipBusy(false);
+    }
   }
 
   async function rollback(publishId: string) {
@@ -175,6 +201,18 @@ export function PublishDrawer({
           >
             Open live site
           </a>
+          <button
+            type="button"
+            disabled={busy || zipBusy}
+            onClick={() => void downloadSiteZip()}
+            className="w-full py-sm border border-outline-variant rounded-xl font-inter text-body-sm text-on-surface hover:bg-surface-container-low disabled:opacity-60 flex items-center justify-center gap-sm"
+          >
+            <span className="material-symbols-outlined text-[18px]">folder_zip</span>
+            {zipBusy ? 'Preparing zip…' : 'Download site zip'}
+          </button>
+          <p className="font-inter text-label-sm text-outline text-center">
+            Static files for self-hosting, plus SETUP.md. Prefer a custom domain on Nabhi when you can.
+          </p>
           <p className="font-inter text-label-sm text-outline text-center break-all">
             {liveSiteUrl(hospitalSlug)}
             {root ? (
