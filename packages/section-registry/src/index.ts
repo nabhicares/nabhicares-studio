@@ -859,14 +859,22 @@ Return ONLY valid JSON (no markdown fences, no commentary) matching this exact s
     "testimonials": {
       "title": "string",
       "body": "string",
-      "items": []
+      "items": [
+        {
+          "quote": "patient words only",
+          "author": "name or initials",
+          "role": "optional e.g. Outpatient",
+          "image": "",
+          "rating": "1-5 as string, optional"
+        }
+      ]
     }
   }
 }
 
 Rules (strict):
 - PLAIN TEXT ONLY in every string. Never use HTML or Markdown: no <b>, <br>, <p>, <span>, <div>, &lt;, &gt;, or any other tags. Write "Emergency Care" not "<b>Emergency Care</b>".
-- Prefer empty testimonials.items [] unless the listing clearly has public reviews you can paraphrase carefully.
+- testimonials.items MUST use only these keys per item: quote, author, role, image, rating. Never use name or text. Prefer "items": [] unless you carefully paraphrase a real public review.
 - Leave image fields as "" (operator will add URLs in Studio).
 - Include contact.phone, contact.address, contact.hours, contact.mapUrl from Maps when available.
 - Return raw JSON only — no \`\`\`json fences, no commentary before or after.
