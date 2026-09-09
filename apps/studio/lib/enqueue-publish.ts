@@ -3,6 +3,7 @@ import { prisma } from '@/lib/db';
 import { publishQueue } from '@nabhicares/queue';
 import { ensureHospitalSectionsMigrated } from '@/lib/migrate-sections';
 import { writeAudit } from '@/lib/auth';
+import { failStalePublishes } from '@/lib/publish-stale';
 
 export async function enqueueHospitalPublish(opts: {
   hospitalId: string;
@@ -15,6 +16,8 @@ export async function enqueueHospitalPublish(opts: {
   if (!reviewNote) {
     throw new Error('reviewNote required');
   }
+
+  await failStalePublishes({ hospitalId: opts.hospitalId });
 
   const inFlight = await prisma.publish.findFirst({
     where: {

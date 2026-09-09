@@ -18,6 +18,7 @@ import {
   type FaviconPresetId,
 } from '@nabhicares/section-registry';
 import { purgeExpiredTrashedHospitals } from './purge-trashed';
+import { failStalePublishes } from './fail-stale-publishes';
 
 const prisma = new PrismaClient({
   datasources: {
@@ -595,6 +596,19 @@ async function runTrashPurge() {
 }
 void runTrashPurge();
 setInterval(() => void runTrashPurge(), PURGE_INTERVAL_MS);
+
+// Fail publishes stuck in PENDING|BUILDING|UPLOADING > 20 minutes
+const STALE_PUBLISH_INTERVAL_MS = 15 * 60 * 1000; // every 15m
+async function runStalePublishFail() {
+  try {
+    const n = await failStalePublishes(prisma);
+    if (n > 0) console.log(`[publish-stale] failed ${n} publish(es)`);
+  } catch (err) {
+    console.error('[publish-stale] tick failed', err);
+  }
+}
+void runStalePublishFail();
+setInterval(() => void runStalePublishFail(), STALE_PUBLISH_INTERVAL_MS);
 
 // On Render, bind PORT for the free-web health check. Skip locally (PORT may be HMS).
 const healthPort = process.env.RENDER ? Number(process.env.PORT || 10000) : 0;

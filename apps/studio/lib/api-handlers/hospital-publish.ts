@@ -3,6 +3,7 @@ import { badRequest, json } from '@/lib/api';
 import { requireHospitalAccess, writeAudit } from '@/lib/auth';
 import { publishQueue } from '@nabhicares/queue';
 import { ensureHospitalSectionsMigrated } from '@/lib/migrate-sections';
+import { failStalePublishes } from '@/lib/publish-stale';
 import { randomUUID } from 'crypto';
 
 export async function GET(
@@ -34,6 +35,8 @@ export async function POST(
       'reviewNote required — briefly confirm content accuracy (e.g. doctor credentials checked)',
     );
   }
+
+  await failStalePublishes({ hospitalId: access.hospital.id });
 
   const inFlight = await prisma.publish.findFirst({
     where: {

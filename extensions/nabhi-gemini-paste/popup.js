@@ -7,6 +7,7 @@ const els = {
   token: document.getElementById('token'),
   campaignId: document.getElementById('campaignId'),
   mapsUrl: document.getElementById('mapsUrl'),
+  photoUrls: document.getElementById('photoUrls'),
   json: document.getElementById('json'),
   doPublish: document.getElementById('doPublish'),
   submit: document.getElementById('submit'),
@@ -221,10 +222,14 @@ els.submit.addEventListener('click', async () => {
   };
   if (els.campaignId.value.trim()) body.campaignId = els.campaignId.value.trim();
   if (els.mapsUrl.value.trim()) body.mapsUrl = els.mapsUrl.value.trim();
+  if (els.photoUrls && els.photoUrls.value.trim()) {
+    body.photoUrls = els.photoUrls.value.trim();
+  }
 
   // Clear paste box immediately — operator keeps going
   els.json.value = '';
   els.mapsUrl.value = '';
+  if (els.photoUrls) els.photoUrls.value = '';
   showStatus('Queued — keep adding hospitals. Build finishes in the background (~1 min).', 'ok');
 
   const jobs = await readJobs();

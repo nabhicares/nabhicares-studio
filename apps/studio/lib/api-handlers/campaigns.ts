@@ -29,9 +29,13 @@ export async function POST(req: Request) {
     typeof body.placeLabel === 'string'
       ? body.placeLabel.trim().slice(0, 120) || null
       : null;
+  const whatsappTemplate =
+    typeof body.whatsappTemplate === 'string'
+      ? body.whatsappTemplate.trim().slice(0, 4000) || null
+      : null;
 
   const campaign = await prisma.campaign.create({
-    data: { name, placeLabel },
+    data: { name, placeLabel, whatsappTemplate },
   });
 
   await writeAudit({

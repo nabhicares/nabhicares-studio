@@ -24,6 +24,7 @@ import { SectionRowMenu } from './SectionRowMenu';
 import { PublishChecklist } from './PublishChecklist';
 import { AppointmentRequestsPanel } from './AppointmentRequestsPanel';
 import { SocialMediaPanel } from './SocialMediaPanel';
+import { PhotosPanel } from './PhotosPanel';
 import type { DesignTokens } from '@nabhicares/section-registry';
 
 function heroHrefHint(ctaLabel: string, role: 'primary' | 'secondary'): string {
@@ -47,7 +48,7 @@ export type Page = {
   sections: Section[];
 };
 
-type Tab = 'pages' | 'sections' | 'design' | 'social' | 'requests' | 'publish';
+type Tab = 'pages' | 'sections' | 'design' | 'photos' | 'social' | 'requests' | 'publish';
 
 function ContentForm({
   fields,
@@ -583,6 +584,7 @@ export function StudioEditor({
             {railBtn('pages', 'description', 'Pages')}
             {railBtn('sections', 'layers', 'Sections')}
             {railBtn('design', 'palette', 'Design')}
+            {railBtn('photos', 'photo_library', 'Photos')}
             {railBtn('social', 'share', 'Social')}
             {railBtn('requests', 'event_available', 'Requests')}
             {railBtn('publish', 'cloud_upload', 'Publish')}
@@ -895,6 +897,40 @@ export function StudioEditor({
             <div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain bg-surface">
               <AppointmentRequestsPanel hospitalId={hospitalId} />
             </div>
+          ) : tab === 'photos' ? (
+            <div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain bg-surface">
+              <PhotosPanel
+                hospitalId={hospitalId}
+                onAssigned={() => {
+                  void (async () => {
+                    const res = await apiFetch(`/api/hospitals/${hospitalId}`);
+                    if (!res.ok) return;
+                    const full = await res.json();
+                    if (!Array.isArray(full.pages)) return;
+                    setPages(
+                      full.pages.map(
+                        (p: {
+                          id: string;
+                          slug: string;
+                          sections: Section[];
+                        }) => ({
+                          id: p.id,
+                          slug: p.slug,
+                          sections: p.sections.map((s) => ({
+                            id: s.id,
+                            order: s.order,
+                            enabled: s.enabled,
+                            contentSchemaVersion: s.contentSchemaVersion,
+                            content: (s.content ?? {}) as Record<string, unknown>,
+                            template: s.template,
+                          })),
+                        }),
+                      ),
+                    );
+                  })();
+                }}
+              />
+            </div>
           ) : tab === 'social' ? (
             <div className="flex-1 min-h-0 w-full overflow-y-auto overscroll-contain bg-surface">
               <SocialMediaPanel
@@ -995,7 +1031,7 @@ export function StudioEditor({
               onTokensChange={setDesignTokens}
             />
           </aside>
-        ) : tab === 'requests' || tab === 'publish' || tab === 'social' ? null : selected ? (
+        ) : tab === 'requests' || tab === 'publish' || tab === 'social' || tab === 'photos' ? null : selected ? (
           <aside className="w-80 bg-surface-container-lowest border-l border-outline-variant flex flex-col z-40 shrink-0">
             <div className="flex border-b border-outline-variant">
               {(

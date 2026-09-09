@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Nabhi Gemini Paste",
-  "version": "1.1.0",
-  "description": "Paste Gemini hospital JSON into Nabhi Studio — queue demos without waiting for publish.",
+  "version": "1.2.0",
+  "description": "Paste Gemini hospital JSON into Nabhi Studio — queue demos, optional photo URLs for polish.",
   "action": {
     "default_title": "Nabhi Gemini Paste",
     "default_popup": "popup.html"

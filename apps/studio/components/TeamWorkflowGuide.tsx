@@ -13,7 +13,7 @@ export function TeamWorkflowGuide() {
   const steps: { title: string; body: string }[] = [
     {
       title: 'Install the Chrome extension',
-      body: 'Download the zip, unzip it, open chrome://extensions, turn on Developer mode, then Load unpacked and pick the unzipped folder. Re-download after updates (v1.1+).',
+      body: 'Download the zip, unzip it, open chrome://extensions, turn on Developer mode, then Load unpacked and pick the unzipped folder. Re-download after updates (v1.2+).',
     },
     {
       title: 'Get your token',
@@ -25,7 +25,7 @@ export function TeamWorkflowGuide() {
     },
     {
       title: 'Polish in Studio',
-      body: 'Open the site → fix copy, upload & crop photos (hero 16:9, doctors 3:4), check contact phone/address. Don’t invent doctor credentials.',
+      body: 'After create, open Photos to pick hero/OG from candidates (or upload & crop). Fix copy, check contact phone/address. Don’t invent doctor credentials.',
     },
     {
       title: 'SEO & share on WhatsApp',

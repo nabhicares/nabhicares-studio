@@ -58,6 +58,8 @@ export type CreateHospitalOpts = {
   campaignId?: string | null;
   mapsUrl?: string | null;
   notes?: string | null;
+  /** HTTPS image URLs for later polish (Photos rail) */
+  photoCandidates?: string[] | null;
   /** Defaults to DEMO with seoIndex false */
   pipelineStatus?: 'DEMO' | 'ACCEPTED' | 'DECLINED' | 'TRASHED';
   seoIndex?: boolean;
@@ -87,6 +89,18 @@ export async function createHospitalWithStarter(opts: CreateHospitalOpts) {
       ? opts.seoIndex
       : pipelineStatus === 'ACCEPTED';
 
+  const photoCandidates = Array.isArray(opts.photoCandidates)
+    ? [
+        ...new Set(
+          opts.photoCandidates
+            .filter((u): u is string => typeof u === 'string')
+            .map((u) => u.trim())
+            .filter((u) => /^https:\/\//i.test(u))
+            .map((u) => u.slice(0, 500)),
+        ),
+      ].slice(0, 40)
+    : [];
+
   return prisma.hospital.create({
     data: {
       name,
@@ -96,6 +110,7 @@ export async function createHospitalWithStarter(opts: CreateHospitalOpts) {
       campaignId: opts.campaignId || null,
       mapsUrl: opts.mapsUrl?.trim() || null,
       notes: opts.notes?.trim() || null,
+      photoCandidates: photoCandidates.length ? photoCandidates : undefined,
       designSystem: {
         create: { tokens: DEFAULT_DESIGN_TOKENS },
       },

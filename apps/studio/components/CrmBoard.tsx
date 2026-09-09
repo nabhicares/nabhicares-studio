@@ -10,6 +10,7 @@ type Campaign = {
   id: string;
   name: string;
   placeLabel: string | null;
+  whatsappTemplate?: string | null;
   _count?: { hospitals: number };
 };
 
@@ -40,6 +41,9 @@ export function CrmBoard() {
   const [error, setError] = useState<string | null>(null);
   const [newCampaignName, setNewCampaignName] = useState('');
   const [newPlace, setNewPlace] = useState('');
+  const [newWaTemplate, setNewWaTemplate] = useState('');
+  const [editTemplateId, setEditTemplateId] = useState<string | null>(null);
+  const [editTemplateText, setEditTemplateText] = useState('');
   const [extToken, setExtToken] = useState<string | null>(null);
   const [tokens, setTokens] = useState<
     { id: string; label: string; prefix: string; createdAt: string }[]
@@ -93,6 +97,7 @@ export function CrmBoard() {
       body: JSON.stringify({
         name: newCampaignName.trim(),
         placeLabel: newPlace.trim() || null,
+        whatsappTemplate: newWaTemplate.trim() || null,
       }),
     });
     setBusy(null);
@@ -102,6 +107,25 @@ export function CrmBoard() {
     }
     setNewCampaignName('');
     setNewPlace('');
+    setNewWaTemplate('');
+    await load();
+  }
+
+  async function saveCampaignTemplate(id: string) {
+    setBusy(`wa:${id}`);
+    const res = await apiFetch(`/api/campaigns/${id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        whatsappTemplate: editTemplateText.trim() || null,
+      }),
+    });
+    setBusy(null);
+    if (!res.ok) {
+      setError((await res.json().catch(() => ({}))).error || 'Save template failed');
+      return;
+    }
+    setEditTemplateId(null);
     await load();
   }
 
@@ -193,25 +217,72 @@ export function CrmBoard() {
             Add campaign
           </button>
         </div>
-        <ul className="flex flex-wrap gap-sm list-none m-0 p-0">
+        <textarea
+          className="w-full mb-md rounded-md border border-outline-variant px-sm py-xs font-inter text-body-sm min-h-[72px]"
+          placeholder="Optional WhatsApp template — {{name}} {{liveUrl}} {{pathUrl}}"
+          value={newWaTemplate}
+          onChange={(e) => setNewWaTemplate(e.target.value)}
+        />
+        <ul className="flex flex-col gap-sm list-none m-0 p-0">
           {campaigns.map((c) => (
             <li
               key={c.id}
               className="rounded-lg border border-outline-variant px-md py-sm font-inter text-label-sm"
             >
-              <strong>{c.name}</strong>
-              {c.placeLabel ? ` · ${c.placeLabel}` : ''}
-              {typeof c._count?.hospitals === 'number'
-                ? ` · ${c._count.hospitals} sites`
-                : ''}
-              <a
-                className="ml-sm text-primary"
-                href={`/api/campaigns/${c.id}/demo-pack`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                QR pack
-              </a>
+              <div className="flex flex-wrap items-center gap-sm">
+                <strong>{c.name}</strong>
+                {c.placeLabel ? ` · ${c.placeLabel}` : ''}
+                {typeof c._count?.hospitals === 'number'
+                  ? ` · ${c._count.hospitals} sites`
+                  : ''}
+                <a
+                  className="text-primary"
+                  href={`/api/campaigns/${c.id}/demo-pack`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  QR pack
+                </a>
+                <button
+                  type="button"
+                  className="btn-ghost text-label-sm py-xs px-sm"
+                  onClick={() => {
+                    setEditTemplateId(editTemplateId === c.id ? null : c.id);
+                    setEditTemplateText(c.whatsappTemplate || '');
+                  }}
+                >
+                  WhatsApp template
+                </button>
+              </div>
+              {editTemplateId === c.id ? (
+                <div className="mt-sm flex flex-col gap-xs">
+                  <textarea
+                    className="w-full rounded-md border border-outline-variant px-sm py-xs font-inter text-body-sm min-h-[100px]"
+                    placeholder="Leave blank for default Nabhi Labs script. Placeholders: {{name}} {{liveUrl}} {{pathUrl}}"
+                    value={editTemplateText}
+                    onChange={(e) => setEditTemplateText(e.target.value)}
+                  />
+                  <div className="flex gap-xs">
+                    <button
+                      type="button"
+                      className="btn-primary px-md py-xs"
+                      disabled={!!busy}
+                      onClick={() => void saveCampaignTemplate(c.id)}
+                    >
+                      Save template
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-ghost px-md py-xs"
+                      onClick={() => setEditTemplateId(null)}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              ) : c.whatsappTemplate ? (
+                <p className="m-0 mt-xs text-outline line-clamp-2">{c.whatsappTemplate}</p>
+              ) : null}
             </li>
           ))}
         </ul>

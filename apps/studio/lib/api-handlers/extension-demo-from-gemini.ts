@@ -9,7 +9,7 @@ import { liveSiteUrl, pathStyleLiveUrl } from '@/lib/cdn';
 
 /**
  * POST /api/extension/demo-from-gemini
- * Body: { json, campaignId?, mapsUrl?, notes?, publish?, reviewNote? }
+ * Body: { json, campaignId?, mapsUrl?, notes?, photoUrls?, publish?, reviewNote? }
  * Auth: cookie or Bearer nabxt_…
  */
 export async function POST(req: Request) {
@@ -44,6 +44,22 @@ export async function POST(req: Request) {
     typeof body.notes === 'string' ? body.notes.trim().slice(0, 2000) : null;
   const doPublish = body.publish !== false;
 
+  let photoCandidates: string[] = [];
+  if (typeof body.photoUrls === 'string') {
+    photoCandidates = body.photoUrls
+      .split(/[\n,\s]+/)
+      .map((s: string) => s.trim())
+      .filter((u: string) => /^https:\/\//i.test(u));
+  } else if (Array.isArray(body.photoUrls)) {
+    photoCandidates = body.photoUrls.filter(
+      (u: unknown): u is string => typeof u === 'string' && /^https:\/\//i.test(u.trim()),
+    );
+  } else if (Array.isArray(body.photoCandidates)) {
+    photoCandidates = body.photoCandidates.filter(
+      (u: unknown): u is string => typeof u === 'string' && /^https:\/\//i.test(u.trim()),
+    );
+  }
+
   let hospital;
   try {
     hospital = await createHospitalWithStarter({
@@ -53,6 +69,7 @@ export async function POST(req: Request) {
       campaignId,
       mapsUrl,
       notes,
+      photoCandidates,
       pipelineStatus: 'DEMO',
       seoIndex: false,
     });

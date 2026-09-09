@@ -32,7 +32,11 @@ export async function PATCH(
   if ('error' in auth) return auth.error;
 
   const body = await req.json().catch(() => ({}));
-  const data: { name?: string; placeLabel?: string | null } = {};
+  const data: {
+    name?: string;
+    placeLabel?: string | null;
+    whatsappTemplate?: string | null;
+  } = {};
   if (typeof body.name === 'string' && body.name.trim()) {
     data.name = body.name.trim().slice(0, 120);
   }
@@ -40,8 +44,16 @@ export async function PATCH(
   else if (typeof body.placeLabel === 'string') {
     data.placeLabel = body.placeLabel.trim().slice(0, 120) || null;
   }
-  if (!data.name && data.placeLabel === undefined) {
-    return badRequest('name or placeLabel required');
+  if (body.whatsappTemplate === null) data.whatsappTemplate = null;
+  else if (typeof body.whatsappTemplate === 'string') {
+    data.whatsappTemplate = body.whatsappTemplate.trim().slice(0, 4000) || null;
+  }
+  if (
+    !data.name &&
+    data.placeLabel === undefined &&
+    data.whatsappTemplate === undefined
+  ) {
+    return badRequest('name, placeLabel, or whatsappTemplate required');
   }
 
   const campaign = await prisma.campaign.update({

@@ -24,6 +24,7 @@ export async function GET(
   const hospital = await prisma.hospital.findUnique({
     where: { id: access.hospital.id },
     include: {
+      campaign: true,
       pages: {
         where: { slug: { in: ['contact', 'home'] } },
         include: {
@@ -54,6 +55,7 @@ export async function GET(
     hospitalName: hospital.name,
     liveUrl,
     pathUrl,
+    template: hospital.campaign?.whatsappTemplate,
   });
 
   return json({
@@ -64,6 +66,7 @@ export async function GET(
     liveUrl,
     pathUrl,
     message,
+    whatsappTemplate: hospital.campaign?.whatsappTemplate ?? null,
     shareCardUrl: `/api/hospitals/${hospital.id}/share-card`,
   });
 }

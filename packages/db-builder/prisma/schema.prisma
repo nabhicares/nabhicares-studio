@@ -26,10 +26,12 @@ enum PipelineStatus {
 
 /// Map-route / place grouping for field demo campaigns (~30 hospitals each).
 model Campaign {
-  id         String   @id @default(uuid())
-  name       String
-  placeLabel String?
-  createdAt  DateTime @default(now())
+  id               String   @id @default(uuid())
+  name             String
+  placeLabel       String?
+  /// WhatsApp demo message; placeholders {{name}} {{liveUrl}} {{pathUrl}}
+  whatsappTemplate String?
+  createdAt        DateTime @default(now())
 
   hospitals Hospital[]
 }
@@ -55,6 +57,8 @@ model Hospital {
   mapsUrl        String?
   notes          String?
   contactedAt    DateTime?
+  /// Candidate image URLs for polish (paste/upload); pick hero/about/OG later
+  photoCandidates Json?
   createdAt   DateTime @default(now())
 
   pages               Page[]
