@@ -11,6 +11,7 @@ const nextConfig = {
       '/api/**/*': [
         './../../packages/db-builder/src/generated/client/**/*',
         './public/fonts/**/*',
+        './lib/fonts/**/*',
       ],
     },
   },
