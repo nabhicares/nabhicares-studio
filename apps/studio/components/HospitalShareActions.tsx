@@ -127,6 +127,23 @@ export function HospitalShareActions({
     }
   }
 
+  async function onCopyMessage() {
+    setBusy(true);
+    setHint('');
+    try {
+      const info = await loadInfo();
+      if (!info) return;
+      try {
+        await navigator.clipboard.writeText(info.message);
+        setHint('WhatsApp message copied');
+      } catch {
+        setHint('Could not copy — select text from Edit instead');
+      }
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function saveMessage() {
     setBusy(true);
     setHint('');
@@ -153,6 +170,15 @@ export function HospitalShareActions({
   return (
     <div className="flex flex-col items-end gap-xs">
       <div className="flex items-center gap-xs">
+        <button
+          type="button"
+          className="btn-ghost px-sm py-xs font-inter text-label-sm"
+          title="Copy WhatsApp message"
+          disabled={busy}
+          onClick={() => void onCopyMessage()}
+        >
+          <span className="material-symbols-outlined text-[18px] align-middle">content_copy</span>
+        </button>
         <button
           type="button"
           className="btn-ghost px-sm py-xs font-inter text-label-sm"
@@ -198,6 +224,19 @@ export function HospitalShareActions({
             onChange={(e) => setDraft(e.target.value)}
           />
           <div className="flex gap-xs justify-end">
+            <button
+              type="button"
+              className="btn-ghost text-label-sm py-xs px-sm"
+              disabled={busy}
+              onClick={() => {
+                void navigator.clipboard.writeText(draft).then(
+                  () => setHint('Draft copied'),
+                  () => setHint('Could not copy'),
+                );
+              }}
+            >
+              Copy
+            </button>
             <button
               type="button"
               className="btn-ghost text-label-sm py-xs px-sm"
