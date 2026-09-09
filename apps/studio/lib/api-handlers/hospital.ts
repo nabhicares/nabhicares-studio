@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/db';
 import { badRequest, json, notFound } from '@/lib/api';
 import { requireHospitalAccess, writeAudit } from '@/lib/auth';
-import { purgeHospitalStorage, setCustomDomainMapping } from '@nabhicares/snapshot-store';
+import { setCustomDomainMapping } from '@nabhicares/snapshot-store';
 import { ensureHospitalSectionsMigrated } from '@/lib/migrate-sections';
 
 function normalizeCustomDomain(input: string): string | null {
@@ -174,43 +174,22 @@ export async function PATCH(
 
 /** Delete hospital, builder rows, and all MinIO objects for the slug. */
 export async function DELETE(
-  _req: Request,
+  req: Request,
   { params }: { params: { hospitalId: string } },
 ) {
-  const access = await requireHospitalAccess(params.hospitalId, 'ADMIN');
+  const access = await requireHospitalAccess(params.hospitalId, 'ADMIN', req);
   if ('error' in access) return access.error;
   const hospital = access.hospital;
-  const slug = hospital.slug;
 
-  try {
-    await setCustomDomainMapping(slug, null);
-  } catch (err) {
-    console.error('[hospital.delete] domain map clear failed', err);
-  }
-
-  await prisma.section.deleteMany({
-    where: { page: { hospitalId: hospital.id } },
-  });
-  await prisma.page.deleteMany({ where: { hospitalId: hospital.id } });
-  await prisma.publish.deleteMany({ where: { hospitalId: hospital.id } });
-  await prisma.designSystem.deleteMany({ where: { hospitalId: hospital.id } });
-  await prisma.hospitalMembership.deleteMany({ where: { hospitalId: hospital.id } });
-  await prisma.hospital.delete({ where: { id: hospital.id } });
-
-  // ponytail: queue job purge deferred — orphaned jobs fail when hospital missing
-  let objectsDeleted = 0;
-  try {
-    objectsDeleted = await purgeHospitalStorage(slug);
-  } catch (err) {
-    console.error('[hospital.delete] MinIO purge failed', err);
-  }
+  const { hardDeleteHospital } = await import('@/lib/hospital-lifecycle');
+  const result = await hardDeleteHospital(hospital.id);
 
   await writeAudit({
     actorId: access.user.id,
     hospitalId: hospital.id,
     action: 'hospital.delete',
-    meta: { slug, name: hospital.name, objectsDeleted },
+    meta: { slug: result.slug, name: result.name, objectsDeleted: result.objectsDeleted },
   });
 
-  return json({ ok: true, id: hospital.id, objectsDeleted });
+  return json({ ok: true, id: hospital.id, objectsDeleted: result.objectsDeleted });
 }

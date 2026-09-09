@@ -11,11 +11,11 @@ export function TopNav({
   active,
   user,
 }: {
-  active: 'dashboard' | 'hospitals';
+  active: 'dashboard' | 'hospitals' | 'crm';
   user?: NavUser | null;
 }) {
   const router = useRouter();
-  const link = (id: 'dashboard' | 'hospitals', href: string, label: string) => (
+  const link = (id: 'dashboard' | 'hospitals' | 'crm', href: string, label: string) => (
     <Link
       href={href}
       className={
@@ -44,6 +44,7 @@ export function TopNav({
           <nav className="hidden md:flex items-center gap-md">
             {link('dashboard', '/dashboard', 'Dashboard')}
             {link('hospitals', '/', 'Hospitals')}
+            {link('crm', '/crm', 'CRM')}
           </nav>
         </div>
         <div className="flex items-center gap-md">

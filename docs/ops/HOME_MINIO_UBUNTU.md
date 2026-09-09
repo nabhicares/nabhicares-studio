@@ -157,6 +157,10 @@ You should see something like: `Publish worker listening on queue "publish-v2"..
 6. Confirm live site / CDN serves the new snapshot
 7. Discard any old temporary `trycloudflare.com` bookmarks and env values
 
+## Field demos (~120 sites)
+
+See [FIELD_DEMO_DAY.md](./FIELD_DEMO_DAY.md) for CRM + Chrome Gemini-paste extension checklist. Keep this permanent tunnel — demos enqueue into the same MinIO bucket and `publish-v2` worker.
+
 ## Notes
 
 - Volume `nabhi_minio_data` keeps objects across container restarts. Avoid `docker compose down -v` unless you intend to wipe.

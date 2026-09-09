@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "Nabhi Gemini Paste",
+  "version": "1.0.0",
+  "description": "Paste Gemini hospital JSON into Nabhi Studio — create, import, and publish a demo site in one click.",
+  "action": {
+    "default_title": "Nabhi Gemini Paste",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://studio.nabhilabs.info/*",
+    "http://localhost:3000/*",
+    "https://*.nabhilabs.info/*"
+  ]
+}

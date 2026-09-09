@@ -8,6 +8,7 @@ import {
   CreateBucketCommand,
   PutBucketPolicyCommand,
   DeleteObjectsCommand,
+  DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
 
 const BUCKET = process.env.SNAPSHOT_BUCKET || 'nabhicares-sites';
@@ -243,6 +244,25 @@ export async function readLivePublishId(hospitalKey: string): Promise<string | n
     return id || null;
   } catch {
     return null;
+  }
+}
+
+/** Soft-unpublish: remove LIVE pointer so CDN stops serving the site (versions kept). */
+export async function clearLivePointer(hospitalKey: string): Promise<void> {
+  try {
+    await s3.send(
+      new DeleteObjectCommand({
+        Bucket: BUCKET,
+        Key: livePointerKey(hospitalKey),
+      }),
+    );
+  } catch (err) {
+    console.error('[clearLivePointer] failed', hospitalKey, err);
+  }
+  try {
+    await purgeCdnForHospital(hospitalKey);
+  } catch (err) {
+    console.error('[clearLivePointer] cdn purge failed', hospitalKey, err);
   }
 }
 

@@ -17,6 +17,7 @@ import {
   type DesignTokens,
   type FaviconPresetId,
 } from '@nabhicares/section-registry';
+import { purgeExpiredTrashedHospitals } from './purge-trashed';
 
 const prisma = new PrismaClient({
   datasources: {
@@ -581,6 +582,19 @@ console.log(`[worker] pid=${process.pid} cwd=${process.cwd()}`);
 console.log(
   `[worker] SNAPSHOT_STORE_ENDPOINT=${process.env.SNAPSHOT_STORE_ENDPOINT ?? '(unset)'}`,
 );
+
+// Daily soft-delete retention: TRASHED hospitals older than 30 days → hard delete
+const PURGE_INTERVAL_MS = 6 * 60 * 60 * 1000; // every 6h
+async function runTrashPurge() {
+  try {
+    const n = await purgeExpiredTrashedHospitals(prisma);
+    if (n > 0) console.log(`[purge-trashed] removed ${n} hospital(s)`);
+  } catch (err) {
+    console.error('[purge-trashed] tick failed', err);
+  }
+}
+void runTrashPurge();
+setInterval(() => void runTrashPurge(), PURGE_INTERVAL_MS);
 
 // On Render, bind PORT for the free-web health check. Skip locally (PORT may be HMS).
 const healthPort = process.env.RENDER ? Number(process.env.PORT || 10000) : 0;

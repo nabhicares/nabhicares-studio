@@ -12,9 +12,12 @@ export default async function HomePage() {
   if (!user) redirect('/login');
 
   const hospitals = await prisma.hospital.findMany({
-    where: user.isSuperAdmin
-      ? undefined
-      : { memberships: { some: { userId: user.id } } },
+    where: {
+      pipelineStatus: { not: 'TRASHED' },
+      ...(user.isSuperAdmin
+        ? {}
+        : { memberships: { some: { userId: user.id } } }),
+    },
     orderBy: { name: 'asc' },
     include: {
       _count: { select: { pages: true } },
@@ -32,6 +35,10 @@ export default async function HomePage() {
             <h1 className="font-outfit text-h2 text-brand-ink tracking-tight">Hospitals</h1>
             <p className="font-inter text-body-sm text-outline mt-xs">
               {hospitals.length} site{hospitals.length === 1 ? '' : 's'}
+              {' · '}
+              <Link href="/crm" className="text-primary">
+                CRM / field demos
+              </Link>
             </p>
           </div>
           <CreateHospitalButton />

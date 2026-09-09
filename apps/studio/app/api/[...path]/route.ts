@@ -41,6 +41,36 @@ async function dispatch(
     return call(import('@/lib/api-handlers/auth-me'), method);
   }
 
+  if (a === 'extension' && b === 'tokens' && c && !d) {
+    return call(import('@/lib/api-handlers/extension-token-revoke'), method, {
+      tokenId: c,
+    });
+  }
+  if (a === 'extension' && b === 'tokens' && !c) {
+    return call(import('@/lib/api-handlers/extension-token'), method);
+  }
+  if (a === 'extension' && b === 'demo-from-gemini' && !c) {
+    return call(import('@/lib/api-handlers/extension-demo-from-gemini'), method);
+  }
+
+  if (a === 'campaigns' && b && c === 'demo-pack' && !d) {
+    return call(import('@/lib/api-handlers/campaign-demo-pack'), method, {
+      campaignId: b,
+    });
+  }
+  if (a === 'campaigns' && b && !c) {
+    return call(import('@/lib/api-handlers/campaign'), method, {
+      campaignId: b,
+    });
+  }
+  if (a === 'campaigns' && !b) {
+    return call(import('@/lib/api-handlers/campaigns'), method);
+  }
+
+  if (a === 'crm' && b === 'purge-trashed' && !c) {
+    return call(import('@/lib/api-handlers/crm-purge-trashed'), method);
+  }
+
   if (a === 'hospitals' && !b) {
     return call(import('@/lib/api-handlers/hospitals'), method);
   }
@@ -84,6 +114,16 @@ async function dispatch(
     }
     if (c === 'import-bundle' && !d) {
       return call(import('@/lib/api-handlers/hospital-import-bundle'), method, {
+        hospitalId,
+      });
+    }
+    if (c === 'pipeline' && !d) {
+      return call(import('@/lib/api-handlers/hospital-pipeline'), method, {
+        hospitalId,
+      });
+    }
+    if (c === 'qr' && !d) {
+      return call(import('@/lib/api-handlers/hospital-qr'), method, {
         hospitalId,
       });
     }

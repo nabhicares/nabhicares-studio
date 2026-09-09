@@ -1,4 +1,4 @@
-import { createHmac, randomBytes, scryptSync, timingSafeEqual } from 'crypto';
+import { createHmac, createHash, randomBytes, scryptSync, timingSafeEqual } from 'crypto';
 import { cookies } from 'next/headers';
 import { prisma } from '@/lib/db';
 import { forbidden, json, unauthorized } from '@/lib/api';
@@ -105,6 +105,48 @@ export async function bumpSessionVersion(userId: string): Promise<number> {
   return updated.sessionVersion;
 }
 
+export function hashExtensionToken(raw: string): string {
+  return createHash('sha256').update(raw).digest('hex');
+}
+
+/** Create a new extension API token. Returns raw token once. */
+export async function issueExtensionToken(userId: string, label?: string) {
+  const raw = `nabxt_${randomBytes(24).toString('base64url')}`;
+  const tokenHash = hashExtensionToken(raw);
+  const prefix = raw.slice(0, 12);
+  const row = await prisma.extensionToken.create({
+    data: {
+      userId,
+      label: (label || 'Chrome extension').slice(0, 80),
+      tokenHash,
+      prefix,
+    },
+  });
+  return { id: row.id, token: raw, prefix, label: row.label, createdAt: row.createdAt };
+}
+
+export async function getUserFromExtensionToken(
+  raw: string,
+): Promise<SessionUser | null> {
+  if (!raw.startsWith('nabxt_')) return null;
+  const tokenHash = hashExtensionToken(raw);
+  const row = await prisma.extensionToken.findUnique({
+    where: { tokenHash },
+    include: { user: true },
+  });
+  if (!row || row.revokedAt) return null;
+  await prisma.extensionToken.update({
+    where: { id: row.id },
+    data: { lastUsedAt: new Date() },
+  });
+  return {
+    id: row.user.id,
+    email: row.user.email,
+    name: row.user.name,
+    isSuperAdmin: row.user.isSuperAdmin,
+  };
+}
+
 export async function getSessionUser(): Promise<SessionUser | null> {
   const token = cookies().get(COOKIE)?.value;
   if (!token) return null;
@@ -121,12 +163,25 @@ export async function getSessionUser(): Promise<SessionUser | null> {
   };
 }
 
+/** Cookie session or Authorization: Bearer nabxt_… */
+export async function getRequestUser(req?: Request): Promise<SessionUser | null> {
+  if (req) {
+    const auth = req.headers.get('authorization');
+    if (auth?.toLowerCase().startsWith('bearer ')) {
+      const raw = auth.slice(7).trim();
+      const fromExt = await getUserFromExtensionToken(raw);
+      if (fromExt) return fromExt;
+    }
+  }
+  return getSessionUser();
+}
+
 export type AuthOk = { user: SessionUser };
 export type AuthFail = { error: Response };
 export type AuthResult = AuthOk | AuthFail;
 
-export async function requireUser(): Promise<AuthResult> {
-  const user = await getSessionUser();
+export async function requireUser(req?: Request): Promise<AuthResult> {
+  const user = await getRequestUser(req);
   if (!user) return { error: unauthorized() };
   return { user };
 }
@@ -139,11 +194,12 @@ export function roleAtLeast(have: MembershipRole, need: MembershipRole) {
 export async function requireHospitalAccess(
   hospitalIdOrSlug: string,
   minRole: MembershipRole = 'EDITOR',
+  req?: Request,
 ): Promise<
   | { user: SessionUser; hospital: { id: string; slug: string; name: string }; role: MembershipRole | 'SUPER' }
   | AuthFail
 > {
-  const auth = await requireUser();
+  const auth = await requireUser(req);
   if ('error' in auth) return auth;
 
   const hospital = await prisma.hospital.findFirst({
@@ -170,13 +226,14 @@ export async function requireHospitalAccess(
 export async function requirePageAccess(
   pageId: string,
   minRole: MembershipRole = 'EDITOR',
+  req?: Request,
 ) {
   const page = await prisma.page.findUnique({
     where: { id: pageId },
     select: { id: true, hospitalId: true },
   });
   if (!page) return { error: json({ error: 'Page not found' }, 404) } as AuthFail;
-  const access = await requireHospitalAccess(page.hospitalId, minRole);
+  const access = await requireHospitalAccess(page.hospitalId, minRole, req);
   if ('error' in access) return access;
   return { ...access, page };
 }
@@ -184,13 +241,14 @@ export async function requirePageAccess(
 export async function requireSectionAccess(
   sectionId: string,
   minRole: MembershipRole = 'EDITOR',
+  req?: Request,
 ) {
   const section = await prisma.section.findUnique({
     where: { id: sectionId },
     select: { id: true, page: { select: { hospitalId: true } } },
   });
   if (!section) return { error: json({ error: 'Section not found' }, 404) } as AuthFail;
-  const access = await requireHospitalAccess(section.page.hospitalId, minRole);
+  const access = await requireHospitalAccess(section.page.hospitalId, minRole, req);
   if ('error' in access) return access;
   return { ...access, section };
 }
