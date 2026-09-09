@@ -5,6 +5,7 @@ import { getSessionUser } from '@/lib/auth';
 import { TopNav } from '@/components/TopNav';
 import { CreateHospitalButton } from '@/components/CreateHospitalButton';
 import { DeleteHospitalButton } from '@/components/DeleteHospitalButton';
+import { TeamWorkflowGuide } from '@/components/TeamWorkflowGuide';
 import { liveSiteUrl } from '@/lib/cdn';
 
 export default async function HomePage() {
@@ -39,15 +40,21 @@ export default async function HomePage() {
               <Link href="/crm" className="text-primary">
                 CRM / field demos
               </Link>
+              {' · '}
+              <a href="#team-guide" className="text-primary">
+                How to use
+              </a>
             </p>
           </div>
           <CreateHospitalButton />
         </div>
 
+        <TeamWorkflowGuide />
+
         {hospitals.length === 0 ? (
           <div className="rounded-xl border border-outline-variant bg-surface-container-lowest px-lg py-xl text-center">
             <p className="font-inter text-body-md text-on-surface-variant mb-md">
-              No hospitals yet. Start with Maps → Gemini onboarding.
+              No hospitals yet. Follow the guide above, or create one manually.
             </p>
             <CreateHospitalButton />
           </div>

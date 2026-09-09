@@ -221,8 +221,8 @@ export function CrmBoard() {
           Chrome extension token
         </h2>
         <p className="font-inter text-label-sm text-outline mb-md">
-          Paste Gemini JSON in the Nabhi extension using a Bearer token. Create one per field
-          laptop; revoke when done.
+          New teammates: see Hospitals → How we build demo sites for install steps. Paste a Bearer
+          token here into the extension (one per laptop). Revoke when done.
         </p>
         {extToken ? (
           <p className="font-mono text-[12px] break-all bg-surface-container p-md rounded-md mb-md">

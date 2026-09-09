@@ -69,16 +69,41 @@ els.copyPrompt.addEventListener('click', async () => {
   }
 });
 
+function normalizeGeminiJson(raw) {
+  let s = String(raw || '')
+    .replace(/^\uFEFF/, '')
+    .trim();
+  const fenced = s.match(/^```(?:json|JSON)?\s*\r?\n?([\s\S]*?)\r?\n?```\s*$/);
+  if (fenced && fenced[1]) s = fenced[1].trim();
+  else if (s.startsWith('```')) {
+    s = s
+      .replace(/^```(?:json|JSON)?\s*\r?\n?/, '')
+      .replace(/\r?\n?```\s*$/, '')
+      .trim();
+  }
+  const brace = s.indexOf('{');
+  const last = s.lastIndexOf('}');
+  if (brace > 0 && last > brace) s = s.slice(brace, last + 1).trim();
+  return s;
+}
+
 els.submit.addEventListener('click', async () => {
   await saveSettings();
   const token = els.token.value.trim();
-  const json = els.json.value.trim();
+  const json = normalizeGeminiJson(els.json.value);
   if (!token) {
     showStatus('Extension token required.', 'err');
     return;
   }
   if (!json) {
     showStatus('Paste Gemini JSON first.', 'err');
+    return;
+  }
+  // Soft check so the user sees a clear error before the network call
+  try {
+    JSON.parse(json);
+  } catch {
+    showStatus('That does not look like valid JSON. Paste only the { … } block from Gemini.', 'err');
     return;
   }
 
@@ -126,7 +151,7 @@ els.submit.addEventListener('click', async () => {
       await navigator.clipboard.writeText(liveUrl);
       showStatus('Live URL copied.', 'ok');
     });
-    showStatus('Done — demo created.', 'ok');
+    showStatus('Done — demo created. Next: open in Studio to polish photos & SEO.', 'ok');
     els.json.value = '';
   } catch (e) {
     showStatus(e instanceof Error ? e.message : 'Request failed', 'err');

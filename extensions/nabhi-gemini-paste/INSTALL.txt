@@ -1,0 +1,6 @@
+﻿Nabhi Gemini Paste — install
+1. Unzip this folder.
+2. Chrome → chrome://extensions → Developer mode ON.
+3. Load unpacked → select this unzipped folder.
+4. Studio (https://studio.nabhilabs.info) → CRM → Issue token → paste into the extension.
+5. Studio URL in the extension: https://studio.nabhilabs.info

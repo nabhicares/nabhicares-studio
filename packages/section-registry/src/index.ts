@@ -708,6 +708,28 @@ export type HospitalBundleImportResult =
     }
   | { ok: false; error: string };
 
+/** Strip Gemini markdown fences / BOM so paste works even when the model wraps JSON. */
+export function normalizeHospitalBundleRaw(raw: string): string {
+  let s = String(raw ?? '').replace(/^\uFEFF/, '').trim();
+  // ```json ... ``` or ``` ... ```
+  const fenced = s.match(/^```(?:json|JSON)?\s*\r?\n?([\s\S]*?)\r?\n?```\s*$/);
+  if (fenced?.[1]) {
+    s = fenced[1].trim();
+  } else if (s.startsWith('```')) {
+    s = s
+      .replace(/^```(?:json|JSON)?\s*\r?\n?/, '')
+      .replace(/\r?\n?```\s*$/, '')
+      .trim();
+  }
+  // Leading prose before first { — common Gemini slip
+  const brace = s.indexOf('{');
+  const last = s.lastIndexOf('}');
+  if (brace > 0 && last > brace) {
+    s = s.slice(brace, last + 1).trim();
+  }
+  return s;
+}
+
 /**
  * Parse a whole-hospital Gemini JSON bundle.
  * Shape: { hospital: {...}, sections: { hero: {...}, ... } }
@@ -715,9 +737,9 @@ export type HospitalBundleImportResult =
 export function importHospitalBundleJson(raw: string): HospitalBundleImportResult {
   let parsed: unknown;
   try {
-    parsed = JSON.parse(raw);
+    parsed = JSON.parse(normalizeHospitalBundleRaw(raw));
   } catch {
-    return { ok: false, error: 'Invalid JSON — check commas and quotes' };
+    return { ok: false, error: 'Invalid JSON — paste only the JSON (no markdown). Check commas and quotes.' };
   }
   if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
     return { ok: false, error: 'JSON must be an object { hospital, sections }' };
