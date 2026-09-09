@@ -1,14 +1,19 @@
 import { existsSync, readFileSync } from 'fs';
 import { join } from 'path';
-import opentype from 'opentype.js';
+import { createRequire } from 'module';
 import QRCode from 'qrcode';
 import sharp from 'sharp';
 import { badRequest } from '@/lib/api';
 import { requireHospitalAccess } from '@/lib/auth';
 import { prisma } from '@/lib/db';
 import { pathStyleLiveUrl } from '@/lib/cdn';
+import type { Font } from 'opentype.js';
 
-type Font = opentype.Font;
+// Prefer Node require — webpack default-import of opentype.js was undefined on Vercel.
+const requireOpentype = createRequire(__filename);
+const opentype = requireOpentype('opentype.js') as {
+  parse: (buffer: ArrayBuffer) => Font;
+};
 
 function loadFontBuffer(filename: string): Buffer {
   const candidates = [
@@ -25,6 +30,9 @@ function loadFontBuffer(filename: string): Buffer {
 }
 
 function parseFont(filename: string): Font {
+  if (typeof opentype.parse !== 'function') {
+    throw new Error('opentype.parse unavailable (module interop)');
+  }
   const buf = loadFontBuffer(filename);
   return opentype.parse(
     buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength),
@@ -148,7 +156,13 @@ export async function GET(
   ${textPath(regular, shortUrl, 48, 900, 14, '#0f1c1a')}
 </svg>`;
 
-  const png = await sharp(Buffer.from(svg)).png().toBuffer();
+  let png: Buffer;
+  try {
+    png = await sharp(Buffer.from(svg)).png().toBuffer();
+  } catch (e) {
+    console.error('[share-card] sharp render failed', e);
+    return badRequest('Share card image render failed');
+  }
 
   return new Response(new Uint8Array(png), {
     headers: {

@@ -14,6 +14,8 @@ const nextConfig = {
         './lib/fonts/**/*',
       ],
     },
+    // Avoid webpack ESM/CJS breakage: opentype.default import was undefined on Vercel.
+    serverComponentsExternalPackages: ['opentype.js', 'sharp'],
   },
   // Must transpile the TS workspace package; do not also mark it external.
   transpilePackages: [
@@ -26,6 +28,11 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     if (isServer) {
       config.plugins = [...config.plugins, new PrismaPlugin()];
+      const externals = config.externals || [];
+      if (Array.isArray(externals)) {
+        externals.push('opentype.js');
+        config.externals = externals;
+      }
     }
     return config;
   },

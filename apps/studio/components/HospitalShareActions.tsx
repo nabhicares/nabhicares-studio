@@ -89,7 +89,8 @@ export function HospitalShareActions({
 
       const res = await apiFetch(`/api/hospitals/${hospitalId}/share-card`);
       if (!res.ok) {
-        setHint('Could not build share card');
+        const data = (await res.json().catch(() => ({}))) as { error?: string };
+        setHint(data.error ?? 'Could not build share card');
         return;
       }
       const blob = await res.blob();
