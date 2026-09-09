@@ -12,7 +12,7 @@ import type { Font } from 'opentype.js';
 // Prefer Node require — webpack default-import of opentype.js was undefined on Vercel.
 const requireOpentype = createRequire(__filename);
 const opentype = requireOpentype('opentype.js') as {
-  parse: (buffer: ArrayBuffer) => Font;
+  parse: (buffer: ArrayBuffer | SharedArrayBuffer) => Font;
 };
 
 function loadFontBuffer(filename: string): Buffer {
