@@ -59,6 +59,8 @@ model Hospital {
   contactedAt    DateTime?
   /// Candidate image URLs for polish (paste/upload); pick hero/about/OG later
   photoCandidates Json?
+  /// Per-hospital WhatsApp outreach (Gemini draft + human edits). Placeholders {{name}} {{liveUrl}} {{pathUrl}}
+  whatsappMessage String?
   createdAt   DateTime @default(now())
 
   pages               Page[]

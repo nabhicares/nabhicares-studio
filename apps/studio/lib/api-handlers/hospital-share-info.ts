@@ -1,6 +1,6 @@
 import { prisma } from '@/lib/db';
-import { json, notFound } from '@/lib/api';
-import { requireHospitalAccess } from '@/lib/auth';
+import { badRequest, json, notFound } from '@/lib/api';
+import { requireHospitalAccess, writeAudit } from '@/lib/auth';
 import { demoWhatsAppMessage, hospitalPublicUrls } from '@/lib/whatsapp-share';
 
 function phoneFromContent(content: unknown): string | null {
@@ -10,19 +10,9 @@ function phoneFromContent(content: unknown): string | null {
   return null;
 }
 
-/**
- * GET /api/hospitals/:hospitalId/share-info
- * Phone (from contact), live URLs, and default WhatsApp message text.
- */
-export async function GET(
-  req: Request,
-  { params }: { params: { hospitalId: string } },
-) {
-  const access = await requireHospitalAccess(params.hospitalId, 'EDITOR', req);
-  if ('error' in access) return access.error;
-
+async function loadSharePayload(hospitalId: string) {
   const hospital = await prisma.hospital.findUnique({
-    where: { id: access.hospital.id },
+    where: { id: hospitalId },
     include: {
       campaign: true,
       pages: {
@@ -36,7 +26,7 @@ export async function GET(
       },
     },
   });
-  if (!hospital) return notFound('Hospital not found');
+  if (!hospital) return null;
 
   let phone: string | null = null;
   const contactPage = hospital.pages.find((p) => p.slug === 'contact');
@@ -51,14 +41,18 @@ export async function GET(
   }
 
   const { liveUrl, pathUrl } = hospitalPublicUrls(hospital.slug, hospital.customDomain);
+  const template =
+    (hospital.whatsappMessage && hospital.whatsappMessage.trim()) ||
+    hospital.campaign?.whatsappTemplate ||
+    null;
   const message = demoWhatsAppMessage({
     hospitalName: hospital.name,
     liveUrl,
     pathUrl,
-    template: hospital.campaign?.whatsappTemplate,
+    template,
   });
 
-  return json({
+  return {
     id: hospital.id,
     name: hospital.name,
     slug: hospital.slug,
@@ -66,7 +60,71 @@ export async function GET(
     liveUrl,
     pathUrl,
     message,
+    whatsappMessage: hospital.whatsappMessage ?? null,
     whatsappTemplate: hospital.campaign?.whatsappTemplate ?? null,
+    messageSource: hospital.whatsappMessage?.trim()
+      ? 'hospital'
+      : hospital.campaign?.whatsappTemplate?.trim()
+        ? 'campaign'
+        : 'default',
     shareCardUrl: `/api/hospitals/${hospital.id}/share-card`,
+  };
+}
+
+/**
+ * GET /api/hospitals/:hospitalId/share-info
+ * Phone (from contact), live URLs, and WhatsApp message (hospital > campaign > default).
+ */
+export async function GET(
+  req: Request,
+  { params }: { params: { hospitalId: string } },
+) {
+  const access = await requireHospitalAccess(params.hospitalId, 'EDITOR', req);
+  if ('error' in access) return access.error;
+
+  const payload = await loadSharePayload(access.hospital.id);
+  if (!payload) return notFound('Hospital not found');
+  return json(payload);
+}
+
+/**
+ * PATCH /api/hospitals/:hospitalId/share-info
+ * Body: { whatsappMessage?: string | null }
+ */
+export async function PATCH(
+  req: Request,
+  { params }: { params: { hospitalId: string } },
+) {
+  const access = await requireHospitalAccess(params.hospitalId, 'EDITOR', req);
+  if ('error' in access) return access.error;
+
+  const body = await req.json().catch(() => ({}));
+  if (body.whatsappMessage === undefined) {
+    return badRequest('whatsappMessage required');
+  }
+
+  let whatsappMessage: string | null = null;
+  if (body.whatsappMessage === null || body.whatsappMessage === '') {
+    whatsappMessage = null;
+  } else if (typeof body.whatsappMessage === 'string') {
+    whatsappMessage = body.whatsappMessage.trim().slice(0, 4000) || null;
+  } else {
+    return badRequest('whatsappMessage must be a string or null');
+  }
+
+  await prisma.hospital.update({
+    where: { id: access.hospital.id },
+    data: { whatsappMessage },
   });
+
+  await writeAudit({
+    actorId: access.user.id,
+    hospitalId: access.hospital.id,
+    action: 'hospital.whatsapp_message',
+    meta: { length: whatsappMessage?.length ?? 0 },
+  });
+
+  const payload = await loadSharePayload(access.hospital.id);
+  if (!payload) return notFound('Hospital not found');
+  return json(payload);
 }

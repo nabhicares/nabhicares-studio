@@ -30,6 +30,7 @@ export async function applyHospitalBundle(
     seoDescription?: string | null;
     ogImage?: string | null;
     ogCardStyle?: string | null;
+    whatsappMessage?: string | null;
   } = {};
   const h = parsed.hospital as HospitalBundleHospital;
   if (h.name) hospitalPatch.name = h.name;
@@ -43,6 +44,9 @@ export async function applyHospitalBundle(
     if (style === 'hero' || style === 'brand' || style === 'custom') {
       hospitalPatch.ogCardStyle = style;
     }
+  }
+  if (parsed.whatsappMessage) {
+    hospitalPatch.whatsappMessage = parsed.whatsappMessage.slice(0, 4000);
   }
 
   if (Object.keys(hospitalPatch).length) {

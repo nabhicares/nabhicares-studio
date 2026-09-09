@@ -9,9 +9,9 @@ export function normalizeWhatsAppDigits(raw: string): string | null {
   return digits;
 }
 
-/** Default Nabhi Labs demo script. Placeholders: {{name}} {{liveUrl}} {{pathUrl}} */
+/** Fallback when no per-hospital message and no campaign template. */
 export const DEFAULT_WHATSAPP_TEMPLATE = [
-  `Hi — this is Nabhi Labs.`,
+  `Hi, this is Nabhi Labs.`,
   ``,
   `We put together a quick demo website for {{name}} so you can see how your hospital can look online.`,
   ``,
@@ -19,9 +19,9 @@ export const DEFAULT_WHATSAPP_TEMPLATE = [
   `{{liveUrl}}`,
   `{{pathBackup}}`,
   ``,
-  `Have a look when you get a moment — happy to adjust anything for you.`,
+  `Have a look when you get a moment. Happy to adjust anything for you.`,
   ``,
-  `— Team Nabhi Labs`,
+  `Team Nabhi Labs`,
 ].join('\n');
 
 function fillTemplate(
@@ -42,7 +42,10 @@ export function demoWhatsAppMessage(opts: {
   hospitalName: string;
   liveUrl: string;
   pathUrl?: string;
-  /** Campaign or custom template; placeholders {{name}} {{liveUrl}} {{pathUrl}} */
+  /**
+   * Priority (caller chooses): hospital.whatsappMessage, then campaign template, then default.
+   * Placeholders: {{name}} {{liveUrl}} {{pathUrl}} {{pathBackup}}
+   */
   template?: string | null;
 }): string {
   const name = opts.hospitalName.trim() || 'your hospital';

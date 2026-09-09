@@ -21,7 +21,7 @@ export function TeamWorkflowGuide() {
     },
     {
       title: 'Maps → Gemini → paste JSON',
-      body: 'Copy Gemini prompt in the extension, paste into Gemini with Maps details, paste JSON back, Create + publish. The box clears right away — keep adding hospitals while builds finish in the background (~1 min each).',
+      body: 'Copy Gemini prompt in the extension, paste into Gemini with Maps details (include rating/reviews if shown). Paste JSON back — it should include whatsappMessage. Create + publish clears the box so you can keep queueing.',
     },
     {
       title: 'Polish in Studio',
@@ -29,7 +29,7 @@ export function TeamWorkflowGuide() {
     },
     {
       title: 'SEO & share on WhatsApp',
-      body: 'Social: share title/description + OG image. On Hospitals, use the chat / QR buttons to open WhatsApp with a demo message and download a share card to attach.',
+      body: 'Gemini should include a personalized whatsappMessage from the Maps listing (rating, no website, area). Review/edit it via the note icon next to chat before you send. Social tab still handles OG image.',
     },
     {
       title: 'CRM status',

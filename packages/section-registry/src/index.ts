@@ -705,6 +705,8 @@ export type HospitalBundleImportResult =
       ok: true;
       hospital: HospitalBundleHospital;
       sections: Record<string, Record<string, unknown>>;
+      /** Personalized WhatsApp outreach from Gemini; placeholders {{liveUrl}} {{pathUrl}} {{name}} */
+      whatsappMessage?: string;
     }
   | { ok: false; error: string };
 
@@ -790,7 +792,12 @@ export function importHospitalBundleJson(raw: string): HospitalBundleImportResul
     return { ok: false, error: 'sections must include at least one section' };
   }
 
-  return { ok: true, hospital, sections };
+  let whatsappMessage: string | undefined;
+  if (typeof root.whatsappMessage === 'string' && root.whatsappMessage.trim()) {
+    whatsappMessage = root.whatsappMessage.trim().slice(0, 4000);
+  }
+
+  return { ok: true, hospital, sections, whatsappMessage };
 }
 
 /** Prompt operators paste into Gemini (Chrome) after opening a Maps listing. */
@@ -809,6 +816,7 @@ Return ONLY valid JSON (no markdown fences, no commentary) matching this exact s
     "ogImage": "https optional share image",
     "ogCardStyle": "hero | brand | custom"
   },
+  "whatsappMessage": "short human WhatsApp note for the hospital owner (see rules below)",
   "sections": {
     "hero": {
       "title": "string",
@@ -862,6 +870,19 @@ Rules (strict):
 - Leave image fields as "" (operator will add URLs in Studio).
 - Include contact.phone, contact.address, contact.hours, contact.mapUrl from Maps when available.
 - Return raw JSON only — no \`\`\`json fences, no commentary before or after.
+
+whatsappMessage rules (required when listing context is available):
+- Write as a real person from Nabhi Labs texting the hospital owner/manager. Warm, specific, not a marketing blast.
+- Mention how you found them (Google Maps / the area or city from the listing).
+- If they have no website (or only a weak/outdated page), say so plainly and why that matters (patients search online and pick places that look clear and reachable).
+- If the listing shows a rating and review count, use the real numbers only. Never invent ratings. If missing, skip numbers.
+- Suggest 1-2 concrete things a simple site helps with (hours, phone, doctors, trust when comparing options).
+- End with the demo link using exactly these placeholders on their own lines when possible:
+  {{liveUrl}}
+  and if useful a backup line with {{pathUrl}}
+- You may also use {{name}} for the hospital name.
+- Length: about 4 to 8 short lines. Plain punctuation only.
+- Do NOT use em dashes or en dashes. Do not write "I hope this finds you well", "leverage", "elevate", "delve", "seamless", or "as an AI". No bullet lists. No hashtags.
 
 Hospital / listing context:
 `;

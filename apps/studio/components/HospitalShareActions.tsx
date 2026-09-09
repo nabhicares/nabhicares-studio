@@ -15,6 +15,8 @@ type ShareInfo = {
   liveUrl: string;
   pathUrl: string;
   message: string;
+  whatsappMessage: string | null;
+  messageSource?: string;
   shareCardUrl: string;
 };
 
@@ -27,6 +29,9 @@ export function HospitalShareActions({
 }) {
   const [busy, setBusy] = useState(false);
   const [hint, setHint] = useState('');
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState('');
+  const [source, setSource] = useState<string | null>(null);
 
   async function loadInfo(): Promise<ShareInfo | null> {
     const res = await apiFetch(`/api/hospitals/${hospitalId}/share-info`);
@@ -107,9 +112,55 @@ export function HospitalShareActions({
     }
   }
 
+  async function openEditor() {
+    setBusy(true);
+    setHint('');
+    try {
+      const info = await loadInfo();
+      if (!info) return;
+      setDraft(info.whatsappMessage || info.message);
+      setSource(info.messageSource || null);
+      setEditing(true);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveMessage() {
+    setBusy(true);
+    setHint('');
+    try {
+      const res = await apiFetch(`/api/hospitals/${hospitalId}/share-info`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ whatsappMessage: draft }),
+      });
+      if (!res.ok) {
+        setHint((await res.json().catch(() => ({}))).error || 'Save failed');
+        return;
+      }
+      const info = (await res.json()) as ShareInfo;
+      setDraft(info.whatsappMessage || info.message);
+      setSource(info.messageSource || 'hospital');
+      setHint('Message saved');
+      setEditing(false);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="flex flex-col items-end gap-xs">
       <div className="flex items-center gap-xs">
+        <button
+          type="button"
+          className="btn-ghost px-sm py-xs font-inter text-label-sm"
+          title="Edit WhatsApp message"
+          disabled={busy}
+          onClick={() => void openEditor()}
+        >
+          <span className="material-symbols-outlined text-[18px] align-middle">edit_note</span>
+        </button>
         <button
           type="button"
           className="btn-ghost px-sm py-xs font-inter text-label-sm"
@@ -130,9 +181,40 @@ export function HospitalShareActions({
         </button>
       </div>
       {hint ? (
-        <span className="font-inter text-[10px] text-outline max-w-[140px] text-right leading-snug">
+        <span className="font-inter text-[10px] text-outline max-w-[180px] text-right leading-snug">
           {hint}
         </span>
+      ) : null}
+      {editing ? (
+        <div className="mt-xs w-[min(100vw-2rem,320px)] rounded-lg border border-outline-variant bg-surface-container-lowest p-sm flex flex-col gap-xs text-left">
+          <p className="font-inter text-[11px] text-outline m-0">
+            WhatsApp message
+            {source ? ` · ${source}` : ''}. Use {'{{liveUrl}}'} {'{{pathUrl}}'} {'{{name}}'}.
+          </p>
+          <textarea
+            className="field-input font-inter text-[12px] min-h-[140px] resize-y"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+          />
+          <div className="flex gap-xs justify-end">
+            <button
+              type="button"
+              className="btn-ghost text-label-sm py-xs px-sm"
+              disabled={busy}
+              onClick={() => setEditing(false)}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="btn-primary text-label-sm py-xs px-sm"
+              disabled={busy}
+              onClick={() => void saveMessage()}
+            >
+              Save
+            </button>
+          </div>
+        </div>
       ) : null}
     </div>
   );

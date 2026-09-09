@@ -110,6 +110,21 @@ describe('contact + hospital bundle', () => {
     assert.equal(typeof r.sections.contact.phone, 'string');
   });
 
+  it('parses top-level whatsappMessage from the bundle', () => {
+    const raw = JSON.stringify({
+      hospital: { name: 'City Care' },
+      whatsappMessage:
+        'Hi, we found City Care on Maps.\n{{liveUrl}}\nTeam Nabhi Labs',
+      sections: {
+        hero: exampleContentForSection('hero'),
+      },
+    });
+    const r = importHospitalBundleJson(raw);
+    assert.equal(r.ok, true);
+    if (!r.ok) return;
+    assert.match(r.whatsappMessage || '', /City Care/);
+  });
+
   it('rejects unknown section keys in the bundle', () => {
     const r = importHospitalBundleJson(
       JSON.stringify({ hospital: {}, sections: { nope: { title: 'x' } } }),
