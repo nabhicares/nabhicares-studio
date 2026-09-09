@@ -1,6 +1,7 @@
-﻿Nabhi Gemini Paste — install
+﻿Nabhi Gemini Paste — install (v1.1+)
 1. Unzip this folder.
 2. Chrome → chrome://extensions → Developer mode ON.
-3. Load unpacked → select this unzipped folder.
+3. Load unpacked → select this unzipped folder (or Reload if updating).
 4. Studio (https://studio.nabhilabs.info) → CRM → Issue token → paste into the extension.
 5. Studio URL in the extension: https://studio.nabhilabs.info
+6. Copy Gemini prompt, paste JSON, Create + publish — the box clears immediately so you can keep adding hospitals while builds run in the background.

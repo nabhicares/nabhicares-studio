@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { apiFetch } from '@/lib/api-client';
 import { liveSiteUrl } from '@/lib/cdn';
+import { HospitalShareActions } from '@/components/HospitalShareActions';
 
 type Campaign = {
   id: string;
@@ -334,6 +335,7 @@ export function CrmBoard() {
                     >
                       QR
                     </a>
+                    <HospitalShareActions hospitalId={h.id} hospitalName={h.name} />
                     <Link
                       href={`/h/${h.slug}`}
                       className="btn-ghost px-sm py-xs text-label-sm"

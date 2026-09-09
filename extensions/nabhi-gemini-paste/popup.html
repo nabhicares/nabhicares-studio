@@ -42,7 +42,7 @@
       padding: 8px 10px;
       background: #fff;
     }
-    textarea { min-height: 140px; resize: vertical; font-family: ui-monospace, monospace; font-size: 11px; }
+    textarea { min-height: 120px; resize: vertical; font-family: ui-monospace, monospace; font-size: 11px; }
     button {
       cursor: pointer;
       background: var(--accent);
@@ -57,15 +57,21 @@
     .msg { font-size: 12px; padding: 8px 10px; border-radius: 8px; background: #fff; border: 1px solid var(--line); }
     .msg.ok { border-color: #9fd4ba; color: var(--ok); }
     .msg.err { border-color: #f0b4ae; color: var(--err); }
-    .result img { width: 140px; height: 140px; display: block; margin: 8px auto; background: #fff; }
-    .result a { word-break: break-all; color: var(--accent); }
+    .jobs { display: flex; flex-direction: column; gap: 6px; max-height: 140px; overflow: auto; }
+    .job {
+      font-size: 11px; padding: 8px; border-radius: 8px; background: #fff;
+      border: 1px solid var(--line);
+    }
+    .job a { color: var(--accent); word-break: break-all; }
+    .job .meta { color: var(--muted); margin-top: 2px; }
     details { font-size: 12px; color: var(--muted); }
+    #clipHelper { position: fixed; left: -9999px; top: 0; }
   </style>
 </head>
 <body>
   <header>
     <h1>Nabhi Gemini Paste</h1>
-    <p>Maps → Gemini JSON → demo on nabhilabs.info</p>
+    <p>Paste JSON → queue demo → keep adding hospitals</p>
   </header>
   <main>
     <div>
@@ -94,19 +100,24 @@
     </div>
     <label style="display:flex;align-items:center;gap:8px;text-transform:none;font-weight:500;color:var(--ink)">
       <input id="doPublish" type="checkbox" checked style="width:auto" />
-      Enqueue publish
+      Enqueue publish (recommended)
     </label>
     <div id="status" hidden class="msg"></div>
-    <div id="result" hidden class="result msg ok"></div>
+    <div>
+      <label>Recent queue</label>
+      <div id="jobs" class="jobs"></div>
+    </div>
     <details>
       <summary>Setup</summary>
       <ol>
         <li>Studio → CRM → Issue token</li>
         <li>Paste token here (saved in this browser)</li>
         <li>Copy Gemini prompt → paste Maps details into Gemini → paste JSON above</li>
+        <li>Create + publish returns in seconds — live build finishes in ~1 min in the background</li>
       </ol>
     </details>
   </main>
+  <textarea id="clipHelper" aria-hidden="true"></textarea>
   <script src="popup.js"></script>
 </body>
 </html>

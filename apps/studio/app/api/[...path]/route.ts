@@ -127,6 +127,16 @@ async function dispatch(
         hospitalId,
       });
     }
+    if (c === 'share-info' && !d) {
+      return call(import('@/lib/api-handlers/hospital-share-info'), method, {
+        hospitalId,
+      });
+    }
+    if (c === 'share-card' && !d) {
+      return call(import('@/lib/api-handlers/hospital-share-card'), method, {
+        hospitalId,
+      });
+    }
     if (c === 'appointment-requests' && d && !p[4]) {
       return call(import('@/lib/api-handlers/hospital-appointment-request'), method, {
         hospitalId,

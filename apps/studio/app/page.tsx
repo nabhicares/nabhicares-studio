@@ -6,7 +6,8 @@ import { TopNav } from '@/components/TopNav';
 import { CreateHospitalButton } from '@/components/CreateHospitalButton';
 import { DeleteHospitalButton } from '@/components/DeleteHospitalButton';
 import { TeamWorkflowGuide } from '@/components/TeamWorkflowGuide';
-import { liveSiteUrl } from '@/lib/cdn';
+import { HospitalShareActions } from '@/components/HospitalShareActions';
+import { liveSiteUrl, pathStyleLiveUrl } from '@/lib/cdn';
 
 export default async function HomePage() {
   const user = await getSessionUser();
@@ -87,6 +88,7 @@ export default async function HomePage() {
                         target="_blank"
                         rel="noreferrer"
                         className="inline-flex items-center gap-xs rounded-md bg-primary-container/60 px-sm py-xs font-inter text-label-sm text-on-primary-container font-semibold"
+                        title={pathStyleLiveUrl(h.slug)}
                       >
                         Live
                         <span className="material-symbols-outlined text-[14px]">open_in_new</span>
@@ -96,6 +98,7 @@ export default async function HomePage() {
                         Draft
                       </span>
                     )}
+                    <HospitalShareActions hospitalId={h.id} hospitalName={h.name} />
                     <Link
                       href={`/h/${h.slug}`}
                       className="btn-ghost px-md py-sm font-inter text-label-sm font-semibold text-primary border-primary/20"

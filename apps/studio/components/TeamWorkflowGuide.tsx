@@ -13,7 +13,7 @@ export function TeamWorkflowGuide() {
   const steps: { title: string; body: string }[] = [
     {
       title: 'Install the Chrome extension',
-      body: 'Download the zip, unzip it, open chrome://extensions, turn on Developer mode, then Load unpacked and pick the unzipped folder.',
+      body: 'Download the zip, unzip it, open chrome://extensions, turn on Developer mode, then Load unpacked and pick the unzipped folder. Re-download after updates (v1.1+).',
     },
     {
       title: 'Get your token',
@@ -21,15 +21,15 @@ export function TeamWorkflowGuide() {
     },
     {
       title: 'Maps → Gemini → paste JSON',
-      body: 'Open the hospital on Google Maps. In the extension click Copy Gemini prompt, paste it into Gemini with the listing details. Copy Gemini’s JSON (only the JSON) into the extension and Create + publish.',
+      body: 'Copy Gemini prompt in the extension, paste into Gemini with Maps details, paste JSON back, Create + publish. The box clears right away — keep adding hospitals while builds finish in the background (~1 min each).',
     },
     {
       title: 'Polish in Studio',
       body: 'Open the site → fix copy, upload & crop photos (hero 16:9, doctors 3:4), check contact phone/address. Don’t invent doctor credentials.',
     },
     {
-      title: 'SEO & share',
-      body: 'In Social: set share title/description (hospital name + city), pick OG image, turn on Allow search engines when ready. Publish again after changes.',
+      title: 'SEO & share on WhatsApp',
+      body: 'Social: share title/description + OG image. On Hospitals, use the chat / QR buttons to open WhatsApp with a demo message and download a share card to attach.',
     },
     {
       title: 'CRM status',
@@ -81,11 +81,23 @@ export function TeamWorkflowGuide() {
         ))}
       </ol>
 
+      <div className="mt-md rounded-lg border border-outline-variant bg-surface-container-low/50 px-md py-sm font-inter text-label-sm text-outline">
+        <p className="m-0 font-semibold text-on-surface">Domains (do this once)</p>
+        <p className="m-0 mt-xs">
+          On Vercel <strong>nabhi-cdn</strong>, keep one Valid domain:{' '}
+          <code className="text-on-surface">*.nabhilabs.info</code>. Do{' '}
+          <strong>not</strong> add each hospital slug by hand. If a subdomain fails, use the
+          backup path URL:{' '}
+          <code className="text-on-surface">https://nabhi-cdn.vercel.app/&#123;slug&#125;/</code>
+          .
+        </p>
+      </div>
+
       <p className="font-inter text-label-sm text-outline mt-md mb-0">
-        Tip: if Gemini wraps JSON in code fences, paste it anyway — Studio strips them. Prefer a
-        block that starts with an opening curly brace. To use a Drive zip instead, set{' '}
-        <code className="text-on-surface">NEXT_PUBLIC_EXTENSION_DOWNLOAD_URL</code> on Vercel to
-        your share link.
+        Tip: if Gemini wraps JSON in code fences, paste it anyway — Studio strips them. Drive zip
+        override: set{' '}
+        <code className="text-on-surface">NEXT_PUBLIC_EXTENSION_DOWNLOAD_URL</code> as a Config
+        (not Secret) on Vercel.
       </p>
     </section>
   );
