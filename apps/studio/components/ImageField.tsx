@@ -1,8 +1,8 @@
 'use client';
 
 import { apiFetch } from '@/lib/api-client';
-
 import { useRef, useState } from 'react';
+import { ImageCropDialog } from '@/components/ImageCropDialog';
 
 function looksLikeImageField(name: string, label: string) {
   const n = name.toLowerCase();
@@ -16,27 +16,54 @@ function looksLikeImageField(name: string, label: string) {
   );
 }
 
+/** Suggest a starting crop ratio from the field name/label. */
+function suggestedAspectId(label: string): string {
+  const l = label.toLowerCase();
+  if (l.includes('doctor') || l.includes('portrait') || l.includes('team')) {
+    return '3:4';
+  }
+  if (l.includes('logo') || l.includes('avatar') || l.includes('icon')) {
+    return '1:1';
+  }
+  if (l.includes('hero') || l.includes('banner') || l.includes('cover')) {
+    return '16:9';
+  }
+  if (l.includes('og') || l.includes('share')) {
+    return '16:9';
+  }
+  return '16:9';
+}
+
 export function ImageField({
   label,
   value,
   hospitalId,
   onChange,
+  aspectHint,
 }: {
   label: string;
   value: string;
   hospitalId: string;
   onChange: (url: string) => void;
+  /** Optional preset id: free | 1:1 | 4:3 | 3:4 | 16:9 | 21:9 | 3:2 */
+  aspectHint?: string;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [cropFileName, setCropFileName] = useState('image.jpg');
 
-  async function onFile(file: File | undefined) {
-    if (!file) return;
+  function revokeCrop() {
+    if (cropSrc?.startsWith('blob:')) URL.revokeObjectURL(cropSrc);
+    setCropSrc(null);
+  }
+
+  async function uploadBlob(blob: Blob, filename: string) {
     setUploading(true);
     setError('');
     const body = new FormData();
-    body.append('file', file);
+    body.append('file', blob, filename);
     try {
       const res = await apiFetch(`/api/hospitals/${hospitalId}/media`, {
         method: 'POST',
@@ -55,6 +82,21 @@ export function ImageField({
     }
   }
 
+  async function onFile(file: File | undefined) {
+    if (!file) return;
+    setError('');
+
+    // Animated GIFs: skip crop (would flatten frames)
+    if (file.type === 'image/gif') {
+      await uploadBlob(file, file.name);
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    setCropFileName(file.name || 'image.jpg');
+    setCropSrc(url);
+  }
+
   return (
     <div className="flex flex-col gap-xs">
       <label className="font-inter text-label-sm text-outline ml-1">{label}</label>
@@ -66,7 +108,7 @@ export function ImageField({
       ) : null}
       <input
         className="field-input"
-        placeholder="https://… or upload"
+        placeholder="https://… or upload & crop"
         value={value}
         onChange={(e) => onChange(e.target.value)}
       />
@@ -77,7 +119,7 @@ export function ImageField({
           disabled={uploading}
           onClick={() => inputRef.current?.click()}
         >
-          {uploading ? 'Uploading…' : 'Upload image'}
+          {uploading ? 'Uploading…' : 'Upload & crop'}
         </button>
         {value ? (
           <button type="button" className="btn-ghost text-error" onClick={() => onChange('')}>
@@ -85,6 +127,9 @@ export function ImageField({
           </button>
         ) : null}
       </div>
+      <p className="font-inter text-[11px] text-outline ml-1">
+        Pick a ratio (16:9, 3:4, 1:1…) and frame the image before it uploads.
+      </p>
       <input
         ref={inputRef}
         type="file"
@@ -96,6 +141,19 @@ export function ImageField({
         }}
       />
       {error ? <p className="font-inter text-label-sm text-error">{error}</p> : null}
+
+      {cropSrc ? (
+        <ImageCropDialog
+          imageSrc={cropSrc}
+          fileName={cropFileName}
+          initialAspectId={aspectHint || suggestedAspectId(label)}
+          onCancel={() => revokeCrop()}
+          onApply={(blob, name) => {
+            revokeCrop();
+            void uploadBlob(blob, name);
+          }}
+        />
+      ) : null}
     </div>
   );
 }
