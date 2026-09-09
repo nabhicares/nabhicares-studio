@@ -6,7 +6,7 @@ import sharp from 'sharp';
 import { badRequest } from '@/lib/api';
 import { requireHospitalAccess } from '@/lib/auth';
 import { prisma } from '@/lib/db';
-import { pathStyleLiveUrl } from '@/lib/cdn';
+import { liveSiteUrl } from '@/lib/cdn';
 import type { Font } from 'opentype.js';
 
 // Prefer Node require — webpack default-import of opentype.js was undefined on Vercel.
@@ -122,8 +122,8 @@ export async function GET(
     return badRequest('Share card fonts unavailable — redeploy Studio');
   }
 
-  // Path URL always works; subdomain HTTPS can fail (ERR_CONNECTION_CLOSED).
-  const cardUrl = pathStyleLiveUrl(hospital.slug);
+  // Prefer custom domain, else {slug}.nabhilabs.info (CDN_ROOT_DOMAIN).
+  const cardUrl = liveSiteUrl(hospital.slug, hospital.customDomain);
   const qrPng = await QRCode.toBuffer(cardUrl, {
     type: 'png',
     margin: 1,
@@ -169,7 +169,7 @@ export async function GET(
       'Content-Type': 'image/png',
       'Cache-Control': 'no-store',
       'Content-Disposition': `inline; filename="${hospital.slug}-nabhi-demo.png"`,
-      'X-Nabhi-Share-Card': 'opentype-paths-v3',
+      'X-Nabhi-Share-Card': 'opentype-paths-v4-subdomain',
     },
   });
 }
