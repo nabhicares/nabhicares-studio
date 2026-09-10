@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { GEMINI_HOSPITAL_BUNDLE_PROMPT } from '@nabhicares/section-registry';
+import { GeminiPromptCopy } from '@/components/GeminiPromptCopy';
 
 const STEPS_CREATE = [
   {
@@ -11,8 +11,9 @@ const STEPS_CREATE = [
   },
   {
     n: '2',
-    title: 'Copy the Gemini prompt',
-    detail: 'Button below → paste into Gemini (Chrome side panel or gemini.google.com).',
+    title: 'Copy a Gemini prompt voice',
+    detail:
+      'Pick Standard / Trust / Local / Services / Reviews below, copy, paste into Gemini (side panel or gemini.google.com). Use a different voice per hospital.',
   },
   {
     n: '3',
@@ -39,8 +40,9 @@ const STEPS_IMPORT = [
   },
   {
     n: '2',
-    title: 'Copy the Gemini prompt',
-    detail: 'Use the button below, then paste into Gemini (side panel or gemini.google.com).',
+    title: 'Copy a Gemini prompt voice',
+    detail:
+      'Use the picker below (rotate voices so demos do not sound identical), then paste into Gemini.',
   },
   {
     n: '3',
@@ -69,14 +71,7 @@ export function GeminiOnboardingGuide({
   defaultOpen?: boolean;
 }) {
   const [guideOpen, setGuideOpen] = useState(defaultOpen);
-  const [copied, setCopied] = useState(false);
   const steps = variant === 'create' ? STEPS_CREATE : STEPS_IMPORT;
-
-  async function copyPrompt() {
-    await navigator.clipboard.writeText(GEMINI_HOSPITAL_BUNDLE_PROMPT);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  }
 
   return (
     <div className="flex flex-col gap-md">
@@ -129,9 +124,7 @@ export function GeminiOnboardingGuide({
         Studio. Always verify clinical claims before publish.
       </p>
 
-      <button type="button" className="btn-ghost text-label-sm self-start" onClick={() => void copyPrompt()}>
-        {copied ? 'Prompt copied' : 'Copy Gemini prompt'}
-      </button>
+      <GeminiPromptCopy />
     </div>
   );
 }

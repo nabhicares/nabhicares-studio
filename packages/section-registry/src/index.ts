@@ -801,99 +801,16 @@ export function importHospitalBundleJson(raw: string): HospitalBundleImportResul
 }
 
 /** Prompt operators paste into Gemini (Chrome) after opening a Maps listing. */
-export const GEMINI_HOSPITAL_BUNDLE_PROMPT = `You are helping build a hospital marketing website for Nabhi Studio.
-
-I am viewing a hospital on Google Maps (or I will paste listing details below). Extract only what you can reasonably infer from the listing / my paste. Do not invent clinical claims, doctor credentials, or fake patient quotes. If unknown, use "" or [].
-
-Return ONLY valid JSON (no markdown fences, no commentary) matching this exact shape:
-
-{
-  "hospital": {
-    "name": "string",
-    "slug": "lowercase-kebab-slug",
-    "seoTitle": "string",
-    "seoDescription": "string under 160 chars",
-    "ogImage": "https optional share image",
-    "ogCardStyle": "hero | brand | custom"
-  },
-  "whatsappMessage": "short human WhatsApp note for the hospital owner (see rules below)",
-  "sections": {
-    "hero": {
-      "title": "string",
-      "body": "string",
-      "ctaPrimary": "string",
-      "ctaSecondary": "string",
-      "image": ""
-    },
-    "about": {
-      "title": "string",
-      "body": "string",
-      "image": "",
-      "highlights": [{ "label": "string", "text": "string" }]
-    },
-    "doctors": {
-      "title": "string",
-      "body": "string",
-      "doctors": [{ "name": "string", "specialty": "string", "bio": "string", "image": "" }]
-    },
-    "services": {
-      "title": "string",
-      "body": "string",
-      "items": [{ "title": "string", "description": "string", "icon": "" }]
-    },
-    "contact": {
-      "title": "string",
-      "body": "string",
-      "phone": "string",
-      "email": "string",
-      "address": "string",
-      "hours": "string (use \\\\n between lines)",
-      "mapUrl": "https://maps.google.com/...",
-      "ctaPrimary": "Get directions"
-    },
-    "faq": {
-      "title": "string",
-      "body": "string",
-      "items": [{ "question": "string", "answer": "string" }]
-    },
-    "testimonials": {
-      "title": "string",
-      "body": "string",
-      "items": [
-        {
-          "quote": "patient words only",
-          "author": "name or initials",
-          "role": "optional e.g. Outpatient",
-          "image": "",
-          "rating": "1-5 as string, optional"
-        }
-      ]
-    }
-  }
-}
-
-Rules (strict):
-- PLAIN TEXT ONLY in every string. Never use HTML or Markdown: no <b>, <br>, <p>, <span>, <div>, &lt;, &gt;, or any other tags. Write "Emergency Care" not "<b>Emergency Care</b>".
-- testimonials.items MUST use only these keys per item: quote, author, role, image, rating. Never use name or text. Prefer "items": [] unless you carefully paraphrase a real public review.
-- Leave image fields as "" (operator will add URLs in Studio).
-- Include contact.phone, contact.address, contact.hours, contact.mapUrl from Maps when available.
-- Return raw JSON only — no \`\`\`json fences, no commentary before or after.
-
-whatsappMessage rules (required when listing context is available):
-- Write as a real person from Nabhi Labs texting the hospital owner/manager. Warm, specific, not a marketing blast.
-- Mention how you found them (Google Maps / the area or city from the listing).
-- If they have no website (or only a weak/outdated page), say so plainly and why that matters (patients search online and pick places that look clear and reachable).
-- If the listing shows a rating and review count, use the real numbers only. Never invent ratings. If missing, skip numbers.
-- Suggest 1-2 concrete things a simple site helps with (hours, phone, doctors, trust when comparing options).
-- End with the demo link using exactly these placeholders on their own lines when possible:
-  {{liveUrl}}
-  and if useful a backup line with {{pathUrl}}
-- You may also use {{name}} for the hospital name.
-- Length: about 4 to 8 short lines. Plain punctuation only.
-- Do NOT use em dashes or en dashes. Do not write "I hope this finds you well", "leverage", "elevate", "delve", "seamless", or "as an AI". No bullet lists. No hashtags.
-
-Hospital / listing context:
-`;
+export {
+  GEMINI_HOSPITAL_BUNDLE_PROMPT,
+  GEMINI_HOSPITAL_BUNDLE_PROMPTS,
+  DEFAULT_GEMINI_HOSPITAL_BUNDLE_PROMPT_ID,
+  getGeminiHospitalBundlePrompt,
+  nextGeminiHospitalBundlePromptId,
+  listGeminiHospitalBundlePromptMeta,
+  type GeminiHospitalBundlePromptId,
+  type GeminiHospitalBundlePromptDef,
+} from './gemini-prompts';
 
 export {
   CONTENT_SCHEMA_VERSION,

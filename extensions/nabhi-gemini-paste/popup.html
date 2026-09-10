@@ -95,6 +95,12 @@
       <textarea id="photoUrls" style="min-height:64px" placeholder="One https:// image URL per line — saved for Photos polish in Studio"></textarea>
     </div>
     <div>
+      <label for="promptVoice">Gemini prompt voice</label>
+      <select id="promptVoice">
+        <option value="standard">Standard — balanced</option>
+      </select>
+    </div>
+    <div>
       <label for="json">Gemini JSON</label>
       <textarea id="json" placeholder='{ "hospital": { "name": "…" }, "sections": { … } }'></textarea>
     </div>
@@ -116,7 +122,7 @@
       <ol>
         <li>Studio → CRM → Issue token</li>
         <li>Paste token here (saved in this browser)</li>
-        <li>Copy Gemini prompt → paste Maps details into Gemini → paste JSON above</li>
+        <li>Copy Gemini prompt (pick a voice; it rotates after copy) → paste Maps into Gemini → paste JSON above</li>
         <li>Create + publish returns in seconds — live build finishes in ~1 min in the background</li>
       </ol>
     </details>

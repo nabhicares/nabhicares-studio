@@ -1,13 +1,18 @@
 import { prisma } from '@/lib/db';
-import { badRequest, json } from '@/lib/api';
+import { json } from '@/lib/api';
 import {
   issueExtensionToken,
   requireUser,
   writeAudit,
 } from '@/lib/auth';
-import { GEMINI_HOSPITAL_BUNDLE_PROMPT } from '@nabhicares/section-registry';
+import {
+  DEFAULT_GEMINI_HOSPITAL_BUNDLE_PROMPT_ID,
+  GEMINI_HOSPITAL_BUNDLE_PROMPT,
+  GEMINI_HOSPITAL_BUNDLE_PROMPTS,
+  listGeminiHospitalBundlePromptMeta,
+} from '@nabhicares/section-registry';
 
-/** GET — list tokens + Gemini prompt for extension setup */
+/** GET — list tokens + Gemini prompts for extension setup */
 export async function GET(req: Request) {
   const auth = await requireUser(req);
   if ('error' in auth) return auth.error;
@@ -27,6 +32,14 @@ export async function GET(req: Request) {
   return json({
     tokens,
     geminiPrompt: GEMINI_HOSPITAL_BUNDLE_PROMPT,
+    geminiPromptId: DEFAULT_GEMINI_HOSPITAL_BUNDLE_PROMPT_ID,
+    geminiPrompts: GEMINI_HOSPITAL_BUNDLE_PROMPTS.map(({ id, label, description, prompt }) => ({
+      id,
+      label,
+      description,
+      prompt,
+    })),
+    geminiPromptMeta: listGeminiHospitalBundlePromptMeta(),
     studioOrigin:
       process.env.NEXT_PUBLIC_STUDIO_URL ||
       process.env.STUDIO_PUBLIC_URL ||

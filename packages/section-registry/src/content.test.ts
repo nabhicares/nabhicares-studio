@@ -132,3 +132,24 @@ describe('contact + hospital bundle', () => {
     assert.equal(r.ok, false);
   });
 });
+
+describe('gemini prompt variants', () => {
+  it('exports five voices with shared schema markers', async () => {
+    const {
+      GEMINI_HOSPITAL_BUNDLE_PROMPTS,
+      GEMINI_HOSPITAL_BUNDLE_PROMPT,
+      getGeminiHospitalBundlePrompt,
+      nextGeminiHospitalBundlePromptId,
+    } = await import('./gemini-prompts');
+    assert.equal(GEMINI_HOSPITAL_BUNDLE_PROMPTS.length, 5);
+    assert.equal(GEMINI_HOSPITAL_BUNDLE_PROMPT, getGeminiHospitalBundlePrompt('standard').prompt);
+    for (const p of GEMINI_HOSPITAL_BUNDLE_PROMPTS) {
+      assert.match(p.prompt, /"whatsappMessage"/);
+      assert.match(p.prompt, /sections/);
+      assert.match(p.prompt, /testimonials\.items MUST use only these keys/);
+      assert.match(p.prompt, /\{\{liveUrl\}\}/);
+    }
+    assert.equal(nextGeminiHospitalBundlePromptId('standard'), 'trust_emergency');
+    assert.equal(nextGeminiHospitalBundlePromptId('reviews_led'), 'standard');
+  });
+});

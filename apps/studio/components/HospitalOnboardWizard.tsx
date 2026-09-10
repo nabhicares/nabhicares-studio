@@ -5,10 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { apiFetch } from '@/lib/api-client';
 import { liveSiteUrl } from '@/lib/cdn';
-import {
-  GEMINI_HOSPITAL_BUNDLE_PROMPT,
-  exampleContentForSection,
-} from '@nabhicares/section-registry';
+import { GeminiPromptCopy } from '@/components/GeminiPromptCopy';
+import { exampleContentForSection } from '@nabhicares/section-registry';
 
 const STEPS = [
   { id: 'maps', label: 'Maps content' },
@@ -53,7 +51,6 @@ function slugify(input: string) {
 export function HospitalOnboardWizard() {
   const router = useRouter();
   const [step, setStep] = useState<StepId>('maps');
-  const [copied, setCopied] = useState(false);
 
   const [name, setName] = useState('');
   const [slug, setSlug] = useState('');
@@ -69,12 +66,6 @@ export function HospitalOnboardWizard() {
   const [importStatus, setImportStatus] = useState('');
 
   const stepIndex = STEPS.findIndex((s) => s.id === step);
-
-  async function copyPrompt() {
-    await navigator.clipboard.writeText(GEMINI_HOSPITAL_BUNDLE_PROMPT);
-    setCopied(true);
-    window.setTimeout(() => setCopied(false), 2000);
-  }
 
   function onNameChange(value: string) {
     setName(value);
@@ -214,11 +205,9 @@ export function HospitalOnboardWizard() {
               Maps photos usually cannot be scraped. Leave image fields empty; add URLs later in
               Studio. Verify clinical claims before publish.
             </p>
-            <div className="flex flex-wrap gap-sm pt-sm">
-              <button type="button" className="btn-primary" onClick={() => void copyPrompt()}>
-                {copied ? 'Prompt copied' : 'Copy Gemini prompt'}
-              </button>
-              <button type="button" className="btn-ghost px-md py-sm" onClick={() => setStep('site')}>
+            <div className="flex flex-col gap-md pt-sm">
+              <GeminiPromptCopy buttonClassName="btn-primary" />
+              <button type="button" className="btn-ghost px-md py-sm self-start" onClick={() => setStep('site')}>
                 I have the JSON — continue
               </button>
             </div>
@@ -295,13 +284,11 @@ export function HospitalOnboardWizard() {
                 stays Nabhi; this only fills content fields.
               </p>
             </div>
-            <div className="flex flex-wrap gap-xs">
-              <button type="button" className="btn-ghost text-label-sm" onClick={() => void copyPrompt()}>
-                {copied ? 'Prompt copied' : 'Copy Gemini prompt again'}
-              </button>
+            <div className="flex flex-col gap-sm">
+              <GeminiPromptCopy buttonClassName="btn-ghost text-label-sm self-start" />
               <button
                 type="button"
-                className="btn-ghost text-label-sm"
+                className="btn-ghost text-label-sm self-start"
                 onClick={() => {
                   setJsonText(EXAMPLE_BUNDLE);
                   setImportError('');

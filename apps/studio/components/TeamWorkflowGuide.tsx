@@ -13,7 +13,7 @@ export function TeamWorkflowGuide() {
   const steps: { title: string; body: string }[] = [
     {
       title: 'Install the Chrome extension',
-      body: 'Download the zip, unzip it, open chrome://extensions, turn on Developer mode, then Load unpacked and pick the unzipped folder. Re-download after updates (v1.2+).',
+      body: 'Download the zip, unzip it, open chrome://extensions, turn on Developer mode, then Load unpacked and pick the unzipped folder. Re-download after updates (v1.3+).',
     },
     {
       title: 'Get your token',
@@ -21,7 +21,7 @@ export function TeamWorkflowGuide() {
     },
     {
       title: 'Maps → Gemini → paste JSON',
-      body: 'Copy Gemini prompt in the extension, paste into Gemini with Maps details (include rating/reviews if shown). Paste JSON back — it should include whatsappMessage. Create + publish clears the box so you can keep queueing.',
+      body: 'Copy Gemini prompt in the extension or Studio (pick a prompt voice: Standard / Trust / Local / Services / Reviews — rotate so demos do not sound identical). Paste into Gemini with Maps details (include rating/reviews if shown). Paste JSON back — it should include whatsappMessage. Create + publish clears the box so you can keep queueing.',
     },
     {
       title: 'Polish in Studio',

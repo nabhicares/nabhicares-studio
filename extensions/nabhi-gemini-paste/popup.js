@@ -1,6 +1,8 @@
 const DEFAULT_STUDIO = 'https://studio.nabhilabs.info';
 const JOBS_KEY = 'recentJobs';
 const MAX_JOBS = 8;
+const PROMPT_ID_KEY = 'geminiPromptId';
+const PROMPTS_KEY = 'geminiPrompts';
 
 const els = {
   studioUrl: document.getElementById('studioUrl'),
@@ -8,6 +10,7 @@ const els = {
   campaignId: document.getElementById('campaignId'),
   mapsUrl: document.getElementById('mapsUrl'),
   photoUrls: document.getElementById('photoUrls'),
+  promptVoice: document.getElementById('promptVoice'),
   json: document.getElementById('json'),
   doPublish: document.getElementById('doPublish'),
   submit: document.getElementById('submit'),
@@ -52,19 +55,40 @@ async function copyText(text) {
   }
 }
 
+function fillPromptSelect(prompts, selectedId) {
+  if (!els.promptVoice || !Array.isArray(prompts) || !prompts.length) return;
+  const id = selectedId || prompts[0].id;
+  els.promptVoice.innerHTML = prompts
+    .map(
+      (p) =>
+        `<option value="${p.id}"${p.id === id ? ' selected' : ''}>${p.label} — ${p.description || ''}</option>`,
+    )
+    .join('');
+}
+
+function nextPromptId(prompts, currentId) {
+  if (!prompts.length) return 'standard';
+  const idx = prompts.findIndex((p) => p.id === currentId);
+  const next = prompts[(idx >= 0 ? idx + 1 : 0) % prompts.length];
+  return next.id;
+}
+
 async function loadSettings() {
   const data = await chrome.storage.local.get([
     'studioUrl',
     'token',
     'campaignId',
     'geminiPrompt',
+    PROMPT_ID_KEY,
+    PROMPTS_KEY,
     JOBS_KEY,
   ]);
   els.studioUrl.value = data.studioUrl || DEFAULT_STUDIO;
   els.token.value = data.token || '';
   els.campaignId.value = data.campaignId || '';
+  fillPromptSelect(data[PROMPTS_KEY] || [], data[PROMPT_ID_KEY] || 'standard');
   renderJobs(data[JOBS_KEY] || []);
-  if (data.token && !data.geminiPrompt) {
+  if (data.token && !(data[PROMPTS_KEY] || []).length) {
     void prefetchPrompt(false);
   }
 }
@@ -74,6 +98,7 @@ async function saveSettings() {
     studioUrl: studioBase(),
     token: els.token.value.trim(),
     campaignId: els.campaignId.value.trim(),
+    [PROMPT_ID_KEY]: els.promptVoice?.value || 'standard',
   });
 }
 
@@ -89,6 +114,17 @@ async function prefetchPrompt(showErrors) {
       return '';
     }
     const data = await res.json();
+    const prompts = Array.isArray(data.geminiPrompts) ? data.geminiPrompts : [];
+    const selectedId = els.promptVoice?.value || data.geminiPromptId || 'standard';
+    if (prompts.length) {
+      fillPromptSelect(prompts, selectedId);
+      await chrome.storage.local.set({
+        [PROMPTS_KEY]: prompts,
+        [PROMPT_ID_KEY]: selectedId,
+        geminiPrompt: (prompts.find((p) => p.id === selectedId) || prompts[0]).prompt,
+      });
+      return (prompts.find((p) => p.id === selectedId) || prompts[0]).prompt;
+    }
     const prompt = (data.geminiPrompt || '').trim();
     if (prompt) await chrome.storage.local.set({ geminiPrompt: prompt });
     return prompt;
@@ -103,6 +139,7 @@ els.token.addEventListener('change', () => {
   void saveSettings().then(() => prefetchPrompt(false));
 });
 els.campaignId.addEventListener('change', () => void saveSettings());
+els.promptVoice?.addEventListener('change', () => void saveSettings());
 
 els.copyPrompt.addEventListener('click', async () => {
   await saveSettings();
@@ -112,19 +149,33 @@ els.copyPrompt.addEventListener('click', async () => {
     return;
   }
 
-  const cached = (await chrome.storage.local.get(['geminiPrompt'])).geminiPrompt || '';
-  // Copy cached prompt immediately while user gesture is fresh
-  if (cached.trim()) {
-    const ok = await copyText(cached);
+  const store = await chrome.storage.local.get(['geminiPrompt', PROMPTS_KEY, PROMPT_ID_KEY]);
+  const prompts = store[PROMPTS_KEY] || [];
+  const selectedId = els.promptVoice?.value || store[PROMPT_ID_KEY] || 'standard';
+  let prompt =
+    (prompts.find((p) => p.id === selectedId) || {}).prompt ||
+    store.geminiPrompt ||
+    '';
+
+  if (prompt.trim()) {
+    const ok = await copyText(prompt);
     if (ok) {
-      showStatus('Gemini prompt copied. Refreshing cache…', 'ok');
+      const nextId = nextPromptId(prompts.length ? prompts : [{ id: 'standard' }], selectedId);
+      if (els.promptVoice && prompts.length) {
+        els.promptVoice.value = nextId;
+      }
+      await chrome.storage.local.set({
+        [PROMPT_ID_KEY]: nextId,
+        geminiPrompt: (prompts.find((p) => p.id === nextId) || {}).prompt || prompt,
+      });
+      showStatus(`Gemini prompt copied (${selectedId}). Next voice: ${nextId}.`, 'ok');
       void prefetchPrompt(false);
       return;
     }
   }
 
   try {
-    const prompt = await prefetchPrompt(true);
+    prompt = await prefetchPrompt(true);
     if (!prompt) {
       showStatus('Prompt was empty — check Studio / section-registry deploy.', 'err');
       return;
@@ -134,7 +185,13 @@ els.copyPrompt.addEventListener('click', async () => {
       showStatus('Could not copy — select & copy manually from Studio CRM if needed.', 'err');
       return;
     }
-    showStatus('Gemini prompt copied to clipboard.', 'ok');
+    const refreshed = await chrome.storage.local.get([PROMPTS_KEY, PROMPT_ID_KEY]);
+    const list = refreshed[PROMPTS_KEY] || [];
+    const cur = els.promptVoice?.value || refreshed[PROMPT_ID_KEY] || 'standard';
+    const nextId = nextPromptId(list.length ? list : [{ id: 'standard' }], cur);
+    if (els.promptVoice && list.length) els.promptVoice.value = nextId;
+    await chrome.storage.local.set({ [PROMPT_ID_KEY]: nextId });
+    showStatus(`Gemini prompt copied (${cur}). Next voice: ${nextId}.`, 'ok');
   } catch (e) {
     showStatus(e instanceof Error ? e.message : 'Failed to fetch prompt', 'err');
   }
